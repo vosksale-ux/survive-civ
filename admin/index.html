@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SURVIVE.CIV — Админ-панель</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #080808; --bg2: #111; --bg3: #1a1a1a; --bg4: #222;
+            --text: #d4d4d4; --text2: #888; --text3: #555;
+            --accent: #c8a96e; --red: #b83040; --green: #5a9a6a; --blue: #4a7ab0;
+            --border: #2a2a2a; --font-h: 'Orbitron', sans-serif; --font-m: 'Share Tech Mono', monospace; --font-b: 'Rajdhani', sans-serif;
+        }
+        body { background: var(--bg); color: var(--text); font-family: var(--font-b); min-height: 100vh; }
+        ::selection { background: var(--accent); color: var(--bg); }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg); } ::-webkit-scrollbar-thumb { background: var(--accent); }
+
+        .layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 220px; background: var(--bg2); border-right: 1px solid var(--border); padding: 20px 0; position: fixed; top: 0; bottom: 0; overflow-y: auto; }
+        .sidebar-logo { font-family: var(--font-h); font-size: 14px; color: var(--accent); padding: 0 20px 20px; letter-spacing: 2px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+        .sidebar-link { display: flex; align-items: center; gap: 10px; padding: 10px 20px; color: var(--text2); font-size: 14px; cursor: pointer; transition: 0.2s; border-left: 2px solid transparent; }
+        .sidebar-link:hover { color: var(--text); background: var(--bg3); }
+        .sidebar-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(200,169,110,0.05); }
+        .sidebar-link span { font-size: 18px; }
+        .main { margin-left: 220px; flex: 1; padding: 30px; }
+        .page-title { font-family: var(--font-h); font-size: 22px; margin-bottom: 5px; }
+        .page-desc { color: var(--text2); font-size: 14px; margin-bottom: 25px; }
+
+        .stats-row { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+        .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 3px; padding: 18px 22px; min-width: 140px; }
+        .stat-card .val { font-family: var(--font-h); font-size: 28px; color: var(--accent); }
+        .stat-card .lbl { font-family: var(--font-m); font-size: 11px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; }
+
+        .toolbar { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
+        .btn { font-family: var(--font-h); font-size: 11px; letter-spacing: 1px; padding: 8px 18px; border-radius: 2px; cursor: pointer; transition: 0.2s; text-transform: uppercase; border: 1px solid var(--border); background: var(--bg3); color: var(--text); }
+        .btn:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-accent { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 700; }
+        .btn-accent:hover { background: transparent; color: var(--accent); }
+        .btn-red { border-color: var(--red); color: var(--red); }
+        .btn-red:hover { background: var(--red); color: #fff; }
+
+        table { width: 100%; border-collapse: collapse; background: var(--bg2); }
+        th { font-family: var(--font-m); font-size: 11px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; text-align: left; padding: 12px 15px; border-bottom: 1px solid var(--border); }
+        td { padding: 10px 15px; border-bottom: 1px solid rgba(42,42,42,0.5); font-size: 14px; vertical-align: top; }
+        tr:hover td { background: var(--bg3); }
+        .td-title { font-weight: 600; max-width: 300px; }
+        .td-desc { color: var(--text2); max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .badge { font-family: var(--font-m); font-size: 10px; padding: 2px 8px; border-radius: 2px; letter-spacing: 1px; }
+        .badge-critical { background: rgba(184,48,64,0.15); color: var(--red); }
+        .badge-high { background: rgba(196,112,48,0.15); color: #c47030; }
+        .badge-medium { background: rgba(184,160,64,0.15); color: #b8a040; }
+
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 30px; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--bg2); border: 1px solid var(--accent); border-radius: 3px; width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto; padding: 30px; position: relative; }
+        .modal-close { position: absolute; top: 12px; right: 16px; background: none; border: none; color: var(--text3); font-size: 24px; cursor: pointer; }
+        .modal-close:hover { color: var(--red); }
+        .modal h2 { font-family: var(--font-h); font-size: 16px; margin-bottom: 20px; color: var(--accent); }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-family: var(--font-m); font-size: 12px; color: var(--text2); letter-spacing: 1px; margin-bottom: 5px; text-transform: uppercase; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 8px 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: var(--font-b); font-size: 14px; border-radius: 2px; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        .form-row { display: flex; gap: 15px; }
+        .form-row .form-group { flex: 1; }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        .toast { position: fixed; bottom: 20px; right: 20px; background: var(--green); color: #fff; padding: 12px 20px; border-radius: 3px; font-size: 14px; z-index: 2000; display: none; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-logo">[SURVIVE.ADMIN]</div>
+            <div class="sidebar-link active" data-page="dashboard"><span>📊</span> Дашборд</div>
+            <div class="sidebar-link" data-page="scenarios"><span>☠️</span> Сценарии</div>
+            <div class="sidebar-link" data-page="articles"><span>📝</span> Статьи</div>
+            <div class="sidebar-link" data-page="videos"><span>🎬</span> Видео</div>
+            <div class="sidebar-link" data-page="books"><span>📚</span> Медиатека</div>
+            <div class="sidebar-link" data-page="facts"><span>💡</span> Факты</div>
+            <div class="sidebar-link" data-page="guides"><span>📖</span> Гайды</div>
+            <div class="sidebar-link" data-page="shop"><span>🛒</span> Магазин</div>
+            <div style="border-top:1px solid var(--border);margin:15px 20px"></div>
+            <div class="sidebar-link" onclick="window.open('/','_blank')"><span>🌐</span> Открыть сайт</div>
+        </div>
+
+        <div class="main">
+            <div id="page-dashboard" class="page active">
+                <div class="page-title">Дашборд</div>
+                <div class="page-desc">Обзор контента SURVIVE.CIV</div>
+                <div class="stats-row" id="stats-row"></div>
+            </div>
+
+            <div id="page-scenarios" class="page">
+                <div class="page-title">Сценарии конца света</div>
+                <div class="toolbar"><button class="btn btn-accent" onclick="openScenarioModal()">+ Добавить</button></div>
+                <table><thead><tr><th>ID</th><th>Иконка</th><th>Название</th><th>Вероятность</th><th>Уровень</th><th>Выжившие</th><th></th></tr></thead><tbody id="tbl-scenarios"></tbody></table>
+            </div>
+
+            <div id="page-articles" class="page">
+                <div class="page-title">Статьи</div>
+                <div class="toolbar"><button class="btn btn-accent" onclick="openArticleModal()">+ Добавить</button></div>
+                <table><thead><tr><th>ID</th><th>Категория</th><th>Название</th><th>Время</th><th></th></tr></thead><tbody id="tbl-articles"></tbody></table>
+            </div>
+
+            <div id="page-videos" class="page">
+                <div class="page-title">Видео</div>
+                <div class="toolbar"><button class="btn btn-accent" onclick="openVideoModal()">+ Добавить</button></div>
+                <table><thead><tr><th>ID</th><th>Название</th><th>Тег</th><th>Длительность</th><th></th></tr></thead><tbody id="tbl-videos"></tbody></table>
+            </div>
+
+            <div id="page-books" class="page">
+                <div class="page-title">Медиатека</div>
+                <div class="toolbar"><button class="btn btn-accent" onclick="openBookModal()">+ Добавить</button></div>
+                <table><thead><tr><th>ID</th><th>Тип</th><th>Название</th><th>Автор</th><th>Рейтинг</th><th></th></tr></thead><tbody id="tbl-books"></tbody></table>
+            </div>
+
+            <div id="page-facts" class="page">
+                <div class="page-title">Факты и цитаты</div>
+                <div class="toolbar"><button class="btn btn-accent" onclick="openFactModal()">+ Добавить</button></div>
+                <table><thead><tr><th>ID</th><th>Текст</th><th>Источник</th><th></th></tr></thead><tbody id="tbl-facts"></tbody></table>
+            </div>
+
+            <div id="page-guides" class="page">
+                <div class="page-title">Гайды</div>
+                <div class="page-desc">Гайды редактируются через API. Используйте инструменты ниже для управления.</div>
+                <table><thead><tr><th>ID</th><th>Иконка</th><th>Название</th><th>Шагов</th></tr></thead><tbody id="tbl-guides"></tbody></table>
+            </div>
+
+            <div id="page-shop" class="page">
+                <div class="page-title">Магазин</div>
+                <div class="toolbar"><button class="btn btn-accent" onclick="openShopModal()">+ Добавить</button></div>
+                <table><thead><tr><th>ID</th><th>Название</th><th>Цена</th><th>Бейдж</th><th></th></tr></thead><tbody id="tbl-shop"></tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+    const API = '';
+    let currentData = {};
+
+    function toast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg; t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 2500);
+    }
+
+    async function api(url, opts = {}) {
+        const r = await fetch(API + url, { headers: { 'Content-Type': 'application/json' }, ...opts });
+        return r.json();
+    }
+
+    // NAVIGATION
+    document.querySelectorAll('.sidebar-link[data-page]').forEach(el => {
+        el.addEventListener('click', () => {
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            el.classList.add('active');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + el.dataset.page).classList.add('active');
+            loadPage(el.dataset.page);
+        });
+    });
+
+    function closeModal() { document.getElementById('modal-overlay').classList.remove('active'); }
+
+    // DASHBOARD
+    async function loadDashboard() {
+        const s = await api('/api/stats');
+        document.getElementById('stats-row').innerHTML = [
+            ['Сценарии', s.scenarios], ['Статьи', s.articles], ['Видео', s.videos],
+            ['Медиатека', s.books], ['Факты', s.facts], ['Гайды', s.guides], ['Товары', s.shop]
+        ].map(([l,v]) => `<div class="stat-card"><div class="val">${v}</div><div class="lbl">${l}</div></div>`).join('');
+    }
+
+    // SCENARIOS
+    async function loadScenarios() {
+        const data = await api('/api/scenarios');
+        currentData.scenarios = data;
+        document.getElementById('tbl-scenarios').innerHTML = data.map(s => `<tr>
+            <td style="font-family:var(--font-m);font-size:12px;color:var(--text3)">${s.id}</td>
+            <td>${s.icon}</td>
+            <td class="td-title">${s.title}</td>
+            <td>${s.probability}%</td>
+            <td><span class="badge badge-${s.severity}">${s.severity}</span></td>
+            <td>${s.survival_rate}</td>
+            <td><button class="btn" onclick="openScenarioModal('${s.id}')">✎</button> <button class="btn btn-red" onclick="del('scenarios','${s.id}')">✕</button></td>
+        </tr>`).join('');
+    }
+
+    function openScenarioModal(id) {
+        const s = id ? currentData.scenarios.find(x => x.id === id) : {};
+        document.getElementById('modal-content').innerHTML = `<h2>${id ? 'Редактировать' : 'Новый'} сценарий</h2>
+            <div class="form-row"><div class="form-group"><label>ID</label><input id="f-id" value="${s.id||''}" ${id?'readonly':''}></div><div class="form-group"><label>Иконка</label><input id="f-icon" value="${s.icon||''}"></div></div>
+            <div class="form-group"><label>Название</label><input id="f-title" value="${s.title||''}"></div>
+            <div class="form-group"><label>Описание</label><textarea id="f-desc">${s.description||''}</textarea></div>
+            <div class="form-row"><div class="form-group"><label>Вероятность %</label><input type="number" id="f-prob" value="${s.probability||0}"></div><div class="form-group"><label>Severity</label><select id="f-sev"><option ${s.severity==='critical'?'selected':''}>critical</option><option ${s.severity==='high'?'selected':''}>high</option><option ${s.severity==='medium'?'selected':''}>medium</option></select></div></div>
+            <div class="form-row"><div class="form-group"><label>Таймфрейм</label><input id="f-time" value="${s.timeframe||''}"></div><div class="form-group"><label>Выжившие</label><input id="f-surv" value="${s.survival_rate||''}"></div></div>
+            <div class="form-group"><label>Заголовок деталей</label><input id="f-dtitle" value="${s.detail_title||''}"></div>
+            <div class="form-group"><label>Тело деталей (HTML)</label><textarea id="f-dbody" style="min-height:200px">${s.detail_body||''}</textarea></div>
+            <button class="btn btn-accent" onclick="saveScenario('${id||''}')">Сохранить</button>`;
+        document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    async function saveScenario(id) {
+        const body = { id: document.getElementById('f-id').value, icon: document.getElementById('f-icon').value, title: document.getElementById('f-title').value, description: document.getElementById('f-desc').value, probability: +document.getElementById('f-prob').value, severity: document.getElementById('f-sev').value, timeframe: document.getElementById('f-time').value, survival_rate: document.getElementById('f-surv').value, detail_title: document.getElementById('f-dtitle').value, detail_body: document.getElementById('f-dbody').value, sort_order: 0 };
+        await api(id ? '/api/scenarios/'+id : '/api/scenarios', { method: id ? 'PUT' : 'POST', body: JSON.stringify(body) });
+        closeModal(); toast('Сохранено'); loadScenarios();
+    }
+
+    // ARTICLES
+    async function loadArticles() {
+        const data = await api('/api/articles');
+        currentData.articles = data;
+        document.getElementById('tbl-articles').innerHTML = data.map(a => `<tr>
+            <td style="font-family:var(--font-m);color:var(--text3)">${a.id}</td>
+            <td><span class="badge badge-medium">${a.cat_label}</span></td>
+            <td class="td-title">${a.title}</td>
+            <td>${a.read_time}</td>
+            <td><button class="btn" onclick="openArticleModal(${a.id})">✎</button> <button class="btn btn-red" onclick="del('articles',${a.id})">✕</button></td>
+        </tr>`).join('');
+    }
+
+    function openArticleModal(id) {
+        const a = id ? currentData.articles.find(x => x.id === id) : {};
+        document.getElementById('modal-content').innerHTML = `<h2>${id ? 'Редактировать' : 'Новая'} статья</h2>
+            <div class="form-row"><div class="form-group"><label>Категория</label><select id="f-cat"><option value="basics" ${a.category==='basics'?'selected':''}>Основы</option><option value="medicine" ${a.category==='medicine'?'selected':''}>Медицина</option><option value="engineering" ${a.category==='engineering'?'selected':''}>Инженерия</option><option value="food" ${a.category==='food'?'selected':''}>Еда и вода</option><option value="science" ${a.category==='science'?'selected':''}>Наука</option></select></div><div class="form-group"><label>Время чтения</label><input id="f-rt" value="${a.read_time||'5 мин'}"></div></div>
+            <div class="form-group"><label>Заголовок</label><input id="f-title" value="${a.title||''}"></div>
+            <div class="form-group"><label>Отрывок</label><textarea id="f-excerpt">${a.excerpt||''}</textarea></div>
+            <div class="form-group"><label>Тело (HTML)</label><textarea id="f-body" style="min-height:250px">${a.body||''}</textarea></div>
+            <div class="form-group"><label>Градиент</label><input id="f-grad" value="${a.gradient||'linear-gradient(135deg, #1a1a2e, #16213e)'}"></div>
+            <button class="btn btn-accent" onclick="saveArticle(${id||0})">Сохранить</button>`;
+        document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    async function saveArticle(id) {
+        const cats = {basics:'Основы',medicine:'Медицина',engineering:'Инженерия',food:'Еда и вода',science:'Наука'};
+        const cat = document.getElementById('f-cat').value;
+        const body = { category: cat, cat_label: cats[cat], title: document.getElementById('f-title').value, excerpt: document.getElementById('f-excerpt').value, body: document.getElementById('f-body').value, read_time: document.getElementById('f-rt').value, gradient: document.getElementById('f-grad').value };
+        await api(id ? '/api/articles/'+id : '/api/articles', { method: id ? 'PUT' : 'POST', body: JSON.stringify(body) });
+        closeModal(); toast('Сохранено'); loadArticles();
+    }
+
+    // VIDEOS
+    async function loadVideos() {
+        const data = await api('/api/videos');
+        currentData.videos = data;
+        document.getElementById('tbl-videos').innerHTML = data.map(v => `<tr>
+            <td style="font-family:var(--font-m);color:var(--text3)">${v.id}</td>
+            <td class="td-title">${v.title}</td>
+            <td>${v.tag}</td><td>${v.duration}</td>
+            <td><button class="btn" onclick="openVideoModal(${v.id})">✎</button> <button class="btn btn-red" onclick="del('videos',${v.id})">✕</button></td>
+        </tr>`).join('');
+    }
+
+    function openVideoModal(id) {
+        const v = id ? currentData.videos.find(x => x.id === id) : {};
+        document.getElementById('modal-content').innerHTML = `<h2>${id ? 'Редактировать' : 'Новое'} видео</h2>
+            <div class="form-group"><label>Название</label><input id="f-title" value="${v.title||''}"></div>
+            <div class="form-group"><label>Описание</label><textarea id="f-desc">${v.description||''}</textarea></div>
+            <div class="form-row"><div class="form-group"><label>Длительность</label><input id="f-dur" value="${v.duration||'10:00'}"></div><div class="form-group"><label>Тег</label><input id="f-tag" value="${v.tag||''}"></div></div>
+            <div class="form-group"><label>Цвет фона</label><input id="f-color" value="${v.color||'#1a1a2e'}"></div>
+            <button class="btn btn-accent" onclick="saveVideo(${id||0})">Сохранить</button>`;
+        document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    async function saveVideo(id) {
+        const body = { title: document.getElementById('f-title').value, description: document.getElementById('f-desc').value, duration: document.getElementById('f-dur').value, tag: document.getElementById('f-tag').value, color: document.getElementById('f-color').value };
+        await api(id ? '/api/videos/'+id : '/api/videos', { method: id ? 'PUT' : 'POST', body: JSON.stringify(body) });
+        closeModal(); toast('Сохранено'); loadVideos();
+    }
+
+    // BOOKS
+    async function loadBooks() {
+        const data = await api('/api/books');
+        currentData.books = data;
+        document.getElementById('tbl-books').innerHTML = data.map(b => `<tr>
+            <td style="font-family:var(--font-m);color:var(--text3)">${b.id}</td>
+            <td>${b.type}</td><td class="td-title">${b.title}</td><td>${b.author}</td><td>${'★'.repeat(b.stars)}</td>
+            <td><button class="btn" onclick="openBookModal(${b.id})">✎</button> <button class="btn btn-red" onclick="del('books',${b.id})">✕</button></td>
+        </tr>`).join('');
+    }
+
+    function openBookModal(id) {
+        const b = id ? currentData.books.find(x => x.id === id) : {};
+        document.getElementById('modal-content').innerHTML = `<h2>${id ? 'Редактировать' : 'Новое'} произведение</h2>
+            <div class="form-row"><div class="form-group"><label>Тип</label><select id="f-type"><option value="book" ${b.type==='book'?'selected':''}>Книга</option><option value="film" ${b.type==='film'?'selected':''}>Фильм</option><option value="game" ${b.type==='game'?'selected':''}>Игра</option></select></div><div class="form-group"><label>Рейтинг</label><input type="number" id="f-stars" value="${b.stars||4}" min="1" max="5"></div></div>
+            <div class="form-group"><label>Название</label><input id="f-title" value="${b.title||''}"></div>
+            <div class="form-row"><div class="form-group"><label>Автор</label><input id="f-author" value="${b.author||''}"></div><div class="form-group"><label>Год</label><input id="f-year" value="${b.year||''}"></div></div>
+            <div class="form-group"><label>Описание</label><textarea id="f-desc">${b.description||''}</textarea></div>
+            <button class="btn btn-accent" onclick="saveBook(${id||0})">Сохранить</button>`;
+        document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    async function saveBook(id) {
+        const body = { type: document.getElementById('f-type').value, title: document.getElementById('f-title').value, author: document.getElementById('f-author').value, year: document.getElementById('f-year').value, description: document.getElementById('f-desc').value, stars: +document.getElementById('f-stars').value };
+        await api(id ? '/api/books/'+id : '/api/books', { method: id ? 'PUT' : 'POST', body: JSON.stringify(body) });
+        closeModal(); toast('Сохранено'); loadBooks();
+    }
+
+    // FACTS
+    async function loadFacts() {
+        const data = await api('/api/facts/all');
+        currentData.facts = data;
+        document.getElementById('tbl-facts').innerHTML = data.map(f => `<tr>
+            <td style="font-family:var(--font-m);color:var(--text3)">${f.id}</td>
+            <td class="td-desc" style="max-width:500px">${f.text}</td>
+            <td style="color:var(--text3);font-size:12px">${f.source||''}</td>
+            <td><button class="btn btn-red" onclick="del('facts',${f.id})">✕</button></td>
+        </tr>`).join('');
+    }
+
+    function openFactModal() {
+        document.getElementById('modal-content').innerHTML = `<h2>Новый факт</h2>
+            <div class="form-group"><label>Текст</label><textarea id="f-text"></textarea></div>
+            <div class="form-group"><label>Источник</label><input id="f-source"></div>
+            <button class="btn btn-accent" onclick="saveFact()">Сохранить</button>`;
+        document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    async function saveFact() {
+        await api('/api/facts', { method: 'POST', body: JSON.stringify({ text: document.getElementById('f-text').value, source: document.getElementById('f-source').value }) });
+        closeModal(); toast('Сохранено'); loadFacts();
+    }
+
+    // GUIDES (read-only display)
+    async function loadGuides() {
+        const data = await api('/api/guides');
+        document.getElementById('tbl-guides').innerHTML = data.map(g => `<tr>
+            <td style="font-family:var(--font-m);color:var(--text3)">${g.id}</td>
+            <td>${g.icon}</td><td class="td-title">${g.title}</td><td>${g.steps.length} шагов</td>
+        </tr>`).join('');
+    }
+
+    // SHOP
+    async function loadShop() {
+        const data = await api('/api/shop');
+        currentData.shop = data;
+        document.getElementById('tbl-shop').innerHTML = data.map(s => `<tr>
+            <td style="font-family:var(--font-m);color:var(--text3)">${s.id}</td>
+            <td class="td-title">${s.icon} ${s.title}</td><td>${s.price}</td><td>${s.badge||'—'}</td>
+            <td><button class="btn btn-red" onclick="del('shop',${s.id})">✕</button></td>
+        </tr>`).join('');
+    }
+
+    function openShopModal() {
+        document.getElementById('modal-content').innerHTML = `<h2>Новый товар</h2>
+            <div class="form-row"><div class="form-group"><label>Иконка</label><input id="f-icon" value="🎒"></div><div class="form-group"><label>Цена</label><input id="f-price" value="0 ₽"></div></div>
+            <div class="form-group"><label>Название</label><input id="f-title"></div>
+            <div class="form-group"><label>Описание</label><textarea id="f-desc"></textarea></div>
+            <div class="form-row"><div class="form-group"><label>Старая цена</label><input id="f-oldp"></div><div class="form-group"><label>Бейдж</label><select id="f-badge"><option value="">Нет</option><option value="bestseller">Bestseller</option><option value="new">New</option></select></div></div>
+            <button class="btn btn-accent" onclick="saveShop()">Сохранить</button>`;
+        document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    async function saveShop() {
+        await api('/api/shop', { method: 'POST', body: JSON.stringify({ icon: document.getElementById('f-icon').value, title: document.getElementById('f-title').value, description: document.getElementById('f-desc').value, price: document.getElementById('f-price').value, old_price: document.getElementById('f-oldp').value || null, badge: document.getElementById('f-badge').value || null }) });
+        closeModal(); toast('Сохранено'); loadShop();
+    }
+
+    // DELETE
+    async function del(table, id) {
+        if (!confirm('Удалить?')) return;
+        await api('/api/' + table + '/' + id, { method: 'DELETE' });
+        toast('Удалено');
+        loadPage(table === 'shop' ? 'shop' : table);
+    }
+
+    // PAGE LOADER
+    const loaders = { dashboard: loadDashboard, scenarios: loadScenarios, articles: loadArticles, videos: loadVideos, books: loadBooks, facts: loadFacts, guides: loadGuides, shop: loadShop };
+    function loadPage(p) { if (loaders[p]) loaders[p](); }
+    loadDashboard();
+    </script>
+</body>
+</html>

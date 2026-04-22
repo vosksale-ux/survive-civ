@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SURVIVE.CIV — Выбери свой дизайн</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #080808;
+            --surface: #111;
+            --border: rgba(255,255,255,0.06);
+            --text: #d4d4d4;
+            --text-dim: #666;
+            --accent: #c8a96e;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 256px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(200,169,110,0.06) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(32px, 6vw, 56px);
+            font-weight: 800;
+            letter-spacing: 6px;
+            margin-bottom: 8px;
+            color: var(--accent);
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .logo-sub {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(10px, 1.5vw, 13px);
+            letter-spacing: 8px;
+            color: var(--text-dim);
+            margin-bottom: 50px;
+            text-transform: uppercase;
+            animation: fadeInDown 0.8s ease 0.2s both;
+        }
+
+        .hero-desc {
+            font-size: 18px;
+            color: var(--text-dim);
+            max-width: 600px;
+            line-height: 1.7;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease 0.4s both;
+        }
+
+        .hero-desc strong {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .designs {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .designs-title {
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            letter-spacing: 6px;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 60px;
+        }
+
+        .designs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 30px;
+        }
+
+        .design-card {
+            position: relative;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.5s ease, border-color 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .design-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            border-color: var(--accent);
+        }
+
+        .design-preview {
+            height: 240px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .design-preview-1 {
+            background: linear-gradient(135deg, #f4e8c1 0%, #e8d5a3 30%, #d4c08a 60%, #c8a060 100%);
+        }
+
+        .design-preview-1::after {
+            content: 'СЕКРЕТНО';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-12deg);
+            font-family: 'Impact', sans-serif;
+            font-size: 36px;
+            color: rgba(139, 26, 26, 0.3);
+            border: 4px solid rgba(139, 26, 26, 0.3);
+            padding: 8px 30px;
+            letter-spacing: 6px;
+        }
+
+        .design-preview-2 {
+            background: linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 30%, #2a5a2a 60%, #0a1a0a 100%);
+        }
+
+        .design-preview-2::after {
+            content: '🌿';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+            filter: brightness(1.5);
+            text-shadow: 0 0 40px rgba(0, 255, 100, 0.3);
+        }
+
+        .design-preview-3 {
+            background: linear-gradient(135deg, #1a1008 0%, #2a1a08 30%, #3a2a10 60%, #1a1008 100%);
+        }
+
+        .design-preview-3::after {
+            content: '📻';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+            text-shadow: 0 0 60px rgba(255, 136, 0, 0.4);
+        }
+
+        .design-preview-4 {
+            background: linear-gradient(135deg, #0a1a3a 0%, #0d2045 30%, #0a1530 60%, #0d2045 100%);
+            background-size: 30px 30px;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(135deg, #0a1a3a 0%, #0d2045 100%);
+        }
+
+        .design-preview-4::after {
+            content: '📐';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+        }
+
+        .design-preview-5 {
+            background: linear-gradient(135deg, #1a1814 0%, #2a2218 30%, #201c16 60%, #1a1814 100%);
+        }
+
+        .design-preview-5::after {
+            content: '📓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-5deg);
+            font-size: 80px;
+        }
+
+        .design-info {
+            padding: 30px;
+        }
+
+        .design-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+        }
+
+        .design-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .design-concept {
+            font-size: 14px;
+            color: var(--text-dim);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .design-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .design-tag {
+            font-size: 10px;
+            letter-spacing: 1px;
+            padding: 4px 12px;
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .design-card:hover .design-name {
+            color: var(--accent);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--text-dim);
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .designs-grid {
+                grid-template-columns: 1fr;
+            }
+            .design-preview {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="noise-overlay"></div>
+
+    <div class="hero">
+        <div class="hero-glow"></div>
+        <div class="logo">SURVIVE.CIV</div>
+        <div class="logo-sub">Выбери свой дизайн</div>
+        <p class="hero-desc">
+            5 уникальных иммерсивных дизайнов для постапокалиптического гида по выживанию.
+            <strong>Один и тот же контент</strong> — пять совершенно разных визуальных миров.
+            Нажми на карточку, чтобы открыть дизайн.
+        </p>
+    </div>
+
+    <div class="designs">
+        <div class="designs-title">// 5 вариантов дизайна</div>
+        <div class="designs-grid">
+            <a href="dossier.html" class="design-card">
+                <div class="design-preview design-preview-1"></div>
+                <div class="design-info">
+                    <div class="design-number">ВАРИАНТ 01</div>
+                    <div class="design-name">СЕКРЕТНОЕ ДОСЬЕ</div>
+                    <div class="design-concept">Секретное правительственное досье. Желтоватая бумага, штампы "СЕКРЕТНО", кофейные пятна, печатная машинка. Ты нашёл засекреченный файл.</div>
+                    <div class="design-tags">
+                        <span class="design-tag">Бумага</span>
+                        <span class="design-tag">Штампы</span>
+                        <span class="design-tag">Машинка</span>
+                        <span class="design-tag">Тёплый</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="overgrowth.html" class="design-card">
+                <div class="design-preview design-preview-2"></div>
+                <div class="design-info">
+                    <div class="design-number">ВАРИАНТ 02</div>
+                    <div class="design-name">ПРИРОДА ЗАБИРАЕТ СВОЁ</div>
+                    <div class="design-concept">Природа поглощает цивилизацию. Лозы, органические формы, живые текстуры, биолюминесцентное свечение, земные тона.</div>
+                    <div class="design-tags">
+                        <span class="design-tag">Органика</span>
+                        <span class="design-tag">Лианы</span>
+                        <span class="design-tag">Мох</span>
+                        <span class="design-tag">Живой</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="radio.html" class="design-card">
+                <div class="design-preview design-preview-3"></div>
+                <div class="design-info">
+                    <div class="design-number">ВАРИАНТ 03</div>
+                    <div class="design-name">РАДИО СВОБОДА</div>
+                    <div class="design-concept">Аналоговое радио и военный briefing. Лампы, частоты, помехи, тёплый amber, шкалы, осциллографы. Ты настроил рацию.</div>
+                    <div class="design-tags">
+                        <span class="design-tag">Лампы</span>
+                        <span class="design-tag">Частоты</span>
+                        <span class="design-tag">Amber</span>
+                        <span class="design-tag">Аналог</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="blueprint.html" class="design-card">
+                <div class="design-preview design-preview-4"></div>
+                <div class="design-info">
+                    <div class="design-number">ВАРИАНТ 04</div>
+                    <div class="design-name">ЧЕРТЕЖ ВЫЖИВАНИЯ</div>
+                    <div class="design-concept">Инженерный blueprint. Синяя бумага, белые линии сетки, размеры, технические рисунки, штампы чертежей.</div>
+                    <div class="design-tags">
+                        <span class="design-tag">Сетка</span>
+                        <span class="design-tag">Размеры</span>
+                        <span class="design-tag">Blue</span>
+                        <span class="design-tag">Точность</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="journal.html" class="design-card">
+                <div class="design-preview design-preview-5"></div>
+                <div class="design-info">
+                    <div class="design-number">ВАРИАНТ 05</div>
+                    <div class="design-name">ДНЕВНИК ВЫЖИВШЕГО</div>
+                    <div class="design-concept">Scrapbook выжившего. Рваная бумага, скотч, кнопки, граффити, обгоревшие края, красная нить, Polaroid. DIY панк.</div>
+                    <div class="design-tags">
+                        <span class="design-tag">Скотч</span>
+                        <span class="design-tag">Граффити</span>
+                        <span class="design-tag">Коллаж</span>
+                        <span class="design-tag">DIY</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="footer">
+        SURVIVE.CIV &mdash; &copy; 2026 &mdash; ВСЕ ПРАВА ПОТЕРЯНЫ ПОСЛЕ АПОКАЛИПСИСА
+    </div>
+</body>
+</html>

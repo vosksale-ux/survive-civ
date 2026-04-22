@@ -1,0 +1,6 @@
+node_modules/
+survive.db
+survive.db-shm
+survive.db-wal
+.planning/
+ Archive/

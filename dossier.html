@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SURVIVE.CIV — Секретное Досье</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dossier.css">
+</head>
+<body>
+
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen">
+        <div class="loader-container">
+            <div class="loader-stamp">СЕКРЕТНО</div>
+            <div class="loader-ring"></div>
+            <div class="loader-text">ДЕШИФРОВКА ДОКУМЕНТОВ...</div>
+            <div class="loader-progress"><span id="load-percent">0</span>%</div>
+        </div>
+    </div>
+
+    <!-- THREE.JS CANVAS -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- ATMOSPHERE -->
+    <div class="atmosphere-blob atmosphere-blob-1"></div>
+    <div class="atmosphere-blob atmosphere-blob-2"></div>
+    <div class="atmosphere-blob atmosphere-blob-3"></div>
+
+    <div id="cursor-glow"></div>
+
+    <!-- COFFEE STAIN DECORATIONS -->
+    <div class="coffee-stain coffee-stain-1"></div>
+    <div class="coffee-stain coffee-stain-2"></div>
+    <div class="coffee-stain coffee-stain-3"></div>
+
+    <!-- INK SPLATTER DECORATIONS -->
+    <div class="ink-splatter ink-splatter-1"></div>
+    <div class="ink-splatter ink-splatter-2"></div>
+
+    <!-- FACTS TICKER -->
+    <div id="facts-ticker" class="facts-ticker"></div>
+
+    <!-- NAVIGATION — MANILA FOLDER TABS -->
+    <nav id="main-nav">
+        <div class="nav-logo">
+            <span class="logo-stamp"></span>
+            <span class="logo-bracket">[</span>
+            <span class="logo-text">SURVIVE</span>
+            <span class="logo-dot">.</span>
+            <span class="logo-civ">CIV</span>
+            <span class="logo-bracket">]</span>
+        </div>
+        <div class="nav-links">
+            <a href="#hero" class="nav-link active" data-section="hero">Главная</a>
+            <a href="#scenarios" class="nav-link" data-section="scenarios">Сценарии</a>
+            <a href="#timeline" class="nav-link" data-section="timeline">Таймлайн</a>
+            <a href="#articles" class="nav-link" data-section="articles">Статьи</a>
+            <a href="#lifehacks" class="nav-link" data-section="lifehacks">Лайфхаки</a>
+            <a href="#autonomy" class="nav-link" data-section="autonomy">Автономность</a>
+            <a href="#guides" class="nav-link" data-section="guides">Гайды</a>
+            <a href="#videos" class="nav-link" data-section="videos">Видео</a>
+            <a href="#books" class="nav-link" data-section="books">Медиатека</a>
+            <a href="#tools" class="nav-link" data-section="tools">Инструменты</a>
+            <a href="#shop" class="nav-link" data-section="shop">Магазин</a>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-icon cart-btn" id="cart-toggle" aria-label="Корзина">
+                🛒<span class="cart-count" id="cart-count">0</span>
+            </button>
+            <button class="btn-icon" id="theme-toggle" aria-label="Переключить тему">◐</button>
+            <button class="btn-icon" id="audio-toggle" aria-label="Звук">🔇</button>
+        </div>
+        <button class="nav-burger" id="nav-burger" aria-label="Меню">☰</button>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content">
+
+        <!-- SYSTEM STATUS BAR -->
+        <div class="system-status-bar">
+            <div class="status-left">
+                <span class="status-indicator status-blink"></span>
+                <span class="status-text">ДОСЬЕ АКТИВНО</span>
+            </div>
+            <div class="status-center" id="status-date"></div>
+            <div class="status-right">
+                <span class="status-text">УРОВЕНЬ УГРОЗЫ: <span class="threat-level" id="threat-level">ПОВЫШЕННЫЙ</span></span>
+            </div>
+        </div>
+
+        <!-- HERO SECTION -->
+        <section id="hero" class="section hero-section">
+            <div class="hero-noise"></div>
+            <div class="hero-gradient"></div>
+            <div class="classified-stamp classified-stamp-hero">СЕКРЕТНО<br><span>TOP SECRET</span></div>
+            <div class="hero-content">
+                <div class="hero-topline">
+                    <span class="hero-bracket">///</span>
+                    <span class="hero-tagline">РУКОВОДСТВО ПО ВОССТАНОВЛЕНИЮ ЦИВИЛИЗАЦИИ</span>
+                    <span class="hero-bracket">///</span>
+                </div>
+                <h1 class="hero-title">
+                    <span class="hero-title-line">КАК</span>
+                    <span class="hero-title-line hero-title-outline">ВЫЖИТЬ</span>
+                    <span class="hero-title-line">И ВОССТАНОВИТЬ</span>
+                    <span class="hero-title-line hero-title-dim">ВСЁ</span>
+                </h1>
+                <div class="hero-divider">
+                    <span class="divider-segment"></span>
+                    <span class="divider-diamond">&#9670;</span>
+                    <span class="divider-segment"></span>
+                </div>
+                <p class="hero-desc">Сценарии конца света, стратегии выживания, пошаговые инструкции по восстановлению цивилизации с нуля.</p>
+                <div class="hero-terminal">
+                    <span class="terminal-prompt">&gt; _</span>
+                    <span class="terminal-cursor">Инициализация протоколов выживания...</span>
+                    <span class="terminal-ok">[OK]</span>
+                </div>
+                <div class="hero-meta">
+                    <div class="meta-block">
+                        <span class="meta-value" data-count="7">0</span>
+                        <span class="meta-label">сценариев<br>конца</span>
+                    </div>
+                    <div class="meta-sep">|</div>
+                    <div class="meta-block">
+                        <span class="meta-value" data-count="42">0</span>
+                        <span class="meta-label">гайдов по<br>выживанию</span>
+                    </div>
+                    <div class="meta-sep">|</div>
+                    <div class="meta-block">
+                        <span class="meta-value" data-count="156">0</span>
+                        <span class="meta-label">навыков для<br>изучения</span>
+                    </div>
+                    <div class="meta-sep">|</div>
+                    <div class="meta-block">
+                        <span class="meta-value" data-count="1000">0</span>
+                        <span class="meta-label">лет до полного<br>восстановления</span>
+                    </div>
+                </div>
+                <div class="hero-cta">
+                    <a href="#scenarios" class="btn btn-primary">Начать подготовку</a>
+                    <a href="#articles" class="btn btn-secondary">Читать статьи</a>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <div class="scroll-line"></div>
+                <span class="scroll-text">SCROLL</span>
+            </div>
+        </section>
+
+        <!-- TICKER 1 -->
+        <div class="section-divider"></div>
+        <div class="horizontal-ticker">
+            <div class="horizontal-ticker-track">
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>АСТЕРОИД</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ПАНДЕМИЯ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ЯДЕРНАЯ ВОЙНА</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>СОЛНЕЧНЫЙ ШТОРМ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ИИ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>СУПЕРВУЛКАН</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>КЛИМАТ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>БИОЛОГИЯ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>АСТЕРОИД</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ПАНДЕМИЯ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ЯДЕРНАЯ ВОЙНА</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>СОЛНЕЧНЫЙ ШТОРМ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ИИ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>СУПЕРВУЛКАН</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>КЛИМАТ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>БИОЛОГИЯ</span>
+            </div>
+        </div>
+
+        <!-- SCENARIOS -->
+        <section id="scenarios" class="section">
+            <div class="section-header">
+                <div class="section-stamp">РАЗДЕЛ I</div>
+                <span class="section-tag">// СЦЕНАРИИ КОНЦА СВЕТА</span>
+                <h2 class="section-title" data-text="Что может нас уничтожить?">Что может нас уничтожить?</h2>
+                <p class="section-desc">Анализ реальных угроз цивилизации. Вероятности, таймлайны, стратегии выживания.</p>
+            </div>
+            <div class="scenarios-grid" id="scenarios-grid"></div>
+            <div class="scenario-detail" id="scenario-detail"></div>
+        </section>
+
+        <!-- TICKER 2 -->
+        <div class="section-divider"></div>
+        <div class="horizontal-ticker">
+            <div class="horizontal-ticker-track">
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ВОДА</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ОГОНЬ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>УКРЫТИЕ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ЕДА</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>МЕДИЦИНА</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>СВЯЗЬ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>НАВИГАЦИЯ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ИНСТРУМЕНТЫ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ВОДА</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ОГОНЬ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>УКРЫТИЕ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ЕДА</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>МЕДИЦИНА</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>СВЯЗЬ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>НАВИГАЦИЯ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ИНСТРУМЕНТЫ</span>
+            </div>
+        </div>
+
+        <!-- TIMELINE -->
+        <section id="timeline" class="section">
+            <div class="section-header">
+                <div class="section-stamp">РАЗДЕЛ II</div>
+                <span class="section-tag">// ТАЙМЛАЙН ВОССТАНОВЛЕНИЯ</span>
+                <h2 class="section-title" data-text="Путь от камня до интернета">Путь от камня до интернета</h2>
+                <p class="section-desc">Минимальный путь восстановления цивилизации от камня до интернета.</p>
+            </div>
+            <div class="timeline-container" id="timeline-container"></div>
+        </section>
+
+        <!-- ARTICLES -->
+        <section id="articles" class="section">
+            <div class="section-header">
+                <div class="section-stamp">РАЗДЕЛ III</div>
+                <span class="section-tag">// БИБЛИОТЕКА ЗНАНИЙ</span>
+                <h2 class="section-title" data-text="Статьи о выживании">Статьи о выживании</h2>
+            </div>
+            <div class="articles-filter">
+                <button class="filter-btn active" data-filter="all">Все</button>
+                <button class="filter-btn" data-filter="basics">Основы</button>
+                <button class="filter-btn" data-filter="medicine">Медицина</button>
+                <button class="filter-btn" data-filter="engineering">Инженерия</button>
+                <button class="filter-btn" data-filter="food">Еда и вода</button>
+                <button class="filter-btn" data-filter="science">Наука</button>
+            </div>
+            <div class="articles-grid" id="articles-grid"></div>
+        </section>
+
+        <!-- LIFEHACKS -->
+        <section id="lifehacks" class="section">
+            <div class="section-header">
+                <div class="section-stamp">РАЗДЕЛ IV</div>
+                <span class="section-tag">// ЛАЙФХАКИ ВЫЖИВАНИЯ</span>
+                <h2 class="section-title" data-text="Проверенные трюки">Проверенные трюки</h2>
+                <p class="section-desc">Реальные лайфхаки, которые работают без электричества, интернета и цивилизации.</p>
+            </div>
+            <div class="lifehacks-grid" id="lifehacks-grid"></div>
+        </section>
+
+        <!-- AUTONOMY -->
+        <section id="autonomy" class="section">
+            <div class="section-header">
+                <div class="section-stamp">РАЗДЕЛ V</div>
+                <span class="section-tag">// 11 ПУНКТОВ СИСТЕМЫ АВТОНОМИИ</span>
+                <h2 class="section-title" data-text="Система автономного выживания">Система автономного выживания</h2>
+                <p class="section-desc">11 пунктов автономии: от безопасности до дикоросов. Полная система выживания и обустройства базы.</p>
+            </div>
+            <div class="autonomy-filter">
+                <button class="filter-btn autonomy-filter-btn active" data-filter="all">Все</button>
+                <button class="filter-btn autonomy-filter-btn" data-filter="basics">Основы</button>
+                <button class="filter-btn autonomy-filter-btn" data-filter="engineering">Энергия и тепло</button>
+                <button class="filter-btn autonomy-filter-btn" data-filter="food">Еда и вода</button>
+                <button class="filter-btn autonomy-filter-btn" data-filter="medicine">Медицина</button>
+                <button class="filter-btn autonomy-filter-btn" data-filter="science">Дикоросы</button>
+            </div>
+            <div class="autonomy-grid" id="autonomy-grid"></div>
+        </section>
+
+        <!-- TICKER 3 -->
+        <div class="section-divider"></div>
+        <div class="horizontal-ticker">
+            <div class="horizontal-ticker-track">
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>СОЛНЕЧНЫЕ ПАНЕЛИ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>КОЛОДЕЦ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ОГОРОД</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>КРОЛИКИ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ПЕЧЬ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>СЕПТИК</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>АВТОНОМНОСТЬ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>СОЛНЕЧНЫЕ ПАНЕЛИ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>КОЛОДЕЦ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ОГОРОД</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>КРОЛИКИ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>ПЕЧЬ</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>СЕПТИК</span>
+                <span class="horizontal-ticker-item"><span class="ticker-dot"></span>АВТОНОМНОСТЬ</span>
+            </div>
+        </div>
+
+        <!-- GUIDES -->
+        <section id="guides" class="section">
+            <div class="section-header">
+                <div class="section-stamp">РАЗДЕЛ VI</div>
+                <span class="section-tag">// ПОШАГОВЫЕ ГАЙДЫ</span>
+                <h2 class="section-title" data-text="Инструкции для выживания">Инструкции для выживания</h2>
+            </div>
+            <div class="guides-container" id="guides-container"></div>
+        </section>
+
+        <!-- VIDEOS -->
+        <section id="videos" class="section">
+            <div class="section-header">
+                <div class="section-stamp">РАЗДЕЛ VII</div>
+                <span class="section-tag">// ВИДЕО-АРХИВ</span>
+                <h2 class="section-title" data-text="Видео для выживальщика">Видео для выживальщика</h2>
+            </div>
+            <div class="videos-grid" id="videos-grid"></div>
+        </section>
+
+        <!-- TOOLS -->
+        <section id="tools" class="section">
+            <div class="section-header">
+                <div class="section-stamp">РАЗДЕЛ VIII</div>
+                <span class="section-tag">// ПОЛЕЗНЫЕ ИНСТРУМЕНТЫ</span>
+                <h2 class="section-title" data-text="Калькуляторы и чеклисты">Калькуляторы и чеклисты</h2>
+            </div>
+            <div class="tools-grid">
+                <div class="tool-card" id="checklist-tool">
+                    <div class="tool-header">
+                        <span class="tool-icon">☑</span>
+                        <h3>Чеклист выживания</h3>
+                    </div>
+                    <div class="tool-body">
+                        <div id="survival-checklist"></div>
+                        <div class="checklist-progress">
+                            <div class="progress-bar"><div class="progress-fill" id="checklist-progress"></div></div>
+                            <span id="checklist-count">0/0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="tool-card" id="water-calc">
+                    <div class="tool-header">
+                        <span class="tool-icon">💧</span>
+                        <h3>Калькулятор воды</h3>
+                    </div>
+                    <div class="tool-body">
+                        <div class="calc-inputs">
+                            <label>Людей в группе: <input type="number" id="water-people" value="4" min="1" max="100"></label>
+                            <label>Дней автономии: <input type="number" id="water-days" value="30" min="1" max="365"></label>
+                            <label>Л/чел/день: <input type="number" id="water-per-day" value="3" min="1" max="10"></label>
+                        </div>
+                        <div class="calc-result" id="water-result">
+                            <span class="calc-number">360</span> литров нужно
+                        </div>
+                    </div>
+                </div>
+                <div class="tool-card" id="calorie-calc">
+                    <div class="tool-header">
+                        <span class="tool-icon">🔥</span>
+                        <h3>Калькулятор калорий</h3>
+                    </div>
+                    <div class="tool-body">
+                        <div class="calc-inputs">
+                            <label>Людей: <input type="number" id="cal-people" value="4" min="1" max="100"></label>
+                            <label>Дней: <input type="number" id="cal-days" value="30" min="1" max="365"></label>
+                        </div>
+                        <div class="calc-result" id="cal-result">
+                            <span class="calc-number">960,000</span> ккал запасено (минимум)
+                        </div>
+                    </div>
+                </div>
+                <div class="tool-card" id="risk-map">
+                    <div class="tool-header">
+                        <span class="tool-icon">🗺</span>
+                        <h3>Оценка угроз по региону</h3>
+                    </div>
+                    <div class="tool-body">
+                        <select id="region-select">
+                            <option value="city">Мегаполис</option>
+                            <option value="suburb">Пригород</option>
+                            <option value="village">Деревня</option>
+                            <option value="wilderness">Дикая природа</option>
+                            <option value="coast">Побережье</option>
+                        </select>
+                        <div id="risk-assessment" class="risk-bars"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BOOKS -->
+        <section id="books" class="section">
+            <div class="section-header">
+                <div class="section-stamp">РАЗДЕЛ IX</div>
+                <span class="section-tag">// МЕДИАТЕКА</span>
+                <h2 class="section-title" data-text="Книги, фильмы, игры">Книги, фильмы, игры</h2>
+                <p class="section-desc">Лучшие произведения на тему выживания, постапокалипсиса и восстановления цивилизации.</p>
+            </div>
+            <div class="books-filter">
+                <button class="filter-btn book-filter active" data-filter="all">Все</button>
+                <button class="filter-btn book-filter" data-filter="book">Книги</button>
+                <button class="filter-btn book-filter" data-filter="film">Фильмы</button>
+                <button class="filter-btn book-filter" data-filter="game">Игры</button>
+            </div>
+            <div class="books-grid" id="books-grid"></div>
+        </section>
+
+        <!-- SHOP -->
+        <section id="shop" class="section">
+            <div class="section-header">
+                <div class="section-stamp">РАЗДЕЛ X</div>
+                <span class="section-tag">// МАСТЕРСКАЯ WAXED CANVAS</span>
+                <h2 class="section-title" data-text="Вощёная парусина ручной работы">Вощёная парусина ручной работы</h2>
+                <p class="section-desc">Рулоны для инструментов, сумки и чехлы из плотной вощёной ткани. Шьём на промышленных машинах.</p>
+            </div>
+            <div class="shop-filter" id="shop-filter"></div>
+            <div class="shop-grid" id="shop-grid"></div>
+            <div class="monetization-block" id="monetization-info"></div>
+        </section>
+
+        <!-- PREMIUM -->
+        <section id="premium" class="section premium-section">
+            <div class="section-header">
+                <div class="section-stamp">ДОСТУП</div>
+                <span class="section-tag">// PREMIUM ДОСТУП</span>
+                <h2 class="section-title" data-text="Расширенные материалы">Расширенные материалы</h2>
+            </div>
+            <div class="premium-grid">
+                <div class="premium-card">
+                    <div class="premium-badge">FREE</div>
+                    <h3>Выживальщик</h3>
+                    <div class="premium-price">0 ₽<span>/навсегда</span></div>
+                    <ul class="premium-features">
+                        <li>✓ Базовые статьи</li>
+                        <li>✓ Чеклист выживания</li>
+                        <li>✓ Калькуляторы</li>
+                        <li>✓ Доступ к видео</li>
+                        <li class="disabled">✗ PDF-гайды</li>
+                        <li class="disabled">✗ Интерактивная карта</li>
+                    </ul>
+                    <button class="btn btn-secondary">Текущий план</button>
+                </div>
+                <div class="premium-card featured">
+                    <div class="premium-badge">PRO</div>
+                    <h3>Строитель</h3>
+                    <div class="premium-price">490 ₽<span>/мес</span></div>
+                    <ul class="premium-features">
+                        <li>✓ Все материалы FREE</li>
+                        <li>✓ PDF-гайды для печати</li>
+                        <li>✓ Офлайн-доступ</li>
+                        <li>✓ Интерактивная карта угроз</li>
+                        <li>✓ Еженедельная рассылка</li>
+                        <li class="disabled">✗ Личные консультации</li>
+                    </ul>
+                    <button class="btn btn-primary">Оформить подписку</button>
+                </div>
+                <div class="premium-card">
+                    <div class="premium-badge">ULTIMATE</div>
+                    <h3>Основатель</h3>
+                    <div class="premium-price">1,490 ₽<span>/мес</span></div>
+                    <ul class="premium-features">
+                        <li>✓ Все материалы PRO</li>
+                        <li>✓ Личные консультации</li>
+                        <li>✓ Персональный план</li>
+                        <li>✓ Доступ к сообществу</li>
+                        <li>✓ Ранний доступ к контенту</li>
+                        <li>✓ Сертификат выживальщика</li>
+                    </ul>
+                    <button class="btn btn-secondary">Оформить подписку</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer id="footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <div class="nav-logo">
+                    <span class="logo-stamp"></span>
+                    <span class="logo-bracket">[</span>SURVIVE<span class="logo-dot">.</span>CIV<span class="logo-bracket">]</span>
+                </div>
+                <p class="footer-desc">Постапокалиптический гид по выживанию и восстановлению цивилизации.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Разделы</h4>
+                <a href="#scenarios">Сценарии</a>
+                <a href="#articles">Статьи</a>
+                <a href="#guides">Гайды</a>
+                <a href="#tools">Инструменты</a>
+            </div>
+            <div class="footer-col">
+                <h4>Сообщество</h4>
+                <a href="#">Telegram-чат</a>
+                <a href="#">YouTube</a>
+                <a href="#">VK группа</a>
+                <a href="#">Discord</a>
+            </div>
+            <div class="footer-col">
+                <h4>Проект</h4>
+                <a href="#">О проекте</a>
+                <a href="#">Поддержать</a>
+                <a href="#">Стать автором</a>
+                <a href="#">Контакты</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 SURVIVE.CIV — Все права потеряны после апокалипсиса</span>
+            <span class="footer-status">СТАТУС СИСТЕМЫ: <span class="status-online">ОНЛАЙН</span></span>
+        </div>
+    </footer>
+
+    <!-- ARTICLE MODAL -->
+    <div id="article-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">&times;</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- CART PANEL -->
+    <div class="cart-overlay" id="cart-overlay"></div>
+    <div class="cart-panel" id="cart-panel">
+        <div class="cart-panel-header">
+            <div class="cart-panel-title">
+                <span class="cart-panel-icon">📋</span>
+                ЗАЯВКА НА СНАБЖЕНИЕ
+            </div>
+            <button class="cart-panel-close" id="cart-close">✕</button>
+        </div>
+        <div class="cart-panel-count" id="cart-panel-count">0 товаров</div>
+        <div id="cart-empty" class="cart-empty">
+            <div class="cart-empty-icon">📦</div>
+            <p>Корзина пуста</p>
+            <small>Добавьте товары из каталога</small>
+        </div>
+        <div id="cart-items" class="cart-items-list"></div>
+        <div class="cart-panel-footer">
+            <div class="cart-panel-total">
+                <span>Итого:</span>
+                <span id="cart-total-value">0 ₽</span>
+            </div>
+            <div class="cart-panel-actions">
+                <button class="btn btn-primary" id="cart-checkout-btn">Оформить заказ</button>
+                <button class="btn btn-secondary" id="cart-continue-btn">Продолжить покупки</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRODUCT DETAIL MODAL -->
+    <div id="product-detail-modal" class="modal">
+        <div class="modal-content product-detail-modal-content">
+            <button class="modal-close">&times;</button>
+            <div id="product-detail-body"></div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content checkout-modal-content">
+            <button class="modal-close">&times;</button>
+            <div id="checkout-body"></div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
