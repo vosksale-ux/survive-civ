@@ -549,12 +549,12 @@ input, select {
 
 .nav-link {
     display: block;
-    padding: 8px 14px;
+    padding: 8px 10px;
     font-family: var(--font-heading);
-    font-size: 16px;
+    font-size: 15px;
     color: var(--text-ink-faded);
     text-decoration: none;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
     white-space: nowrap;
     transition: all var(--transition-fast);
     position: relative;
@@ -4345,5 +4345,474 @@ body.light-mode {
     .spec-row span:last-child {
         text-align: left;
         max-width: 100%;
+    }
+}
+
+/* ============================================================
+   SEARCH OVERLAY
+   ============================================================ */
+.search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    background: rgba(244, 232, 193, 0.97);
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.search-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.search-overlay-inner {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 80px 20px 40px;
+}
+
+.search-overlay-close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    background: none;
+    border: none;
+    font-size: 32px;
+    color: var(--text-ink);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    line-height: 1;
+    padding: 4px 8px;
+    border: 2px solid transparent;
+}
+
+.search-overlay-close:hover {
+    border-color: var(--stamp-red);
+    color: var(--stamp-red);
+}
+
+.search-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 3px solid var(--text-ink);
+    padding-bottom: 12px;
+    margin-bottom: 24px;
+}
+
+.search-input-wrap .search-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.search-input-wrap input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: var(--font-body);
+    font-size: 21px;
+    color: var(--text-ink);
+}
+
+.search-input-wrap input::placeholder {
+    color: var(--text-ink-dim);
+    opacity: 0.6;
+}
+
+.search-results {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.search-hint, .search-empty {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-ink-dim);
+    font-family: var(--font-mono);
+    font-size: 15px;
+}
+
+.search-count {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-ink-dim);
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--border-color);
+    margin-bottom: 8px;
+}
+
+.search-result-item {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(200, 184, 136, 0.3);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.search-result-item:hover {
+    background: rgba(200, 184, 136, 0.2);
+}
+
+.search-result-type {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.search-result-title {
+    font-family: var(--font-heading);
+    font-size: 17px;
+    color: var(--text-ink);
+    line-height: 1.3;
+}
+
+.search-result-title mark,
+.search-result-excerpt mark {
+    background: rgba(200, 112, 48, 0.3);
+    color: var(--stamp-red);
+    padding: 0 2px;
+}
+
+.search-result-excerpt {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text-ink-dim);
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+/* ============================================================
+   LEAD MAGNET
+   ============================================================ */
+.lead-magnet-section {
+    padding: 60px 20px;
+    background: linear-gradient(135deg, rgba(44, 24, 16, 0.15), rgba(244, 232, 193, 0.1));
+    border-top: 2px dashed var(--border-color);
+    border-bottom: 2px dashed var(--border-color);
+}
+
+.lead-magnet-inner {
+    max-width: 560px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.lead-magnet-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.lead-magnet-title {
+    font-family: var(--font-heading);
+    font-size: clamp(22px, 4vw, 30px);
+    color: var(--text-ink);
+    margin-bottom: 12px;
+}
+
+.lead-magnet-desc {
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--text-ink-dim);
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.lead-magnet-form {
+    display: flex;
+    gap: 10px;
+    max-width: 440px;
+    margin: 0 auto 12px;
+}
+
+.lead-magnet-form input[type="email"] {
+    flex: 1;
+    background: var(--bg-manila);
+    border: 2px solid var(--border-color);
+    padding: 12px 16px;
+    font-family: var(--font-mono);
+    font-size: 15px;
+    color: var(--text-ink);
+    outline: none;
+}
+
+.lead-magnet-form input[type="email"]:focus {
+    border-color: var(--accent);
+}
+
+.lead-magnet-note {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-ink-dim);
+    opacity: 0.7;
+}
+
+.lead-magnet-success {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    color: var(--accent-green);
+    padding: 20px;
+}
+
+.teaser-more {
+    display: block;
+    text-align: center;
+    font-family: var(--font-heading);
+    font-size: 17px;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 18px 20px;
+    margin-top: 10px;
+    border: 2px dashed var(--border-color);
+    transition: all 0.2s ease;
+    letter-spacing: 0.5px;
+}
+
+.teaser-more:hover {
+    background: rgba(200, 184, 136, 0.15);
+    border-color: var(--accent);
+    color: var(--stamp-red);
+}
+
+/* ============================================================
+   ARTICLE THUMB SVG ILLUSTRATIONS
+   ============================================================ */
+.article-thumb {
+    position: relative;
+    height: 160px;
+    overflow: hidden;
+    background-color: #1a1a2e;
+    background-size: cover;
+    background-position: center;
+}
+
+.article-thumb svg {
+    display: none;
+}
+
+.article-thumb-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 8px 15px;
+    background: linear-gradient(transparent, rgba(26, 26, 46, 0.85));
+    z-index: 1;
+}
+
+.article-thumb-overlay .article-category {
+    position: static;
+}
+
+/* ============================================================
+   SCENARIO ILLUSTRATIONS
+   ============================================================ */
+.scenario-illustration {
+    height: 160px;
+    overflow: hidden;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    background-color: #1a1a2e;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.scenario-illustration::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(transparent, rgba(244, 232, 193, 0.3));
+    pointer-events: none;
+}
+
+/* ============================================================
+   MAP SECTION
+   ============================================================ */
+.map-world-wrap {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.map-world-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.map-world-svg .map-point:hover circle:last-of-type {
+    r: 5;
+}
+
+.map-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    padding: 12px 0 30px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-ink-dim);
+}
+
+.map-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.map-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.map-locations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.map-location-card {
+    background: var(--bg-manila);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+}
+
+.map-location-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+}
+
+.map-loc-type {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.map-loc-name {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    color: var(--text-ink);
+    margin-bottom: 4px;
+}
+
+.map-loc-country {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-ink-dim);
+    margin-bottom: 8px;
+}
+
+.map-loc-desc {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text-ink-dim);
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .map-locations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .map-legend {
+        gap: 10px;
+        font-size: 12px;
+    }
+
+    .scenario-illustration {
+        height: 100px;
+    }
+}
+
+/* ============================================================
+   RESPONSIVE: Search + Lead Magnet
+   ============================================================ */
+@media (max-width: 768px) {
+    .search-overlay-inner {
+        padding: 70px 16px 30px;
+    }
+
+    .search-input-wrap input {
+        font-size: 17px;
+    }
+
+    .lead-magnet-form {
+        flex-direction: column;
+    }
+
+    .lead-magnet-form .btn {
+        text-align: center;
+    }
+
+    .hero-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .meta-sep {
+        display: none;
+    }
+
+    .nav-links .nav-link[href="#tools"],
+    .nav-links .nav-link[href="#books"],
+    .nav-links .nav-link[href="#videos"] {
+        display: none;
+    }
+
+    #search-toggle {
+        display: flex;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-overlay-inner {
+        padding: 60px 12px 20px;
+    }
+
+    .search-input-wrap input {
+        font-size: 16px;
+    }
+
+    .lead-magnet-section {
+        padding: 40px 16px;
+    }
+
+    .lead-magnet-title {
+        font-size: 20px;
+    }
+
+    .lead-magnet-desc {
+        font-size: 15px;
     }
 }

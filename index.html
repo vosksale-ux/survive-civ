@@ -1,11 +1,44 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-page="home">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SURVIVE.CIV — Выживание и восстановление цивилизации</title>
+    <meta name="description" content="Постапокалиптический гид по выживанию и восстановлению цивилизации. 7 сценариев конца света, 120+ статей, гайды, калькуляторы, магазин вощёной парусины.">
+    <meta name="keywords" content="выживание, постапокалипсис, bushcraft, автономность, вощёная парусина, восстановление цивилизации, выживальщик, снаряжение">
+    <meta name="author" content="SURVIVE.CIV">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://survive-civ.github.io/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="SURVIVE.CIV — Выживание и восстановление цивилизации">
+    <meta property="og:description" content="Сценарии конца света, стратегии выживания, пошаговые инструкции по восстановлению цивилизации с нуля. Магазин вощёной парусины ручной работы.">
+    <meta property="og:url" content="https://survive-civ.github.io/">
+    <meta property="og:site_name" content="SURVIVE.CIV">
+    <meta property="og:locale" content="ru_RU">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SURVIVE.CIV — Выживание и восстановление цивилизации">
+    <meta name="twitter:description" content="Постапокалиптический гид по выживанию. 120+ статей, гайды, калькуляторы, магазин вощёной парусины.">
+
     <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/dossier.css">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "SURVIVE.CIV",
+        "url": "https://survive-civ.github.io/",
+        "description": "Постапокалиптический гид по выживанию и восстановлению цивилизации",
+        "inLanguage": "ru",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://survive-civ.github.io/#articles?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
 </head>
 <body>
 
@@ -54,17 +87,15 @@
         <div class="nav-links">
             <a href="#hero" class="nav-link active" data-section="hero">Главная</a>
             <a href="#scenarios" class="nav-link" data-section="scenarios">Сценарии</a>
-            <a href="#timeline" class="nav-link" data-section="timeline">Таймлайн</a>
             <a href="#articles" class="nav-link" data-section="articles">Статьи</a>
             <a href="#lifehacks" class="nav-link" data-section="lifehacks">Лайфхаки</a>
-            <a href="#autonomy" class="nav-link" data-section="autonomy">Автономность</a>
             <a href="#guides" class="nav-link" data-section="guides">Гайды</a>
             <a href="#videos" class="nav-link" data-section="videos">Видео</a>
-            <a href="#books" class="nav-link" data-section="books">Медиатека</a>
             <a href="#tools" class="nav-link" data-section="tools">Инструменты</a>
             <a href="#shop" class="nav-link" data-section="shop">Магазин</a>
         </div>
         <div class="nav-actions">
+            <button class="btn-icon" id="search-toggle" aria-label="Поиск">🔍</button>
             <button class="btn-icon cart-btn" id="cart-toggle" aria-label="Корзина">
                 🛒<span class="cart-count" id="cart-count">0</span>
             </button>
@@ -461,6 +492,32 @@
             </div>
         </section>
     </main>
+
+    <!-- SEARCH OVERLAY -->
+    <div id="search-overlay" class="search-overlay">
+        <div class="search-overlay-inner">
+            <button class="search-overlay-close" id="search-close">&times;</button>
+            <div class="search-input-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" placeholder="Поиск по статьям, гайдам, лайфхакам..." autocomplete="off">
+            </div>
+            <div id="search-results" class="search-results"></div>
+        </div>
+    </div>
+
+    <!-- LEAD MAGNET: EMAIL SUBSCRIBE -->
+    <section id="lead-magnet" class="section lead-magnet-section">
+        <div class="lead-magnet-inner">
+            <div class="lead-magnet-icon">📋</div>
+            <h2 class="lead-magnet-title">Бесплатный чеклист выживания</h2>
+            <p class="lead-magnet-desc">Скачайте PDF-чеклист на 50 пунктов: вода, еда, медицина, инструменты, связь. Всё, что нужно для автономии на 30+ дней.</p>
+            <form id="lead-magnet-form" class="lead-magnet-form">
+                <input type="email" id="lead-email" placeholder="Ваш email" required>
+                <button type="submit" class="btn btn-primary">Получить PDF</button>
+            </form>
+            <p class="lead-magnet-note" id="lead-magnet-note">Без спама. Только чеклист.</p>
+        </div>
+    </section>
 
     <!-- FOOTER -->
     <footer id="footer">

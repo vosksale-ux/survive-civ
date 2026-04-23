@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru" data-page="articles">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статьи о выживании — SURVIVE.CIV</title>
+    <meta name="description" content="25+ статей о выживании: основы, медицина, инженерия, еда, наука. 11 пунктов системы автономии. Гайды по восстановлению цивилизации.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://survive-civ.github.io/articles.html">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dossier.css">
+    <style>
+        .page-header {
+            padding: 80px 20px 40px;
+            text-align: center;
+            border-bottom: 2px dashed var(--border-color);
+            margin-bottom: 40px;
+        }
+        .page-header .back-link {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+        }
+        .page-header .back-link:hover { background: rgba(200,184,136,0.15); }
+        .page-title {
+            font-family: var(--font-heading);
+            font-size: clamp(28px, 5vw, 42px);
+            color: var(--text-ink);
+            margin-bottom: 12px;
+        }
+        .page-desc {
+            font-family: var(--font-body);
+            font-size: 17px;
+            color: var(--text-ink-dim);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .section-divider-big {
+            text-align: center;
+            padding: 30px 0 10px;
+            margin: 30px 0 0;
+            border-top: 3px double var(--border-color);
+        }
+        .section-divider-big h2 {
+            font-family: var(--font-heading);
+            font-size: clamp(22px, 4vw, 32px);
+            color: var(--text-ink);
+        }
+        .section-divider-big p {
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--text-ink-dim);
+            max-width: 500px;
+            margin: 8px auto 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-screen">
+        <div class="loader-container">
+            <div class="loader-stamp">СЕКРЕТНО</div>
+            <div class="loader-ring"></div>
+            <div class="loader-text">ЗАГРУЗКА БИБЛИОТЕКИ...</div>
+            <div class="loader-progress"><span id="load-percent">0</span>%</div>
+        </div>
+    </div>
+
+    <canvas id="bg-canvas"></canvas>
+    <div class="atmosphere-blob atmosphere-blob-1"></div>
+    <div class="atmosphere-blob atmosphere-blob-2"></div>
+    <div id="cursor-glow"></div>
+    <div id="facts-ticker" class="facts-ticker"></div>
+
+    <nav id="main-nav">
+        <div class="nav-logo">
+            <span class="logo-stamp"></span>
+            <span class="logo-bracket">[</span><span class="logo-text">SURVIVE</span><span class="logo-dot">.</span><span class="logo-civ">CIV</span><span class="logo-bracket">]</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Главная</a>
+            <a href="scenarios.html" class="nav-link">Сценарии</a>
+            <a href="articles.html" class="nav-link active">Статьи</a>
+            <a href="shop.html" class="nav-link">Магазин</a>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-icon" id="search-toggle" aria-label="Поиск">🔍</button>
+        </div>
+        <button class="nav-burger" id="nav-burger" aria-label="Меню">☰</button>
+    </nav>
+
+    <main id="main-content">
+        <div class="page-header">
+            <a href="index.html" class="back-link">← На главную</a>
+            <div class="section-stamp">БИБЛИОТЕКА ЗНАНИЙ</div>
+            <h1 class="page-title">Статьи о выживании</h1>
+            <p class="page-desc">Основы, медицина, инженерия, еда, наука. Нажмите на статью для полного чтения.</p>
+        </div>
+
+        <section id="articles" class="section">
+            <div class="articles-filter">
+                <button class="filter-btn active" data-filter="all">Все</button>
+                <button class="filter-btn" data-filter="basics">Основы</button>
+                <button class="filter-btn" data-filter="medicine">Медицина</button>
+                <button class="filter-btn" data-filter="engineering">Инженерия</button>
+                <button class="filter-btn" data-filter="food">Еда и вода</button>
+                <button class="filter-btn" data-filter="science">Наука</button>
+            </div>
+            <div class="articles-grid" id="articles-grid"></div>
+        </section>
+
+        <div class="section-divider-big" id="autonomy-anchor">
+            <div class="section-stamp">РАЗДЕЛ V</div>
+            <h2>11 пунктов системы автономии</h2>
+            <p>От безопасности до дикоросов. Полная система выживания и обустройства базы.</p>
+        </div>
+
+        <section id="autonomy" class="section">
+            <div class="autonomy-filter">
+                <button class="filter-btn autonomy-filter-btn active" data-filter="all">Все</button>
+                <button class="filter-btn autonomy-filter-btn" data-filter="basics">Основы</button>
+                <button class="filter-btn autonomy-filter-btn" data-filter="engineering">Энергия и тепло</button>
+                <button class="filter-btn autonomy-filter-btn" data-filter="food">Еда и вода</button>
+                <button class="filter-btn autonomy-filter-btn" data-filter="medicine">Медицина</button>
+                <button class="filter-btn autonomy-filter-btn" data-filter="science">Дикоросы</button>
+            </div>
+            <div class="autonomy-grid" id="autonomy-grid"></div>
+        </section>
+
+        <div class="section-divider-big" id="lifehacks-anchor">
+            <div class="section-stamp">ЛАЙФХАКИ</div>
+            <h2>Лайфхаки выживания</h2>
+            <p>Проверенные трюки, которые работают без электричества, интернета и цивилизации.</p>
+        </div>
+
+        <section id="lifehacks" class="section">
+            <div class="lifehacks-grid" id="lifehacks-grid"></div>
+        </section>
+    </main>
+
+    <footer id="footer">
+        <div class="footer-bottom">
+            <span>© 2026 SURVIVE.CIV — Все права потеряны после апокалипсиса</span>
+            <span class="footer-status">СТАТУС СИСТЕМЫ: <span class="status-online">ОНЛАЙН</span></span>
+        </div>
+    </footer>
+
+    <div id="article-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">&times;</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <div id="search-overlay" class="search-overlay">
+        <div class="search-overlay-inner">
+            <button class="search-overlay-close" id="search-close">&times;</button>
+            <div class="search-input-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" placeholder="Поиск по статьям, гайдам, лайфхакам..." autocomplete="off">
+            </div>
+            <div id="search-results" class="search-results"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        function scrollToHash() {
+            var hash = window.location.hash.replace('#', '');
+            var target = document.getElementById(hash + '-anchor') || document.getElementById(hash);
+            if (target) setTimeout(function() {
+                target.scrollIntoView({ behavior: 'smooth' });
+                setTimeout(function() {
+                    var cards = target.querySelectorAll ? target.querySelectorAll('.reveal') : (target.parentNode ? target.parentNode.querySelectorAll('.reveal') : []);
+                    cards.forEach(function(c) { c.classList.add('visible'); });
+                    if (target.nextElementSibling) {
+                        target.nextElementSibling.querySelectorAll('.reveal').forEach(function(c) { c.classList.add('visible'); });
+                    }
+                }, 600);
+            }, 800);
+        }
+        if (window.location.hash) scrollToHash();
+    </script>
+</body>
+</html>
