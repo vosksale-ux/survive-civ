@@ -1167,6 +1167,265 @@
         }
     }
 
+    var dsLayers = {};
+    var dsCache = {};
+    var dsLegendEl = document.getElementById('ds-legend');
+    var dsLegendTitle = document.getElementById('ds-legend-title');
+    var dsLegendBody = document.getElementById('ds-legend-body');
+
+    var DS_COLORS = {
+        water: '#3b9eff',
+        dangers: '#ff4d4f',
+        abandoned: '#a855f7',
+        biomes: '#22c55e',
+        evacuation: '#f97316',
+        population: '#eab308'
+    };
+
+    var DS_LEGENDS = {
+        water: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#3b9eff"></span> Река / озеро</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#80d4ff"></span> Родники / источники</div><p style="margin-top:6px">Тепловая карта — плотность источников воды</p>',
+        dangers: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#ff4d4f"></span> Радиация</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#ff8c00"></span> Пожары</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#a855f7"></span> Клещи</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#3b9eff"></span> Наводнения</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#fff"></span> Лавины / вулканы</div>',
+        abandoned: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#a855f7"></span> Город-призрак</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#7c3aed"></span> Бункер ГО</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#c084fc"></span> Заброшенная база</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#ff4d4f"></span> Опасная зона</div>',
+        biomes: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#1a5c1a"></span> Тайга</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#2d8f2d"></span> Смешанные леса</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#8fbc5a"></span> Лесостепь</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#d4a843"></span> Степь</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#6b8f8f"></span> Тундра</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#b8d4e3"></span> Арктическая пустыня</div>',
+        evacuation: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#f97316"></span> Автомобильный</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#3b82f6"></span> Водный</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#ef4444"></span> Внедорожный</div><p style="margin-top:6px">Клик на маршрут — подробности</p>',
+        population: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#eab308"></span> Высокая плотность</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#854d0e"></span> Средняя</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#365314"></span> Низкая</div><p style="margin-top:6px">Размер круга = население региона</p>'
+    };
+
+    function loadJSON(url, cb) {
+        if (dsCache[url]) { cb(dsCache[url]); return; }
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                var data = JSON.parse(xhr.responseText);
+                dsCache[url] = data;
+                cb(data);
+            }
+        };
+        xhr.send();
+    }
+
+    function makePopup(props, tagClass) {
+        var html = '<div class="marker-popup">';
+        html += '<h4>' + (props.name || '') + '</h4>';
+        if (props.desc) html += '<p>' + props.desc + '</p>';
+        if (props.type) html += '<span class="tag ' + tagClass + '">' + props.type + '</span>';
+        if (props.danger) html += ' <span class="tag tag-danger">' + props.danger + '</span>';
+        if (props.dist) html += '<p style="margin-top:4px">' + props.dist + '</p>';
+        if (props.population) html += '<p style="margin-top:4px">Население: ' + props.population.toLocaleString() + '</p>';
+        if (props.density) html += '<br>Плотность: ' + props.density + ' чел/км²';
+        html += '</div>';
+        return html;
+    }
+
+    function toggleDataset(dsId, checked) {
+        if (checked) {
+            if (dsLayers[dsId]) { map.addLayer(dsLayers[dsId]); }
+            else { loadDataset(dsId); }
+            dsLegendTitle.textContent = document.querySelector('[data-ds="' + dsId + '"]').closest('.ds-item').querySelector('.ds-name').textContent;
+            dsLegendBody.innerHTML = DS_LEGENDS[dsId];
+            dsLegendEl.style.display = '';
+        } else {
+            if (dsLayers[dsId]) map.removeLayer(dsLayers[dsId]);
+            dsLegendEl.style.display = 'none';
+        }
+    }
+
+    function loadDataset(dsId) {
+        loadJSON('data/' + dsId + '.json', function (data) {
+            switch (dsId) {
+                case 'water': renderWater(data); break;
+                case 'dangers': renderDangers(data); break;
+                case 'abandoned': renderAbandoned(data); break;
+                case 'biomes': renderBiomes(data); break;
+                case 'evacuation': renderEvacuation(data); break;
+                case 'population': renderPopulation(data); break;
+            }
+        });
+    }
+
+    function renderWater(data) {
+        var group = L.layerGroup();
+        var heatPoints = [];
+
+        data.features.forEach(function (f) {
+            var latlng = [f.geometry.coordinates[1], f.geometry.coordinates[0]];
+            var color = f.properties.type === 'springs' ? '#80d4ff' : '#3b9eff';
+            var radius = f.properties.type === 'lake' ? 8 : f.properties.type === 'springs' ? 5 : 4;
+
+            L.circleMarker(latlng, {
+                radius: radius, color: color, fillColor: color,
+                fillOpacity: 0.7, weight: 1, opacity: 0.8
+            }).bindPopup(makePopup(f.properties, 'tag-water')).addTo(group);
+
+            var intensity = f.properties.type === 'lake' ? 0.8 : f.properties.type === 'river' ? 0.5 : 0.3;
+            heatPoints.push([latlng[0], latlng[1], intensity]);
+        });
+
+        var heat = L.heatLayer(heatPoints, {
+            radius: 35, blur: 25, maxZoom: 10,
+            gradient: { 0.2: '#003366', 0.4: '#3b9eff', 0.7: '#80d4ff', 1.0: '#ffffff' }
+        }).addTo(group);
+
+        dsLayers['water'] = group;
+        map.addLayer(group);
+    }
+
+    function renderDangers(data) {
+        var group = L.layerGroup();
+
+        data.features.forEach(function (f) {
+            var latlng = [f.geometry.coordinates[1], f.geometry.coordinates[0]];
+            var p = f.properties;
+            var color, radius;
+
+            if (p.type === 'radiation') { color = '#ff4d4f'; radius = 10; }
+            else if (p.type === 'fire') { color = '#ff8c00'; radius = 8; }
+            else if (p.type === 'ticks') { color = '#a855f7'; radius = 7; }
+            else if (p.type === 'flood') { color = '#3b9eff'; radius = 7; }
+            else if (p.type === 'avalanche') { color = '#ffffff'; radius = 6; }
+            else if (p.type === 'volcano') { color = '#ff2020'; radius = 10; }
+            else if (p.type === 'earthquake') { color = '#ffcc00'; radius = 8; }
+            else { color = '#ff4d4f'; radius = 6; }
+
+            L.circleMarker(latlng, {
+                radius: radius, color: color, fillColor: color,
+                fillOpacity: 0.5, weight: 2, opacity: 0.8,
+                dashArray: p.level === 'seasonal' ? '4,3' : null
+            }).bindPopup(makePopup(p, 'tag-danger')).addTo(group);
+        });
+
+        dsLayers['dangers'] = group;
+        map.addLayer(group);
+    }
+
+    function renderAbandoned(data) {
+        var markers = L.markerClusterGroup({
+            iconCreateFunction: function (cluster) {
+                return L.divIcon({
+                    html: '<div>' + cluster.getChildCount() + '</div>',
+                    className: 'custom-marker-cluster',
+                    iconSize: L.point(40, 40)
+                });
+            },
+            spiderfyOnMaxZoom: true, showCoverageOnHover: false, maxClusterRadius: 50
+        });
+
+        data.features.forEach(function (f) {
+            var latlng = [f.geometry.coordinates[1], f.geometry.coordinates[0]];
+            var p = f.properties;
+            var iconColor = p.type === 'ghost_town' ? '#a855f7' : p.type === 'bunker' ? '#7c3aed' : '#c084fc';
+            var iconSymbol = p.type === 'ghost_town' ? '&#9960;' : p.type === 'bunker' ? '&#9650;' : '&#9672;';
+
+            var icon = L.divIcon({
+                html: '<div style="background:' + iconColor + ';border:2px solid rgba(255,255,255,0.6);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 0 8px ' + iconColor + '80;">' + iconSymbol + '</div>',
+                className: '',
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
+            });
+
+            L.marker(latlng, { icon: icon }).bindPopup(makePopup(p, 'tag-abandoned')).addTo(markers);
+        });
+
+        dsLayers['abandoned'] = markers;
+        map.addLayer(markers);
+    }
+
+    function renderBiomes(data) {
+        var group = L.layerGroup();
+
+        data.features.forEach(function (f) {
+            var coords = f.geometry.coordinates.map(function (ring) {
+                return ring.map(function (c) { return [c[1], c[0]]; });
+            });
+
+            L.polygon(coords, {
+                color: f.properties.color,
+                fillColor: f.properties.color,
+                fillOpacity: 0.2,
+                weight: 1.5,
+                opacity: 0.5
+            }).bindPopup(makePopup(f.properties, 'tag-biome')).addTo(group);
+        });
+
+        dsLayers['biomes'] = group;
+        map.addLayer(group);
+    }
+
+    function renderEvacuation(data) {
+        var group = L.layerGroup();
+
+        data.features.forEach(function (f) {
+            var coords = f.geometry.coordinates.map(function (c) { return [c[1], c[0]]; });
+            var p = f.properties;
+            var color = p.type === 'water' ? '#3b82f6' : p.type === 'offroad' ? '#ef4444' : '#f97316';
+            var weight = p.type === 'water' ? 3 : 4;
+
+            L.polyline(coords, {
+                color: color, weight: weight, opacity: 0.7,
+                dashArray: p.type === 'water' ? '8,6' : null,
+                lineCap: 'round', lineJoin: 'round'
+            }).bindPopup(makePopup(p, 'tag-evac')).addTo(group);
+
+            if (coords.length > 0) {
+                var startIcon = L.divIcon({
+                    html: '<div style="background:' + color + ';color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;box-shadow:0 0 6px ' + color + '80;">S</div>',
+                    className: '', iconSize: [18, 18], iconAnchor: [9, 9]
+                });
+                var endIcon = L.divIcon({
+                    html: '<div style="background:#00c878;color:#0c1117;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;box-shadow:0 0 6px rgba(0,200,120,0.4);">E</div>',
+                    className: '', iconSize: [18, 18], iconAnchor: [9, 9]
+                });
+                L.marker(coords[0], { icon: startIcon }).addTo(group);
+                L.marker(coords[coords.length - 1], { icon: endIcon }).addTo(group);
+            }
+        });
+
+        dsLayers['evacuation'] = group;
+        map.addLayer(group);
+    }
+
+    function renderPopulation(data) {
+        var group = L.layerGroup();
+        var heatPoints = [];
+
+        data.features.forEach(function (f) {
+            var latlng = [f.geometry.coordinates[1], f.geometry.coordinates[0]];
+            var p = f.properties;
+            var pop = p.population || 0;
+            var radius = Math.max(4, Math.min(20, Math.sqrt(pop / 100000) * 3));
+            var intensity = Math.min(1, p.density / 500);
+
+            var color;
+            if (p.density > 100) color = '#eab308';
+            else if (p.density > 10) color = '#a16207';
+            else color = '#365314';
+
+            L.circleMarker(latlng, {
+                radius: radius, color: color, fillColor: color,
+                fillOpacity: 0.5, weight: 1, opacity: 0.6
+            }).bindPopup(makePopup(p, 'tag-pop')).addTo(group);
+
+            heatPoints.push([latlng[0], latlng[1], intensity]);
+        });
+
+        L.heatLayer(heatPoints, {
+            radius: 40, blur: 30, maxZoom: 9,
+            gradient: { 0.1: '#365314', 0.3: '#854d0e', 0.6: '#eab308', 1.0: '#fef08a' }
+        }).addTo(group);
+
+        dsLayers['population'] = group;
+        map.addLayer(group);
+    }
+
+    function initDatasets() {
+        document.querySelectorAll('[data-ds]').forEach(function (cb) {
+            cb.addEventListener('change', function () {
+                toggleDataset(this.dataset.ds, this.checked);
+            });
+        });
+    }
+
     L.control.scale({ imperial: false, metric: true }).addTo(map);
 
     initPanels();
@@ -1175,6 +1434,7 @@
     initRoute();
     initMarkers();
     initDownload();
+    initDatasets();
     initRegions();
     initCoords();
     initRuler();

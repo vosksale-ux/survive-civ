@@ -1,0 +1,31 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type":"Feature","properties":{"name":"Кадыкчан","type":"ghost_town","desc":"Заброшенный посёлок в Магаданской обл., угольная шахта","year_abandoned":"2000","danger":"medium"},"geometry":{"type":"Point","coordinates":[150.3,63.0]}},
+    {"type":"Feature","properties":{"name":"Чернобыльская зона","type":"restricted","desc":"Зона отчуждения,Припять","year_abandoned":"1986","danger":"high"},"geometry":{"type":"Point","coordinates":[30.1,51.4]}},
+    {"type":"Feature","properties":{"name":"Хальмер-Ю","type":"ghost_town","desc":"Заброшенный посёлок в Коми, угольная шахта","year_abandoned":"1995","danger":"low"},"geometry":{"type":"Point","coordinates":[57.0,65.3]}},
+    {"type":"Feature","properties":{"name":"Сигикты","type":"ghost_town","desc":"Заброшенный посёлок в Амурской обл.","year_abandoned":"1993","danger":"low"},"geometry":{"type":"Point","coordinates":[128.0,54.0]}},
+    {"type":"Feature","properties":{"name":"Юбилейный","type":"ghost_town","desc":"Заброшенный посёлок в Коми","year_abandoned":"1997","danger":"low"},"geometry":{"type":"Point","coordinates":[58.0,64.0]}},
+    {"type":"Feature","properties":{"name":"Старая Гутара","type":"ghost_town","desc":"Заброшенный посёлок в Иркутской обл.","year_abandoned":"1990","danger":"low"},"geometry":{"type":"Point","coordinates":[99.0,54.0]}},
+    {"type":"Feature","properties":{"name":"Усть-Каменогорск бункеры","type":"bunker","desc":"Сеть бункеров ГО времён СССР","year_abandoned":"","danger":"low"},"geometry":{"type":"Point","coordinates":[82.6,49.9]}},
+    {"type":"Feature","properties":{"name":"Бункер-42 (Москва)","type":"bunker","desc":"Командный пункт Зенит, глубина 65 м","year_abandoned":"2001","danger":"low"},"geometry":{"type":"Point","coordinates":[37.6,55.73]}},
+    {"type":"Feature","properties":{"name":"Бункер ГО С-50 (Москва)","type":"bunker","desc":"Секретное убежище, станция метро","year_abandoned":"","danger":"low"},"geometry":{"type":"Point","coordinates":[37.6,55.75]}},
+    {"type":"Feature","properties":{"name":"Мятлево бункер","type":"bunker","desc":"Убежище ГО в Калужской обл.","year_abandoned":"1990","danger":"low"},"geometry":{"type":"Point","coordinates":[35.5,54.8]}},
+    {"type":"Feature","properties":{"name":"Остров Гraham Bell","type":"abandoned_base","desc":"Заброшенная советская база на Земле Франца-Иосифа","year_abandoned":"1990","danger":"extreme"},"geometry":{"type":"Point","coordinates":[50.0,81.0]}},
+    {"type":"Feature","properties":{"name":"База Ленинградская","type":"abandoned_base","desc":"Заброшенная метеостанция на Новой Земле","year_abandoned":"1990","danger":"high"},"geometry":{"type":"Point","coordinates":[55.0,76.0]}},
+    {"type":"Feature","properties":{"name":"Остров Врангеля — посёлок Ушаковское","type":"ghost_town","desc":"Заброшенный посёлок на заповедном острове","year_abandoned":"1990","danger":"extreme"},"geometry":{"type":"Point","coordinates":[178.5,71.0]}},
+    {"type":"Feature","properties":{"name":"Диксон — заброшенный порт","type":"ghost_town","desc":"Бывший крупный порт на Енисейском заливе","year_abandoned":"","danger":"high"},"geometry":{"type":"Point","coordinates":[80.3,73.5]}},
+    {"type":"Feature","properties":{"name":"Долина смерти (Камчатка)","type":"restricted","desc":"Токсичная вулканическая зона, выходы газов","year_abandoned":"","danger":"extreme"},"geometry":{"type":"Point","coordinates":[160.0,55.0]}},
+    {"type":"Feature","properties":{"name":"Аммонджа","type":"ghost_town","desc":"Заброшенный посёлок геологов на Таймыре","year_abandoned":"1990","danger":"high"},"geometry":{"type":"Point","coordinates":[93.0,70.0]}},
+    {"type":"Feature","properties":{"name":"Норильск — старые рудники","type":"abandoned_base","desc":"Заброшенные шахты и штольни, токсичная зона","year_abandoned":"","danger":"high"},"geometry":{"type":"Point","coordinates":[88.0,69.3]}},
+    {"type":"Feature","properties":{"name":"База Мирный (Антарктида)","type":"abandoned_base","desc":"Российская антарктическая станция","year_abandoned":"","danger":"extreme"},"geometry":{"type":"Point","coordinates":[93.0,66.5]}},
+    {"type":"Feature","properties":{"name":"Охотск — старый форт","type":"ghost_town","desc":"Первый русский город на Тихом океане, заброшенные постройки","year_abandoned":"","danger":"low"},"geometry":{"type":"Point","coordinates":[143.2,59.4]}},
+    {"type":"Feature","properties":{"name":"Колымский тракт — заброшенные посёлки","type":"ghost_town","desc":"Цепочка заброшенных посёлков вдоль трассы","year_abandoned":"1990-2000","danger":"medium"},"geometry":{"type":"Point","coordinates":[150.0,62.0]}},
+    {"type":"Feature","properties":{"name":"Комсомольский-на-Амуре — подземные ходы","type":"bunker","desc":"Сеть подземных коммуникаций и убежищ","year_abandoned":"","danger":"low"},"geometry":{"type":"Point","coordinates":[137.0,50.5]}},
+    {"type":"Feature","properties":{"name":"Тайшет — бункеры ГО","type":"bunker","desc":"Убежища гражданской обороны, Иркутская обл.","year_abandoned":"1990","danger":"low"},"geometry":{"type":"Point","coordinates":[98.0,56.0]}},
+    {"type":"Feature","properties":{"name":"Енисейск — старые подвалы","type":"ghost_town","desc":"Город-музей, подземные ходы XVII века","year_abandoned":"","danger":"low"},"geometry":{"type":"Point","coordinates":[92.2,58.5]}},
+    {"type":"Feature","properties":{"name":"Чекистов (Таймыр)","type":"ghost_town","desc":"Заброшенная фактория на Енисее","year_abandoned":"1980","danger":"high"},"geometry":{"type":"Point","coordinates":[82.0,70.0]}},
+    {"type":"Feature","properties":{"name":"Озёрск бункеры","type":"bunker","desc":"Убежища в ЗАТО Озёрск (Маяк)","year_abandoned":"","danger":"medium"},"geometry":{"type":"Point","coordinates":[60.8,55.8]}},
+    {"type":"Feature","properties":{"name":"Северодвинск — бункеры","type":"bunker","desc":"Подземные убежища судоремонтного завода","year_abandoned":"","danger":"low"},"geometry":{"type":"Point","coordinates":[39.8,64.1]}}
+  ]
+}

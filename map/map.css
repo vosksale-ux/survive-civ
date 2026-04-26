@@ -706,7 +706,7 @@ body {
     position: absolute;
     top: 14px;
     left: 14px;
-    z-index: 999;
+    z-index: 1000;
     width: 40px;
     height: 40px;
     border-radius: var(--radius);
@@ -814,6 +814,7 @@ body {
     box-shadow: var(--shadow-sm) !important;
     margin-left: 14px !important;
     margin-bottom: 50px !important;
+    margin-top: 60px !important;
 }
 
 .leaflet-control-zoom a {
@@ -1097,3 +1098,169 @@ body {
 .crosshair-cursor {
     cursor: crosshair !important;
 }
+
+/* ── Datasets ─────────────────────────────────────────────── */
+
+.ds-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-top: 4px;
+}
+
+.ds-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    user-select: none;
+    transition: background var(--transition);
+}
+
+.ds-item:hover {
+    background: var(--bg-hover);
+}
+
+.ds-item input[type="checkbox"] {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--radius-xs);
+    background: var(--bg-hover);
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.ds-item input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.ds-item input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 5px;
+    width: 4px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.ds-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.ds-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.ds-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.ds-desc {
+    font-size: 10px;
+    color: var(--text-dim);
+}
+
+.ds-legend {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--bg-hover);
+    border-radius: var(--radius-sm);
+}
+
+.ds-legend-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ds-legend-body {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.6;
+}
+
+.ds-legend-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ds-legend-color {
+    width: 14px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.custom-marker-cluster {
+    background: rgba(0, 200, 120, 0.2) !important;
+    border: 2px solid rgba(0, 200, 120, 0.5);
+    border-radius: 50%;
+}
+
+.custom-marker-cluster div {
+    background: rgba(0, 200, 120, 0.7);
+    color: #0c1117;
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
+}
+
+.marker-popup {
+    font-family: var(--font);
+}
+
+.marker-popup h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 4px;
+}
+
+.marker-popup p {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.marker-popup .tag {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tag-water { background: rgba(59, 158, 255, 0.2); color: #3b9eff; }
+.tag-danger { background: rgba(255, 77, 79, 0.2); color: #ff4d4f; }
+.tag-abandoned { background: rgba(168, 85, 247, 0.2); color: #a855f7; }
+.tag-biome { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+.tag-evac { background: rgba(249, 115, 22, 0.2); color: #f97316; }
+.tag-pop { background: rgba(234, 179, 8, 0.2); color: #eab308; }
