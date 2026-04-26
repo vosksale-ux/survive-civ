@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>SURVIVE.MAP — Топографические карты</title>
+    <meta name="description" content="Топографические, военные и спутниковые карты. Карты генштаба, маршруты, навигация.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺️</text></svg>">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="map.css" />
+</head>
+<body>
+    <div id="app">
+        <aside id="sidebar" class="open">
+            <div class="sidebar-head">
+                <div class="logo">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                    <span>SURVIVE<b>.MAP</b></span>
+                </div>
+                <button class="icon-btn" id="sidebar-close" title="Свернуть панель (Tab)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+            </div>
+
+            <div class="sidebar-body">
+                <section class="panel">
+                    <button class="panel-toggle" data-panel="layers">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                        <span>Слои карты</span>
+                        <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="panel-content" id="panel-layers">
+                        <div class="layer-grid" id="layer-grid"></div>
+                        <div class="sub-title">Перекрытия</div>
+                        <div class="overlay-list" id="overlay-list"></div>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <button class="panel-toggle" data-panel="search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <span>Поиск</span>
+                        <kbd>/</kbd>
+                    </button>
+                    <div class="panel-content" id="panel-search">
+                        <div class="search-box">
+                            <input type="text" id="search-input" placeholder="Город, область, координаты..." autocomplete="off">
+                            <button class="icon-btn search-clear" id="search-clear" title="Очистить">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                        </div>
+                        <div class="search-results" id="search-results"></div>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <button class="panel-toggle" data-panel="route">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        <span>Маршрут</span>
+                        <span class="badge" id="route-badge" style="display:none">0</span>
+                    </button>
+                    <div class="panel-content" id="panel-route">
+                        <div class="route-stats" id="route-stats">
+                            <div class="stat"><span class="stat-label">Точек</span><span class="stat-value" id="route-points">0</span></div>
+                            <div class="stat"><span class="stat-label">Расстояние</span><span class="stat-value" id="route-dist">0 км</span></div>
+                        </div>
+                        <div class="route-actions">
+                            <button class="btn btn-ghost" id="route-undo" title="Отменить последнюю точку">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                                Отменить
+                            </button>
+                            <button class="btn btn-ghost" id="route-clear">Очистить</button>
+                            <button class="btn btn-primary" id="route-export">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                GPX
+                            </button>
+                        </div>
+                        <p class="hint">ЛКМ по карте — добавить точку маршрута</p>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <button class="panel-toggle" data-panel="markers">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <span>Маркеры</span>
+                        <span class="badge" id="markers-badge" style="display:none">0</span>
+                    </button>
+                    <div class="panel-content" id="panel-markers">
+                        <div class="markers-list" id="markers-list"></div>
+                        <div class="marker-actions">
+                            <button class="btn btn-ghost" id="markers-clear">Удалить все</button>
+                        </div>
+                        <p class="hint">ПКМ по карте — поставить маркер</p>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <button class="panel-toggle" data-panel="download">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <span>Скачать карту</span>
+                    </button>
+                    <div class="panel-content" id="panel-download">
+                        <div class="dl-mode-toggle">
+                            <button class="dl-mode-btn active" data-mode="view">Видимая</button>
+                            <button class="dl-mode-btn" data-mode="area">Область</button>
+                            <button class="dl-mode-btn" data-mode="region">Регион</button>
+                        </div>
+
+                        <div class="dl-subpanel" id="dl-sub-view">
+                            <div class="form-group" style="padding-top:6px">
+                                <label>Масштаб</label>
+                                <select id="dl-scale">
+                                    <option value="1">1x — стандарт</option>
+                                    <option value="2" selected>2x — высокое качество</option>
+                                    <option value="3">3x — максимум</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Формат</label>
+                                <select id="dl-format">
+                                    <option value="png">PNG</option>
+                                    <option value="jpeg">JPG (меньше размер)</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" id="dl-save" style="width:100%;margin-top:8px">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                Сохранить карту
+                            </button>
+                        </div>
+
+                        <div class="dl-subpanel" id="dl-sub-area" style="display:none">
+                            <div class="dl-area-info" id="dl-area-info">
+                                <div class="dl-area-text" id="dl-area-text">Растяните прямоугольник на карте</div>
+                                <button class="btn btn-ghost" id="dl-area-clear" style="width:100%;margin-top:6px">Сбросить выделение</button>
+                            </div>
+                            <div class="form-group" style="padding-top:6px">
+                                <label>Масштаб</label>
+                                <select id="dl-area-scale">
+                                    <option value="1">1x — стандарт</option>
+                                    <option value="2" selected>2x — высокое качество</option>
+                                    <option value="3">3x — максимум</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Формат</label>
+                                <select id="dl-area-format">
+                                    <option value="png">PNG</option>
+                                    <option value="jpeg">JPG (меньше размер)</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" id="dl-save-area" style="width:100%;margin-top:8px">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                Сохранить выделение
+                            </button>
+                        </div>
+
+                        <div class="dl-subpanel" id="dl-sub-region" style="display:none">
+                            <div class="form-group" style="padding-top:6px">
+                                <label>Федеральный округ</label>
+                                <select id="dl-fed-okrug"><option value="">— Выберите —</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Регион</label>
+                                <select id="dl-region"><option value="">— Весь округ —</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Зум (от — до)</label>
+                                <div style="display:flex;gap:6px">
+                                    <select id="dl-zoom-min" style="flex:1"></select>
+                                    <select id="dl-zoom-max" style="flex:1"></select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Слои для скачивания</label>
+                                <div class="dl-layer-checks" id="dl-layer-checks"></div>
+                            </div>
+                            <div class="dl-tile-info" id="dl-tile-info" style="display:none">
+                                <span id="dl-tile-count">0</span> тайлов, ~<span id="dl-tile-size">0</span> МБ
+                            </div>
+                            <button class="btn btn-primary" id="dl-save-region" style="width:100%;margin-top:8px">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                Скачать регион
+                            </button>
+                        </div>
+
+                        <div class="dl-progress" id="dl-progress" style="display:none">
+                            <div class="dl-progress-bar"><div class="dl-progress-fill" id="dl-progress-fill"></div></div>
+                            <span class="dl-progress-text" id="dl-progress-text">Подготовка...</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <button class="panel-toggle" data-panel="regions">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                        <span>Регионы</span>
+                    </button>
+                    <div class="panel-content" id="panel-regions">
+                        <div class="form-group">
+                            <label>Федеральный округ</label>
+                            <select id="fed-okrug"><option value="">— Выберите —</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Область / район</label>
+                            <select id="region"><option value="">— Весь округ —</option></select>
+                        </div>
+                        <div class="sub-title">Быстрый переход</div>
+                        <div class="quick-nav" id="quick-nav"></div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="sidebar-foot">
+                <a href="../index.html" class="back-link">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                    SURVIVE.CIV
+                </a>
+                <span class="version">v2.0</span>
+            </div>
+        </aside>
+
+        <main id="map-wrap">
+            <button class="sidebar-open-btn" id="sidebar-open" title="Открыть панель (Tab)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <div id="map"></div>
+
+            <div class="coords-bar" id="coords-bar">
+                <span id="coords-lat">55.7558</span>°N,&nbsp;<span id="coords-lng">37.6173</span>°E
+                <span class="sep">|</span>
+                <span id="coords-zoom">z6</span>
+                <span class="sep">|</span>
+                <span id="coords-scale">~1:2.5M</span>
+            </div>
+
+            <div class="toolbar" id="toolbar">
+                <button class="tb-btn" id="btn-locate" title="Моё местоположение">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
+                </button>
+                <button class="tb-btn" id="btn-ruler" title="Линейка (измерение расстояний)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20M12 2v20M5 9v6M9 7v10M15 7v10M19 9v6"/></svg>
+                </button>
+                <button class="tb-btn" id="btn-fullscreen" title="Полный экран (F)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="map.js"></script>
+</body>
+</html>
