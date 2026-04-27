@@ -148,13 +148,14 @@
     ];
 
     var LAYERS_CONFIG = [
-        { id: 'topo', name: 'Топо', icon: '\u{26F0}', url: 'https://tile.opentopomap.org/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OpenTopoMap', maxZoom: 17 } },
-        { id: 'osm', name: 'OSM', icon: '\u{1F5FA}', url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OpenStreetMap', maxZoom: 19 } },
-        { id: 'cyclosm', name: 'Цикл', icon: '\u{1F6B2}', url: 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 CyclOSM', maxZoom: 19 } },
-        { id: 'relief', name: 'Рельеф', icon: '\u{26F0}', url: 'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.png', opts: { attribution: '\u00a9 Stamen / Stadia', maxZoom: 18 } },
-        { id: 'satellite', name: 'Спутник', icon: '\u{1F6F0}', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', opts: { attribution: '\u00a9 Esri', maxZoom: 18 } },
-        { id: 'gsh', name: 'Генштаб', icon: '\u{1F3AF}', url: 'https://mapy.com/turisticka/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 Mapy.cz', maxZoom: 18 } },
-        { id: 'ggc', name: 'ГГЦ', icon: '\u{1F4D0}', url: 'https://mapy.com/turisticka-winter/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 Mapy.cz', maxZoom: 18 } }
+        { id: 'yandex', name: 'Яндекс', icon: '\u{1F4F1}', url: 'https://core-sat.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}&scale=1&lang=ru_RU', opts: { attribution: '\u00a9 Яндекс Карты', maxNativeZoom: 18, maxZoom: 21, subdomains: '' } },
+        { id: 'osm', name: 'OSM', icon: '\u{1F5FA}', url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OpenStreetMap', maxNativeZoom: 19, maxZoom: 21 } },
+        { id: 'cyclosm', name: 'Цикл', icon: '\u{1F6B2}', url: 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 CyclOSM', maxNativeZoom: 19, maxZoom: 21 } },
+        { id: 'relief', name: 'Рельеф', icon: '\u{26F0}', url: 'https://tile.opentopomap.org/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OpenTopoMap', maxNativeZoom: 17, maxZoom: 21 } },
+        { id: 'satellite', name: 'Спутник (Esri)', icon: '\u{1F6F0}', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', opts: { attribution: '\u00a9 Esri', maxNativeZoom: 18, maxZoom: 21 } },
+        { id: 'google_sat', name: 'Спутник (Google)', icon: '\u{1F4F7}', url: 'https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', opts: { attribution: '\u00a9 Google', maxNativeZoom: 21, maxZoom: 21, subdomains: '0123' } },
+        { id: 'gsh', name: 'Генштаб', icon: '\u{1F3AF}', url: 'https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 Wikimedia', maxNativeZoom: 19, maxZoom: 21 } },
+        { id: 'ggc', name: 'ГГЦ', icon: '\u{1F4D0}', url: 'https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OpenStreetMap Bretagne', maxNativeZoom: 18, maxZoom: 21 } }
     ];
 
     var OVERLAYS_CONFIG = [
@@ -164,13 +165,16 @@
     var map = L.map('map', {
         center: [55.7558, 37.6173],
         zoom: 6,
+        maxZoom: 21,
         zoomControl: true,
-        attributionControl: false
+        attributionControl: false,
+        doubleClickZoom: false
     });
 
     var tileLayers = {};
     var currentLayer = null;
     var overlays = {};
+    var labelsLayer = null;
     var routePoints = [];
     var routeLine = null;
     var routeMarkers = [];
@@ -183,7 +187,6 @@
     var dlMode = 'view';
     var dlAreaRect = null;
     var dlSelecting = false;
-    var dlSelectStart = null;
     var dlTempRect = null;
 
     LAYERS_CONFIG.forEach(function (cfg) {
@@ -197,14 +200,25 @@
         document.querySelectorAll('.layer-btn').forEach(function (b) {
             b.classList.toggle('active', b.dataset.layer === id);
         });
+        if (labelsLayer && map.hasLayer(labelsLayer)) {
+            map.removeLayer(labelsLayer);
+            labelsLayer = null;
+        }
+        if (id === 'yandex') {
+            labelsLayer = L.tileLayer('https://core-renderer-tiles.maps.yandex.net/tiles?l=skl&x={x}&y={y}&z={z}&scale=1&lang=ru_RU', { maxNativeZoom: 18, maxZoom: 21, opacity: 0.9, subdomains: '' });
+            map.addLayer(labelsLayer);
+        } else if (id === 'satellite' || id === 'google_sat') {
+            labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', { maxNativeZoom: 19, maxZoom: 21, opacity: 0.85 });
+            map.addLayer(labelsLayer);
+        }
     }
 
-    setLayer('topo');
+    setLayer('osm');
 
     var layerGrid = document.getElementById('layer-grid');
     LAYERS_CONFIG.forEach(function (cfg) {
         var btn = document.createElement('button');
-        btn.className = 'layer-btn' + (cfg.id === 'topo' ? ' active' : '');
+        btn.className = 'layer-btn' + (cfg.id === 'osm' ? ' active' : '');
         btn.dataset.layer = cfg.id;
         btn.innerHTML = '<span class="layer-icon">' + cfg.icon + '</span>' + cfg.name;
         btn.addEventListener('click', function () { setLayer(cfg.id); });
@@ -302,7 +316,9 @@
                         results.innerHTML = data.map(function (item) {
                             var typeMap = { city: '\u{1F3D9}', town: '\u{1F3D9}', village: '\u{1F3D8}', state: '\u{1F3DB}', country: '\u{1F30D}', peak: '\u{26F0}', water: '\u{1F30A}', forest: '\u{1F332}' };
                             var iconSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
-                            return '<div class="search-item" data-lat="' + item.lat + '" data-lng="' + item.lon + '"><div class="search-item-icon">' + iconSvg + '</div><div class="search-item-body"><div class="search-item-name">' + item.display_name.split(',')[0] + '</div><div class="search-item-detail">' + item.display_name.split(',').slice(1, 3).join(',').trim() + '</div></div></div>';
+                            var name = escHtml(item.display_name.split(',')[0]);
+                            var detail = escHtml(item.display_name.split(',').slice(1, 3).join(',').trim());
+                            return '<div class="search-item" data-lat="' + item.lat + '" data-lng="' + item.lon + '"><div class="search-item-icon">' + iconSvg + '</div><div class="search-item-body"><div class="search-item-name">' + name + '</div><div class="search-item-detail">' + detail + '</div></div></div>';
                         }).join('');
                         results.querySelectorAll('.search-item').forEach(function (el) {
                             el.addEventListener('click', function () {
@@ -435,6 +451,12 @@
     function removeMarker(index) {
         map.removeLayer(markers[index]);
         markers.splice(index, 1);
+        updateMarkersUI();
+    }
+
+    function clearAllMarkers() {
+        markers.forEach(function (m) { map.removeLayer(m); });
+        markers = [];
         updateMarkersUI();
     }
 
@@ -585,17 +607,39 @@
             }
             var label = totalDist > 1000 ? (totalDist / 1000).toFixed(2) + ' км' : Math.round(totalDist) + ' м';
 
-            if (rulerMarkers.length > 1) {
-                var last = rulerMarkers[rulerMarkers.length - 1];
-                last.unbindTooltip();
-                last.bindTooltip(label, {
-                    permanent: true,
-                    direction: 'right',
-                    className: 'ruler-tooltip',
-                    offset: [8, 0]
-                });
-            }
+            var lastIdx = rulerPoints.length - 1;
+            var p1 = rulerPoints[lastIdx - 1];
+            var p2 = rulerPoints[lastIdx];
+            var az = bearing(p1.lat, p1.lng, p2.lat, p2.lng);
+            var decl = calcMagneticDeclination(p2.lat, p2.lng);
+            var magAz = ((az + decl) % 360 + 360) % 360;
+            var dir = bearingDir(az);
+
+            label += ' \u2022 ' + Math.round(az) + '\u00b0' + dir + ' (маг. ' + Math.round(magAz) + '\u00b0)';
+
+            var last = rulerMarkers[rulerMarkers.length - 1];
+            last.unbindTooltip();
+            last.bindTooltip(label, {
+                permanent: true,
+                direction: 'right',
+                className: 'ruler-tooltip',
+                offset: [8, 0]
+            });
         }
+    }
+
+    function bearing(lat1, lng1, lat2, lng2) {
+        var dLng = (lng2 - lng1) * Math.PI / 180;
+        var y = Math.sin(dLng) * Math.cos(lat2 * Math.PI / 180);
+        var x = Math.cos(lat1 * Math.PI / 180) * Math.sin(lat2 * Math.PI / 180) -
+                Math.sin(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.cos(dLng);
+        var brng = Math.atan2(y, x) * 180 / Math.PI;
+        return (brng + 360) % 360;
+    }
+
+    function bearingDir(b) {
+        var dirs = ['С','ССВ','СВ','ВСВ','В','ВЮВ','ЮВ','ЮЮВ','Ю','ЮЮЗ','ЮЗ','ЗЮЗ','З','ЗСЗ','СЗ','ССЗ'];
+        return dirs[Math.round(b / 22.5) % 16];
     }
 
     function initFullscreen() {
@@ -615,17 +659,8 @@
     }
 
     function initMapEvents() {
-        map.on('click', function (e) {
-            if (rulerMode) {
-                addRulerPoint(e.latlng);
-            } else {
-                addRoutePoint(e.latlng);
-            }
-        });
-
-        map.on('contextmenu', function (e) {
-            e.originalEvent.preventDefault();
-            createCustomMarker(e.latlng);
+        map.on('dblclick', function (e) {
+            addRoutePoint(e.latlng);
         });
 
         map.on('zoomend', function () {
@@ -652,6 +687,12 @@
                 } else {
                     document.exitFullscreen();
                 }
+            }
+            if (e.key === 'c' || e.key === 'C') {
+                document.getElementById('btn-compass').click();
+            }
+            if (e.key === 'g' || e.key === 'G') {
+                document.getElementById('btn-tracking').click();
             }
             if (e.key === 'Escape') {
                 if (rulerMode) {
@@ -1173,22 +1214,14 @@
     var dsLegendTitle = document.getElementById('ds-legend-title');
     var dsLegendBody = document.getElementById('ds-legend-body');
 
-    var DS_COLORS = {
-        water: '#3b9eff',
-        dangers: '#ff4d4f',
-        abandoned: '#a855f7',
-        biomes: '#22c55e',
-        evacuation: '#f97316',
-        population: '#eab308'
-    };
-
     var DS_LEGENDS = {
         water: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#3b9eff"></span> Река / озеро</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#80d4ff"></span> Родники / источники</div><p style="margin-top:6px">Тепловая карта — плотность источников воды</p>',
         dangers: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#ff4d4f"></span> Радиация</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#ff8c00"></span> Пожары</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#a855f7"></span> Клещи</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#3b9eff"></span> Наводнения</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#fff"></span> Лавины / вулканы</div>',
         abandoned: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#a855f7"></span> Город-призрак</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#7c3aed"></span> Бункер ГО</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#c084fc"></span> Заброшенная база</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#ff4d4f"></span> Опасная зона</div>',
         biomes: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#1a5c1a"></span> Тайга</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#2d8f2d"></span> Смешанные леса</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#8fbc5a"></span> Лесостепь</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#d4a843"></span> Степь</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#6b8f8f"></span> Тундра</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#b8d4e3"></span> Арктическая пустыня</div>',
         evacuation: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#f97316"></span> Автомобильный</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#3b82f6"></span> Водный</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#ef4444"></span> Внедорожный</div><p style="margin-top:6px">Клик на маршрут — подробности</p>',
-        population: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#eab308"></span> Высокая плотность</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#854d0e"></span> Средняя</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#365314"></span> Низкая</div><p style="margin-top:6px">Размер круга = население региона</p>'
+        population: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#eab308"></span> Высокая плотность</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#854d0e"></span> Средняя</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#365314"></span> Низкая</div><p style="margin-top:6px">Размер круга = население региона</p>',
+        permafrost: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#0e7490"></span> Сплошная (200-1500 м)</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#22d3ee"></span> Прерывистая (50-300 м)</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#67e8f9"></span> Островная (10-100 м)</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#a5f3fc"></span> Отдельные очаги (5-30 м)</div>'
     };
 
     function loadJSON(url, cb) {
@@ -1207,13 +1240,13 @@
 
     function makePopup(props, tagClass) {
         var html = '<div class="marker-popup">';
-        html += '<h4>' + (props.name || '') + '</h4>';
-        if (props.desc) html += '<p>' + props.desc + '</p>';
-        if (props.type) html += '<span class="tag ' + tagClass + '">' + props.type + '</span>';
-        if (props.danger) html += ' <span class="tag tag-danger">' + props.danger + '</span>';
-        if (props.dist) html += '<p style="margin-top:4px">' + props.dist + '</p>';
-        if (props.population) html += '<p style="margin-top:4px">Население: ' + props.population.toLocaleString() + '</p>';
-        if (props.density) html += '<br>Плотность: ' + props.density + ' чел/км²';
+        html += '<h4>' + escHtml(props.name || '') + '</h4>';
+        if (props.desc) html += '<p>' + escHtml(props.desc) + '</p>';
+        if (props.type) html += '<span class="tag ' + tagClass + '">' + escHtml(props.type) + '</span>';
+        if (props.danger) html += ' <span class="tag tag-danger">' + escHtml(props.danger) + '</span>';
+        if (props.dist) html += '<p style="margin-top:4px">' + escHtml(props.dist) + '</p>';
+        if (props.population) html += '<p style="margin-top:4px">Население: ' + Number(props.population).toLocaleString() + '</p>';
+        if (props.density) html += '<br>Плотность: ' + escHtml(String(props.density)) + ' чел/км²';
         html += '</div>';
         return html;
     }
@@ -1240,6 +1273,7 @@
                 case 'biomes': renderBiomes(data); break;
                 case 'evacuation': renderEvacuation(data); break;
                 case 'population': renderPopulation(data); break;
+                case 'permafrost': renderPermafrost(data); break;
             }
         });
     }
@@ -1418,6 +1452,51 @@
         map.addLayer(group);
     }
 
+    function renderPermafrost(data) {
+        var group = L.layerGroup();
+        var zoneColors = {
+            continuous: { fill: '#0e7490', stroke: '#0891b2' },
+            discontinuous: { fill: '#22d3ee', stroke: '#06b6d4' },
+            sporadic: { fill: '#67e8f9', stroke: '#22d3ee' },
+            isolated: { fill: '#a5f3fc', stroke: '#67e8f9' }
+        };
+        var zoneNames = {
+            continuous: 'Сплошная',
+            discontinuous: 'Прерывистая',
+            sporadic: 'Островная',
+            isolated: 'Отдельные очаги'
+        };
+
+        data.features.forEach(function (f) {
+            var zone = f.properties.zone;
+            var colors = zoneColors[zone] || zoneColors.isolated;
+            L.geoJSON(f, {
+                style: {
+                    fillColor: colors.fill,
+                    fillOpacity: 0.25,
+                    color: colors.stroke,
+                    weight: 1.5,
+                    opacity: 0.6,
+                    dashArray: zone === 'isolated' ? '4,4' : zone === 'sporadic' ? '6,4' : null
+                },
+                onEachFeature: function (feature, layer) {
+                    var p = feature.properties;
+                    layer.bindPopup(
+                        '<div class="marker-popup">' +
+                        '<h4>' + p.name + '</h4>' +
+                        '<p>Тип: <b>' + zoneNames[zone] + '</b></p>' +
+                        '<p>Глубина: ' + p.depth + '</p>' +
+                        '<p>Температура грунта: ' + p.temp + '</p>' +
+                        '</div>'
+                    );
+                }
+            }).addTo(group);
+        });
+
+        dsLayers['permafrost'] = group;
+        map.addLayer(group);
+    }
+
     function initDatasets() {
         document.querySelectorAll('[data-ds]').forEach(function (cb) {
             cb.addEventListener('change', function () {
@@ -1426,21 +1505,1408 @@
         });
     }
 
+    var compassActive = false;
+    var deviceHeading = null;
+
+    var importedTracks = [];
+
+    var elevCache = {};
+
+    function initElevation() {
+        var btn = document.getElementById('btn-elevation');
+        var panel = document.getElementById('elevation-panel');
+        var canvas = document.getElementById('elevation-canvas');
+        var statsEl = document.getElementById('elevation-stats');
+
+        btn.addEventListener('click', function () {
+            if (routePoints.length < 2) {
+                btn.textContent = 'Нужно минимум 2 точки';
+                setTimeout(function () {
+                    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Профиль высот';
+                }, 2000);
+                return;
+            }
+            panel.style.display = panel.style.display === 'none' ? '' : 'none';
+            if (panel.style.display !== 'none') fetchElevation();
+        });
+
+        function fetchElevation() {
+            statsEl.innerHTML = 'Загрузка высот...';
+            var locations = routePoints.map(function (p) { return p.lat.toFixed(5) + ',' + p.lng.toFixed(5); });
+
+            var cached = [];
+            var uncached = [];
+            routePoints.forEach(function (p, i) {
+                var key = p.lat.toFixed(4) + ',' + p.lng.toFixed(4);
+                if (elevCache[key] !== undefined) {
+                    cached.push({ idx: i, elev: elevCache[key] });
+                } else {
+                    uncached.push({ idx: i, lat: p.lat, lng: p.lng });
+                }
+            });
+
+            if (uncached.length === 0) {
+                var results = cached.sort(function (a, b) { return a.idx - b.idx; }).map(function (c) { return c.elev; });
+                drawProfile(results);
+                return;
+            }
+
+            var url = 'https://api.open-meteo.com/v1/elevation?' + uncached.map(function (p) { return 'latitude=' + p.lat.toFixed(5) + '&longitude=' + p.lng.toFixed(5); }).join('&');
+
+            var batchUrl = 'https://api.open-meteo.com/v1/elevation?latitude=' + uncached.map(function (p) { return p.lat.toFixed(5); }).join(',') + '&longitude=' + uncached.map(function (p) { return p.lng.toFixed(5); }).join(',');
+
+            fetch(batchUrl).then(function (r) { return r.json(); }).then(function (data) {
+                var elevations = data.elevation || [];
+                uncached.forEach(function (p, i) {
+                    var key = p.lat.toFixed(4) + ',' + p.lng.toFixed(4);
+                    elevCache[key] = elevations[i] || 0;
+                    cached.push({ idx: p.idx, elev: elevations[i] || 0 });
+                });
+
+                cached.sort(function (a, b) { return a.idx - b.idx; });
+                drawProfile(cached.map(function (c) { return c.elev; }));
+            }).catch(function () {
+                statsEl.innerHTML = 'Ошибка загрузки высот';
+            });
+        }
+
+        function drawProfile(elevations) {
+            if (!elevations.length) return;
+            var c = canvas;
+            var dpr = window.devicePixelRatio || 1;
+            c.width = c.offsetWidth * dpr;
+            c.height = 100 * dpr;
+            var ctx = c.getContext('2d');
+            ctx.scale(dpr, dpr);
+            var w = c.offsetWidth;
+            var h = 100;
+
+            var minE = Math.min.apply(null, elevations);
+            var maxE = Math.max.apply(null, elevations);
+            var range = maxE - minE || 1;
+            var pad = 8;
+
+            ctx.clearRect(0, 0, w, h);
+
+            var grad = ctx.createLinearGradient(0, 0, 0, h);
+            grad.addColorStop(0, 'rgba(0,200,120,0.4)');
+            grad.addColorStop(1, 'rgba(0,200,120,0.02)');
+
+            ctx.beginPath();
+            ctx.moveTo(0, h);
+            elevations.forEach(function (e, i) {
+                var x = (i / (elevations.length - 1)) * w;
+                var y = h - pad - ((e - minE) / range) * (h - pad * 2);
+                if (i === 0) ctx.lineTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.lineTo(w, h);
+            ctx.closePath();
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            ctx.beginPath();
+            elevations.forEach(function (e, i) {
+                var x = (i / (elevations.length - 1)) * w;
+                var y = h - pad - ((e - minE) / range) * (h - pad * 2);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.strokeStyle = '#00c878';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            elevations.forEach(function (e, i) {
+                var x = (i / (elevations.length - 1)) * w;
+                var y = h - pad - ((e - minE) / range) * (h - pad * 2);
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#00c878';
+                ctx.fill();
+                ctx.strokeStyle = '#0c1117';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            });
+
+            var asc = 0, desc = 0;
+            for (var i = 1; i < elevations.length; i++) {
+                var diff = elevations[i] - elevations[i - 1];
+                if (diff > 0) asc += diff;
+                else desc += Math.abs(diff);
+            }
+
+            statsEl.innerHTML =
+                '<span>&#8593; ' + Math.round(asc) + ' м</span>' +
+                '<span>&#8595; ' + Math.round(desc) + ' м</span>' +
+                '<span>min ' + Math.round(minE) + ' м</span>' +
+                '<span>max ' + Math.round(maxE) + ' м</span>';
+        }
+    }
+
+    var trackingActive = false;
+    var trackingWatch = null;
+    var trackingPoints = [];
+    var trackingLine = null;
+    var trackingMarker = null;
+    var trackingWidget = null;
+    var trackingStartTime = null;
+
+    function initTracking() {
+        var btn = document.getElementById('btn-tracking');
+
+        btn.addEventListener('click', function () {
+            if (trackingActive) return;
+            startTracking();
+        });
+
+        function startTracking() {
+            if (!navigator.geolocation) {
+                alert('Geolocation не поддерживается');
+                return;
+            }
+
+            trackingActive = true;
+            trackingPoints = [];
+            trackingStartTime = Date.now();
+            btn.classList.add('active');
+
+            if (trackingLine) { map.removeLayer(trackingLine); trackingLine = null; }
+            if (trackingMarker) { map.removeLayer(trackingMarker); trackingMarker = null; }
+
+            trackingLine = L.polyline([], {
+                color: '#00c878', weight: 4, opacity: 0.9,
+                lineCap: 'round', lineJoin: 'round',
+                dashArray: null
+            }).addTo(map);
+
+            trackingWatch = navigator.geolocation.watchPosition(
+                function (pos) {
+                    var lat = pos.coords.latitude;
+                    var lng = pos.coords.longitude;
+                    var alt = pos.coords.altitude;
+                    var acc = pos.coords.accuracy;
+                    var speed = pos.coords.speed;
+
+                    var latlng = L.latLng(lat, lng);
+                    trackingPoints.push({ latlng: latlng, alt: alt, acc: acc, speed: speed, time: Date.now() });
+
+                    trackingLine.addLatLng(latlng);
+
+                    if (trackingMarker) map.removeLayer(trackingMarker);
+                    trackingMarker = L.circleMarker(latlng, {
+                        radius: 7, color: '#00c878', fillColor: '#00c878',
+                        fillOpacity: 1, weight: 3, opacity: 1
+                    }).addTo(map);
+
+                    if (trackingPoints.length === 1) {
+                        map.setView(latlng, 16);
+                    } else {
+                        map.panTo(latlng, { animate: true });
+                    }
+
+                    updateTrackingWidget();
+                },
+                function (err) {
+                    console.warn('GPS error:', err.message);
+                },
+                { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
+            );
+
+            createTrackingWidget();
+        }
+
+        function createTrackingWidget() {
+            if (trackingWidget) trackingWidget.remove();
+            var div = document.createElement('div');
+            div.className = 'tracking-widget';
+            div.id = 'tracking-widget';
+            div.innerHTML =
+                '<div class="tw-header">' +
+                    '<span class="tw-title">GPS Трекинг</span>' +
+                    '<button class="tw-stop" id="tw-stop">Стоп</button>' +
+                '</div>' +
+                '<div class="tw-stats">' +
+                    '<div><div class="tw-stat-label">Время</div><div class="tw-stat-value" id="tw-time">00:00</div></div>' +
+                    '<div><div class="tw-stat-label">Расстояние</div><div class="tw-stat-value" id="tw-dist">0 м</div></div>' +
+                    '<div><div class="tw-stat-label">Скорость</div><div class="tw-stat-value" id="tw-speed">0 км/ч</div></div>' +
+                    '<div><div class="tw-stat-label">Точек</div><div class="tw-stat-value" id="tw-pts">0</div></div>' +
+                '</div>' +
+                '<div class="tw-actions">' +
+                    '<button class="btn btn-primary" id="tw-export-gpx">GPX</button>' +
+                    '<button class="btn btn-ghost" id="tw-export-save">На карту</button>' +
+                '</div>';
+            document.getElementById('map-wrap').appendChild(div);
+
+            document.getElementById('tw-stop').addEventListener('click', stopTracking);
+            document.getElementById('tw-export-gpx').addEventListener('click', exportTrackingGPX);
+            document.getElementById('tw-export-save').addEventListener('click', saveTrackingToRoute);
+
+            var timerInterval = setInterval(function () {
+                if (!trackingActive) { clearInterval(timerInterval); return; }
+                var elapsed = Math.floor((Date.now() - trackingStartTime) / 1000);
+                var m = Math.floor(elapsed / 60);
+                var s = elapsed % 60;
+                var el = document.getElementById('tw-time');
+                if (el) el.textContent = pad2(m) + ':' + pad2(s);
+            }, 1000);
+        }
+
+        function updateTrackingWidget() {
+            var dist = 0;
+            for (var i = 1; i < trackingPoints.length; i++) {
+                dist += trackingPoints[i - 1].latlng.distanceTo(trackingPoints[i].latlng);
+            }
+
+            var lastSpeed = 0;
+            if (trackingPoints.length > 1) {
+                var last = trackingPoints[trackingPoints.length - 1];
+                if (last.speed !== null && last.speed !== undefined) {
+                    lastSpeed = last.speed * 3.6;
+                } else {
+                    var prev = trackingPoints[trackingPoints.length - 2];
+                    var dt = (last.time - prev.time) / 1000;
+                    if (dt > 0) lastSpeed = (prev.latlng.distanceTo(last.latlng) / dt) * 3.6;
+                }
+            }
+
+            var distEl = document.getElementById('tw-dist');
+            if (distEl) distEl.textContent = dist > 1000 ? (dist / 1000).toFixed(2) + ' км' : Math.round(dist) + ' м';
+            var speedEl = document.getElementById('tw-speed');
+            if (speedEl) speedEl.textContent = lastSpeed.toFixed(1) + ' км/ч';
+            var ptsEl = document.getElementById('tw-pts');
+            if (ptsEl) ptsEl.textContent = trackingPoints.length;
+        }
+
+        function stopTracking() {
+            trackingActive = false;
+            if (trackingWatch) navigator.geolocation.clearWatch(trackingWatch);
+            document.getElementById('btn-tracking').classList.remove('active');
+
+            var w = document.getElementById('tracking-widget');
+            if (w) w.remove();
+        }
+
+        function exportTrackingGPX() {
+            if (trackingPoints.length < 2) return;
+            var xml = '<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="SURVIVE.MAP">\n  <trk>\n    <name>GPS Track ' + new Date().toLocaleDateString() + '</name>\n    <trkseg>\n';
+            trackingPoints.forEach(function (p) {
+                xml += '      <trkpt lat="' + p.latlng.lat.toFixed(7) + '" lon="' + p.latlng.lng.toFixed(7) + '">';
+                if (p.alt !== null && p.alt !== undefined) xml += '<ele>' + p.alt.toFixed(1) + '</ele>';
+                xml += '<time>' + new Date(p.time).toISOString() + '</time>';
+                xml += '</trkpt>\n';
+            });
+            xml += '    </trkseg>\n  </trk>\n</gpx>';
+            var blob = new Blob([xml], { type: 'application/gpx+xml' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'survive-track-' + Date.now() + '.gpx';
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+
+        function saveTrackingToRoute() {
+            if (trackingPoints.length < 2) return;
+            clearRoute();
+            trackingPoints.forEach(function (p) {
+                addRoutePoint(p.latlng);
+            });
+            stopTracking();
+        }
+    }
+
+    var solarInitialized = false;
+
+    function initAurora() {
+        var btn = document.querySelector('[data-panel="solar"]');
+        if (!btn) return;
+        btn.addEventListener('click', function () {
+            if (!solarInitialized) {
+                solarInitialized = true;
+                fetchSolar();
+                setInterval(fetchSolar, 300000);
+            }
+        });
+    }
+
+    function fetchSolar() {
+        var statusEl = document.getElementById('solar-status');
+        statusEl.innerHTML = '<div class="aurora-loading">Загрузка данных NOAA...</div>';
+
+        Promise.all([
+            fetch('https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json').then(function (r) { return r.json(); }).catch(function () { return null; }),
+            fetch('https://services.swpc.noaa.gov/json/solar_wind/mag_1m.json').then(function (r) { return r.json(); }).catch(function () { return null; }),
+            fetch('https://services.swpc.noaa.gov/json/f107_cm_flux.json').then(function (r) { return r.json(); }).catch(function () { return null; }),
+            fetch('https://services.swpc.noaa.gov/json/sunspot_report.json').then(function (r) { return r.json(); }).catch(function () { return null; })
+        ]).then(function (results) {
+            var kpData = results[0];
+            var magData = results[1];
+            var fluxData = results[2];
+            var sunspotData = results[3];
+
+            var currentKp = 0;
+            var forecast = [];
+
+            if (kpData && kpData.length > 1) {
+                var now = new Date();
+                for (var i = 1; i < kpData.length; i++) {
+                    var row = kpData[i];
+                    var kp = parseFloat(row[1]);
+                    var obs = row[2];
+                    var d = new Date(row[0] + 'Z');
+                    if (obs === 'observed') currentKp = kp;
+                    if (d >= now && forecast.length < 24) {
+                        forecast.push({ time: d, kp: kp });
+                    }
+                }
+                if (currentKp === 0 && forecast.length) currentKp = forecast[0].kp;
+            }
+
+            var bzMagnitude = 0, windSpeed = 0;
+            if (magData && magData.length > 0) {
+                var latest = magData[magData.length - 1];
+                bzMagnitude = parseFloat(latest.bz_gsm) || 0;
+                windSpeed = parseFloat(latest.speed) || 0;
+            }
+
+            var f107 = 0;
+            if (fluxData && fluxData.length > 0) {
+                f107 = parseFloat(fluxData[fluxData.length - 1].flux) || 0;
+            }
+
+            var sunspots = 0;
+            if (sunspotData && sunspotData.length > 0) {
+                sunspots = sunspotData.reduce(function (s, r) { return s + (parseInt(r.Number_of_Sunspots) || 0); }, 0);
+            }
+
+            renderSolar(currentKp, bzMagnitude, windSpeed, f107, sunspots, forecast);
+        }).catch(function () {
+            renderSolar(0, 0, 0, 0, 0, []);
+        });
+    }
+
+    function renderSolar(kp, bz, wind, f107, sunspots, forecast) {
+        var el = document.getElementById('solar-status');
+        var kpColor = kp >= 5 ? '#ef4444' : kp >= 3 ? '#eab308' : '#22c55e';
+        var kpDesc = kp >= 9 ? 'G5 — Экстремальная буря' : kp >= 7 ? 'G3 — Сильная буря' : kp >= 5 ? 'G1 — Магнитная буря' : kp >= 3 ? 'Активный' : kp >= 1 ? 'Спокойный' : 'Очень тихо';
+        var stormAlert = kp >= 5;
+
+        var html = '<div class="solar-alert" style="background:' + kpColor + '20;color:' + kpColor + '">Kp ' + kp.toFixed(1) + ' \u2014 ' + kpDesc + '</div>';
+
+        html += '<div class="solar-grid">';
+        html += '<div class="solar-card"><div class="solar-card-label">Солнечные пятна</div><div class="solar-card-value">' + sunspots + '</div></div>';
+        html += '<div class="solar-card"><div class="solar-card-label">Поток F10.7</div><div class="solar-card-value">' + f107.toFixed(0) + ' <span class="solar-card-unit">sfu</span></div></div>';
+        html += '<div class="solar-card"><div class="solar-card-label">Bz (GSM)</div><div class="solar-card-value" style="color:' + (bz < -5 ? '#ef4444' : '#22c55e') + '">' + bz.toFixed(1) + ' <span class="solar-card-unit">nT</span></div></div>';
+        html += '<div class="solar-card"><div class="solar-card-label">Солнечный ветер</div><div class="solar-card-value">' + wind.toFixed(0) + ' <span class="solar-card-unit">км/с</span></div></div>';
+        html += '</div>';
+
+        if (stormAlert) {
+            html += '<div class="solar-alert" style="background:rgba(239,68,68,0.15);color:#ef4444;margin-top:8px">\u26a0 Магнитная буря! Возможны сбои связи и GPS, северное сияние до средних широт</div>';
+        }
+
+        if (forecast.length) {
+            html += '<div class="solar-forecast-title">Прогноз Kp на 3 дня</div>';
+            var shown = 0;
+            forecast.forEach(function (f) {
+                if (shown >= 18) return;
+                shown++;
+                var c = f.kp >= 5 ? '#ef4444' : f.kp >= 3 ? '#eab308' : '#22c55e';
+                var pct = Math.min(100, (f.kp / 9) * 100);
+                var h = f.time.getUTCHours();
+                var d = f.time.getUTCDate();
+                html += '<div class="solar-forecast-row">' +
+                    '<span class="solar-f-time">' + pad2(h) + ':00</span>' +
+                    '<div class="solar-f-bar"><div class="solar-f-fill" style="width:' + pct + '%;background:' + c + '"></div></div>' +
+                    '<span class="solar-f-val" style="color:' + c + '">' + f.kp.toFixed(1) + '</span>' +
+                    '</div>';
+            });
+        }
+
+        html += '<p class="hint" style="margin-top:8px">Источник: NOAA SWPC (реальные данные)</p>';
+        el.innerHTML = html;
+    }
+
+    var weatherTimeout = null;
+
+    function initWeather() {
+        map.on('moveend', function () {
+            clearTimeout(weatherTimeout);
+            weatherTimeout = setTimeout(fetchWeather, 800);
+        });
+        fetchWeather();
+    }
+
+    function fetchWeather() {
+        var center = map.getCenter();
+        var lat = center.lat.toFixed(4);
+        var lng = center.lng.toFixed(4);
+        document.getElementById('weather-location').textContent = lat + '\u00b0, ' + lng + '\u00b0';
+
+        var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lng + '&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m,wind_gusts_10m,cloud_cover,precipitation,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max&timezone=auto&forecast_days=5';
+
+        document.getElementById('weather-loading').style.display = '';
+        document.getElementById('weather-main').style.display = 'none';
+
+        fetch(url).then(function (r) { return r.json(); }).then(function (data) {
+            if (!data.current) return;
+            var c = data.current;
+
+            var temp = c.temperature_2m;
+            var wind = c.wind_speed_10m;
+            var gust = c.wind_gusts_10m;
+            var hum = c.relative_humidity_2m;
+            var pres = c.surface_pressure;
+            var cloud = c.cloud_cover;
+            var rain = c.precipitation;
+            var code = c.weather_code;
+
+            document.getElementById('weather-temp').textContent = (temp > 0 ? '+' : '') + Math.round(temp) + '\u00b0';
+            document.getElementById('weather-icon').textContent = weatherEmoji(code);
+            document.getElementById('w-wind').textContent = wind.toFixed(1) + ' м/с';
+            document.getElementById('w-gust').textContent = gust.toFixed(1) + ' м/с';
+            document.getElementById('w-hum').textContent = hum + '%';
+            document.getElementById('w-pres').textContent = Math.round(pres) + ' гПа';
+            document.getElementById('w-cloud').textContent = cloud + '%';
+            document.getElementById('w-rain').textContent = rain + ' мм';
+
+            var tempEl = document.getElementById('weather-temp');
+            if (temp < -10) tempEl.style.color = '#60a5fa';
+            else if (temp < 0) tempEl.style.color = '#93c5fd';
+            else if (temp > 30) tempEl.style.color = '#f87171';
+            else if (temp > 20) tempEl.style.color = '#fbbf24';
+            else tempEl.style.color = 'var(--text-bright)';
+
+            document.getElementById('weather-loading').style.display = 'none';
+            document.getElementById('weather-main').style.display = '';
+
+            if (data.daily) {
+                renderForecast(data.daily);
+            }
+        }).catch(function () {
+            document.getElementById('weather-loading').style.display = 'none';
+        });
+    }
+
+    function renderForecast(daily) {
+        var list = document.getElementById('forecast-list');
+        var title = document.getElementById('forecast-title');
+        title.style.display = '';
+
+        var tMin = Math.min.apply(null, daily.temperature_2m_min);
+        var tMax = Math.max.apply(null, daily.temperature_2m_max);
+        var range = tMax - tMin || 1;
+
+        var days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+        var html = '';
+
+        for (var i = 0; i < daily.time.length; i++) {
+            var d = new Date(daily.time[i]);
+            var dayName = i === 0 ? 'Сег' : i === 1 ? 'Зав' : days[d.getDay()];
+            var tmin = daily.temperature_2m_min[i];
+            var tmax = daily.temperature_2m_max[i];
+            var code = daily.weather_code[i];
+            var rain = daily.precipitation_sum[i];
+            var wind = daily.wind_speed_10m_max[i];
+
+            var barLeft = ((tmin - tMin) / range) * 100;
+            var barWidth = ((tmax - tmin) / range) * 100;
+
+            html += '<div class="forecast-row">' +
+                '<span class="forecast-day">' + dayName + '</span>' +
+                '<span class="forecast-icon">' + weatherEmoji(code) + '</span>' +
+                '<span class="forecast-tmin">' + Math.round(tmin) + '\u00b0</span>' +
+                '<div class="forecast-bar"><div class="forecast-bar-fill" style="left:' + barLeft + '%;width:' + Math.max(barWidth, 5) + '%"></div></div>' +
+                '<span class="forecast-tmax">' + Math.round(tmax) + '\u00b0</span>' +
+                '<span class="forecast-info">' + (rain > 0 ? rain.toFixed(1) + '\u{1F4A7}' : Math.round(wind) + 'm/s') + '</span>' +
+                '</div>';
+        }
+
+        list.innerHTML = html;
+    }
+
+    function weatherEmoji(code) {
+        if (code === 0) return '\u2600';
+        if (code <= 3) return '\u26C5';
+        if (code <= 48) return '\u{1F324}';
+        if (code <= 57) return '\u{1F327}';
+        if (code <= 67) return '\u{1F328}';
+        if (code <= 75) return '\u2744';
+        if (code <= 77) return '\u{1F328}';
+        if (code <= 82) return '\u{1F327}';
+        if (code <= 86) return '\u2744';
+        if (code <= 99) return '\u26C8';
+        return '\u2600';
+    }
+
+    var bookmarks = JSON.parse(localStorage.getItem('survive-bookmarks') || '[]');
+
+    function initBookmarks() {
+        renderBookmarks();
+
+        document.getElementById('bookmarks-clear').addEventListener('click', function () {
+            if (!bookmarks.length) return;
+            if (confirm('Удалить все закладки?')) {
+                bookmarks = [];
+                saveBookmarks();
+                renderBookmarks();
+            }
+        });
+
+        map.on('contextmenu', function (e) {
+            e.originalEvent.preventDefault();
+            showContextMenu(e);
+        });
+
+        var longPressTimer = null;
+        var longPressFired = false;
+        var mapWrap = document.getElementById('map-wrap');
+
+        mapWrap.addEventListener('touchstart', function (e) {
+            if (e.touches.length !== 1) return;
+            longPressFired = false;
+            var touch = e.touches[0];
+            longPressTimer = setTimeout(function () {
+                longPressFired = true;
+                var latlng = map.containerPointToLatLng(L.point(touch.clientX - mapWrap.getBoundingClientRect().left, touch.clientY - mapWrap.getBoundingClientRect().top));
+                showContextMenu({ latlng: latlng, originalEvent: e });
+            }, 500);
+        }, { passive: true });
+
+        mapWrap.addEventListener('touchmove', function () {
+            clearTimeout(longPressTimer);
+        }, { passive: true });
+
+        mapWrap.addEventListener('touchend', function () {
+            clearTimeout(longPressTimer);
+        }, { passive: true });
+    }
+
+    function showContextMenu(e) {
+        var latlng = e.latlng;
+        var existing = document.querySelector('.map-ctx-menu');
+        if (existing) existing.remove();
+
+        var menu = document.createElement('div');
+        menu.className = 'map-ctx-menu';
+        menu.style.cssText = 'position:absolute;z-index:2000;background:var(--bg-elevated);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:var(--radius);padding:4px;box-shadow:var(--shadow);min-width:180px;font-family:var(--font);';
+
+        var containerPoint = map.latLngToContainerPoint(latlng);
+        menu.style.left = (containerPoint.x + 10) + 'px';
+        menu.style.top = (containerPoint.y + 10) + 'px';
+
+        var items = [
+            { icon: '&#128278;', text: 'Сохранить в закладки', action: function () { addBookmark(latlng); } },
+            { icon: '&#128205;', text: 'Поставить маркер', action: function () { createCustomMarker(latlng); } },
+            { icon: '&#128207;', text: 'Копировать координаты', action: function () { copyCoords(latlng); } },
+            { icon: '&#10148;', text: 'Маршрут: добавить точку', action: function () { addRoutePoint(latlng); } },
+            { icon: '&#128465;', text: 'Удалить все маркеры', action: function () { clearAllMarkers(); } },
+            { icon: '&#128465;', text: 'Очистить маршрут', action: function () { clearRoute(); } }
+        ];
+
+        items.forEach(function (item) {
+            var btn = document.createElement('button');
+            btn.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;background:none;border:none;color:var(--text);font-family:var(--font);font-size:12px;cursor:pointer;border-radius:var(--radius-xs);transition:background 0.15s;';
+            btn.innerHTML = '<span style="font-size:14px">' + item.icon + '</span> ' + item.text;
+            btn.addEventListener('mouseenter', function () { btn.style.background = 'var(--bg-hover)'; });
+            btn.addEventListener('mouseleave', function () { btn.style.background = 'none'; });
+            btn.addEventListener('click', function () {
+                item.action();
+                menu.remove();
+            });
+            menu.appendChild(btn);
+        });
+
+        document.getElementById('map-wrap').appendChild(menu);
+
+        var closeHandler = function (ev) {
+            if (!menu.contains(ev.target)) {
+                menu.remove();
+                document.removeEventListener('click', closeHandler);
+            }
+        };
+        setTimeout(function () { document.addEventListener('click', closeHandler); }, 10);
+    }
+
+    function addBookmark(latlng) {
+        var name = prompt('Название закладки:', latlng.lat.toFixed(5) + ', ' + latlng.lng.toFixed(5));
+        if (!name) return;
+        var bm = {
+            id: Date.now(),
+            name: name,
+            lat: latlng.lat,
+            lng: latlng.lng,
+            zoom: map.getZoom(),
+            ts: Date.now()
+        };
+        bookmarks.push(bm);
+        saveBookmarks();
+        renderBookmarks();
+    }
+
+    function saveBookmarks() {
+        localStorage.setItem('survive-bookmarks', JSON.stringify(bookmarks));
+    }
+
+    function renderBookmarks() {
+        var list = document.getElementById('bookmarks-list');
+        var empty = document.getElementById('bookmarks-empty');
+        var badge = document.getElementById('bookmarks-badge');
+
+        if (!bookmarks.length) {
+            list.innerHTML = '';
+            empty.style.display = '';
+            badge.style.display = 'none';
+            document.getElementById('bookmark-actions').style.display = 'none';
+            return;
+        }
+
+        empty.style.display = 'none';
+        badge.style.display = '';
+        badge.textContent = bookmarks.length;
+        document.getElementById('bookmark-actions').style.display = '';
+
+        list.innerHTML = bookmarks.map(function (bm, i) {
+            return '<div class="bookmark-item" data-idx="' + i + '">' +
+                '<span class="bookmark-icon">&#128278;</span>' +
+                '<div class="bookmark-info">' +
+                    '<div class="bookmark-name">' + escHtml(bm.name) + '</div>' +
+                    '<div class="bookmark-coords">' + bm.lat.toFixed(5) + ', ' + bm.lng.toFixed(5) + ' · z' + bm.zoom + '</div>' +
+                '</div>' +
+                '<button class="bookmark-del" data-idx="' + i + '" title="Удалить"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
+            '</div>';
+        }).join('');
+
+        list.querySelectorAll('.bookmark-item').forEach(function (el) {
+            el.addEventListener('click', function (ev) {
+                if (ev.target.closest('.bookmark-del')) return;
+                var idx = parseInt(this.dataset.idx);
+                var bm = bookmarks[idx];
+                if (bm) map.setView([bm.lat, bm.lng], bm.zoom);
+            });
+        });
+
+        list.querySelectorAll('.bookmark-del').forEach(function (btn) {
+            btn.addEventListener('click', function (ev) {
+                ev.stopPropagation();
+                var idx = parseInt(this.dataset.idx);
+                bookmarks.splice(idx, 1);
+                saveBookmarks();
+                renderBookmarks();
+            });
+        });
+    }
+
+    function copyCoords(latlng) {
+        var text = latlng.lat.toFixed(6) + ', ' + latlng.lng.toFixed(6);
+        navigator.clipboard.writeText(text);
+    }
+
+    function escHtml(s) {
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+    }
+
+    function initImport() {
+        var dropZone = document.getElementById('import-drop');
+        var fileInput = document.getElementById('import-file');
+        var importBtn = document.getElementById('import-btn');
+        var listEl = document.getElementById('import-list');
+
+        importBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            fileInput.click();
+        });
+
+        dropZone.addEventListener('click', function () { fileInput.click(); });
+
+        dropZone.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', function () {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', function (e) {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        });
+
+        fileInput.addEventListener('change', function () {
+            if (this.files.length) handleFile(this.files[0]);
+            this.value = '';
+        });
+
+        function handleFile(file) {
+            var name = file.name.toLowerCase();
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var text = e.target.result;
+                if (name.endsWith('.gpx')) parseGPX(text, file.name);
+                else if (name.endsWith('.kml')) parseKML(text, file.name);
+                else if (name.endsWith('.geojson') || name.endsWith('.json')) parseGeoJSON(text, file.name);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseGPX(text, fileName) {
+            var parser = new DOMParser();
+            var xml = parser.parseFromString(text, 'text/xml');
+            var tracks = xml.querySelectorAll('trk');
+            var routes = xml.querySelectorAll('rte');
+            var waypoints = xml.querySelectorAll('wpt');
+
+            tracks.forEach(function (trk, idx) {
+                var pts = trk.querySelectorAll('trkpt');
+                var coords = [];
+                pts.forEach(function (pt) {
+                    var lat = parseFloat(pt.getAttribute('lat'));
+                    var lng = parseFloat(pt.getAttribute('lon'));
+                    if (!isNaN(lat) && !isNaN(lng)) coords.push([lat, lng]);
+                });
+                if (coords.length > 1) {
+                    var name = trk.querySelector('name') ? trk.querySelector('name').textContent : fileName.replace('.gpx', '') + ' #' + (idx + 1);
+                    addTrack(coords, name);
+                }
+            });
+
+            routes.forEach(function (rte, idx) {
+                var pts = rte.querySelectorAll('rtept');
+                var coords = [];
+                pts.forEach(function (pt) {
+                    var lat = parseFloat(pt.getAttribute('lat'));
+                    var lng = parseFloat(pt.getAttribute('lon'));
+                    if (!isNaN(lat) && !isNaN(lng)) coords.push([lat, lng]);
+                });
+                if (coords.length > 1) {
+                    var name = rte.querySelector('name') ? rte.querySelector('name').textContent : 'Route #' + (idx + 1);
+                    addTrack(coords, name);
+                }
+            });
+
+            if (waypoints.length) {
+                var wptGroup = L.layerGroup().addTo(map);
+                waypoints.forEach(function (wpt) {
+                    var lat = parseFloat(wpt.getAttribute('lat'));
+                    var lng = parseFloat(wpt.getAttribute('lon'));
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        var name = wpt.querySelector('name') ? wpt.querySelector('name').textContent : 'WP';
+                        L.marker([lat, lng]).bindPopup('<b>' + escHtml(name) + '</b>').addTo(wptGroup);
+                    }
+                });
+                importedTracks.push({ name: fileName + ' (WP)', color: '#aaa', dist: 0, line: wptGroup });
+                renderImportList();
+            }
+        }
+
+        function parseKML(text, fileName) {
+            var parser = new DOMParser();
+            var xml = parser.parseFromString(text, 'text/xml');
+            var placemarks = xml.querySelectorAll('Placemark');
+
+            placemarks.forEach(function (pm) {
+                var ls = pm.querySelector('LineString');
+                if (ls) {
+                    var coordsText = ls.querySelector('coordinates').textContent.trim();
+                    var coords = [];
+                    coordsText.split(/\s+/).forEach(function (c) {
+                        var parts = c.split(',');
+                        var lng = parseFloat(parts[0]);
+                        var lat = parseFloat(parts[1]);
+                        if (!isNaN(lat) && !isNaN(lng)) coords.push([lat, lng]);
+                    });
+                    if (coords.length > 1) {
+                        var name = pm.querySelector('name') ? pm.querySelector('name').textContent : fileName;
+                        addTrack(coords, name);
+                    }
+                }
+            });
+        }
+
+        function parseGeoJSON(text, fileName) {
+            var data = JSON.parse(text);
+            var features = data.features || [data];
+
+            features.forEach(function (f, idx) {
+                if (!f.geometry) return;
+                if (f.geometry.type === 'LineString') {
+                    var coords = f.geometry.coordinates.map(function (c) { return [c[1], c[0]]; });
+                    if (coords.length > 1) {
+                        var name = f.properties && f.properties.name ? f.properties.name : fileName + ' #' + (idx + 1);
+                        addTrack(coords, name);
+                    }
+                } else if (f.geometry.type === 'MultiLineString') {
+                    f.geometry.coordinates.forEach(function (line, li) {
+                        var coords = line.map(function (c) { return [c[1], c[0]]; });
+                        if (coords.length > 1) {
+                            var name = (f.properties && f.properties.name ? f.properties.name : fileName) + ' #' + (li + 1);
+                            addTrack(coords, name);
+                        }
+                    });
+                }
+            });
+        }
+
+        var trackColors = ['#00c878', '#3b9eff', '#f97316', '#a855f7', '#eab308', '#ff4d4f', '#ec4899', '#14b8a6'];
+        var colorIdx = 0;
+
+        function addTrack(coords, name) {
+            var color = trackColors[colorIdx % trackColors.length];
+            colorIdx++;
+
+            var line = L.polyline(coords, {
+                color: color, weight: 3, opacity: 0.8,
+                lineCap: 'round', lineJoin: 'round'
+            }).addTo(map);
+
+            var dist = 0;
+            for (var i = 1; i < coords.length; i++) {
+                dist += L.latLng(coords[i - 1]).distanceTo(L.latLng(coords[i]));
+            }
+
+            var id = Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+            var track = { id: id, name: name, line: line, coords: coords, dist: dist, color: color };
+            importedTracks.push(track);
+
+            map.fitBounds(line.getBounds(), { padding: [30, 30] });
+
+            line.bindPopup('<div class="marker-popup"><h4>' + escHtml(name) + '</h4><p>' + (dist > 1000 ? (dist / 1000).toFixed(1) + ' км' : Math.round(dist) + ' м') + ', ' + coords.length + ' точек</p></div>');
+
+            renderImportList();
+        }
+
+        function renderImportList() {
+            listEl.innerHTML = importedTracks.map(function (t, i) {
+                var d = t.dist > 1000 ? (t.dist / 1000).toFixed(1) + ' км' : Math.round(t.dist) + ' м';
+                return '<div class="import-item">' +
+                    '<span class="import-item-color" style="background:' + t.color + '"></span>' +
+                    '<span class="import-item-name">' + escHtml(t.name) + '</span>' +
+                    '<span class="import-item-info">' + d + '</span>' +
+                    '<button class="import-item-del" data-idx="' + i + '" title="Удалить"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
+                    '</div>';
+            }).join('');
+
+            listEl.querySelectorAll('.import-item-del').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var idx = parseInt(this.dataset.idx);
+                    map.removeLayer(importedTracks[idx].line);
+                    importedTracks.splice(idx, 1);
+                    renderImportList();
+                });
+            });
+        }
+    }
+
+    function initSunMoon() {
+        map.on('moveend', updateSunMoon);
+        updateSunMoon();
+    }
+
+    function updateSunMoon() {
+        var center = map.getCenter();
+        var lat = center.lat;
+        var lng = center.lng;
+        var now = new Date();
+
+        document.getElementById('sm-location').textContent = lat.toFixed(4) + '\u00b0, ' + lng.toFixed(4) + '\u00b0';
+
+        var sunTimes = calcSunTimes(now, lat, lng);
+        var sunrise = sunTimes.rise;
+        var sunset = sunTimes.set;
+
+        if (sunrise && sunset) {
+            var riseH = pad2(sunrise.getHours()) + ':' + pad2(sunrise.getMinutes());
+            var setH = pad2(sunset.getHours()) + ':' + pad2(sunset.getMinutes());
+            var dayMin = (sunset - sunrise) / 60000;
+            var dayH = Math.floor(dayMin / 60);
+            var dayM = Math.round(dayMin % 60);
+
+            document.getElementById('sm-sunrise').textContent = riseH;
+            document.getElementById('sm-sunset').textContent = setH;
+            document.getElementById('sm-daylen').textContent = dayH + '\u0447 ' + pad2(dayM) + '\u043c';
+            document.getElementById('sm-label-rise').textContent = '\u2600 ' + riseH;
+            document.getElementById('sm-label-set').textContent = '\u2193 ' + setH;
+
+            var totalMs = sunset - sunrise;
+            var elapsedMs = now - sunrise;
+            var pct = Math.max(0, Math.min(100, (elapsedMs / totalMs) * 100));
+            var sunBar = document.getElementById('sm-progress-sun');
+            if (now < sunrise) {
+                sunBar.style.width = '0%';
+                sunBar.style.left = '0%';
+            } else if (now > sunset) {
+                sunBar.style.width = '100%';
+                sunBar.style.left = '0%';
+            } else {
+                sunBar.style.width = pct + '%';
+                sunBar.style.left = '0%';
+            }
+            var nowLabel = document.getElementById('sm-label-now');
+            if (now < sunrise) {
+                nowLabel.textContent = '\u2190 до восхода';
+            } else if (now > sunset) {
+                nowLabel.textContent = 'закат прошел \u2192';
+            } else {
+                nowLabel.textContent = pad2(now.getHours()) + ':' + pad2(now.getMinutes());
+            }
+        } else {
+            document.getElementById('sm-sunrise').textContent = sunTimes.polar ? 'Полярный' : '--:--';
+            document.getElementById('sm-sunset').textContent = sunTimes.polar ? sunTimes.polar : '--:--';
+            document.getElementById('sm-daylen').textContent = sunTimes.polar === 'день' ? '24ч' : '0ч';
+        }
+
+        var moon = calcMoonPhase(now);
+        document.getElementById('sm-moon').textContent = moon.name;
+        document.getElementById('sm-moon-visual').textContent = moon.emoji;
+    }
+
+    function calcSunTimes(date, lat, lng) {
+        var dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 86400000);
+        var declination = -23.45 * Math.cos((2 * Math.PI / 365) * (dayOfYear + 10));
+        var decRad = declination * Math.PI / 180;
+        var latRad = lat * Math.PI / 180;
+
+        var cosHA = (Math.sin(-0.83 * Math.PI / 180) - Math.sin(latRad) * Math.sin(decRad)) / (Math.cos(latRad) * Math.cos(decRad));
+
+        if (cosHA > 1) return { rise: null, set: null, polar: 'ночь' };
+        if (cosHA < -1) return { rise: null, set: null, polar: 'день' };
+
+        var HA = Math.acos(cosHA) * 180 / Math.PI;
+        var solarNoonMin = 720 - 4 * lng;
+        var riseMin = solarNoonMin - HA * 4;
+        var setMin = solarNoonMin + HA * 4;
+
+        var tzOffset = -date.getTimezoneOffset();
+        var utcOffset = tzOffset;
+
+        var riseDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, riseMin + utcOffset);
+        var setDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, setMin + utcOffset);
+
+        return { rise: riseDate, set: setDate };
+    }
+
+    function calcMoonPhase(date) {
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var day = date.getDate();
+
+        if (month < 3) { year--; month += 12; }
+        month++;
+        var c = 365.25 * year;
+        var e = 30.6 * month;
+        var jd = c + e + day - 694039.09;
+        jd /= 29.5305882;
+        var phase = jd - Math.floor(jd);
+        var age = Math.round(phase * 29.53);
+
+        var phases = [
+            { name: 'Новолуние', emoji: '\ud83c\udf11' },
+            { name: 'Растущий серп', emoji: '\ud83c\udf12' },
+            { name: 'Первая четверть', emoji: '\ud83c\udf13' },
+            { name: 'Растущая Луна', emoji: '\ud83c\udf14' },
+            { name: 'Полнолуние', emoji: '\ud83c\udf15' },
+            { name: 'Убывающая Луна', emoji: '\ud83c\udf16' },
+            { name: 'Последняя четверть', emoji: '\ud83c\udf17' },
+            { name: 'Убывающий серп', emoji: '\ud83c\udf18' }
+        ];
+
+        var idx = Math.round(phase * 8) % 8;
+        return { name: phases[idx].name + ' (' + age + '/29)', emoji: phases[idx].emoji, age: age };
+    }
+
+    function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+
+    var magDeclination = 0;
+
+    function calcMagneticDeclination(lat, lng) {
+        if (typeof geomag !== 'undefined' && geomag.field) {
+            return geomag.field(lat, lng, 0).declination;
+        }
+        return 0;
+    }
+
+    function initCompass() {
+        var btn = document.getElementById('btn-compass');
+        var widget = document.getElementById('compass-widget');
+        var ring = document.getElementById('compass-ring');
+        var degEl = document.getElementById('compass-deg');
+        var dirEl = document.getElementById('compass-dir');
+        var declEl = document.getElementById('compass-decl');
+        var magLine = document.getElementById('compass-mag-line');
+
+        btn.addEventListener('click', function () {
+            compassActive = !compassActive;
+            btn.classList.toggle('active', compassActive);
+            widget.style.display = compassActive ? 'flex' : 'none';
+            if (compassActive) {
+                updateDeclination();
+                requestDeviceOrientation();
+                updateCompass(0);
+                startCompassTick();
+            } else {
+                stopCompassTick();
+            }
+        });
+
+        function updateDeclination() {
+            var c = map.getCenter();
+            magDeclination = calcMagneticDeclination(c.lat, c.lng);
+            var sign = magDeclination >= 0 ? '+' : '';
+            declEl.innerHTML = 'Склонение: <span style="color:#3b82f6;font-weight:600">' + sign + magDeclination.toFixed(1) + '\u00b0</span>' +
+                '<span style="margin-left:4px;font-size:8px;color:var(--text-dim)">(' + (magDeclination >= 0 ? 'восточное' : 'западное') + ')</span>';
+
+            var declNorm = ((magDeclination % 360) + 360) % 360;
+            var rad = declNorm * Math.PI / 180;
+            var r = 42;
+            var cx = 60, cy = 60;
+            var x2 = cx + r * Math.sin(rad);
+            var y2 = cy - r * Math.cos(rad);
+            magLine.setAttribute('x2', x2.toFixed(1));
+            magLine.setAttribute('y2', y2.toFixed(1));
+            magLine.setAttribute('opacity', '0.8');
+        }
+
+        function requestDeviceOrientation() {
+            if (typeof DeviceOrientationEvent !== 'undefined' &&
+                typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission().then(function (state) {
+                    if (state === 'granted') bindOrientation();
+                }).catch(function () {});
+            } else if ('DeviceOrientationEvent' in window) {
+                bindOrientation();
+            }
+        }
+
+        function bindOrientation() {
+            window.addEventListener('deviceorientation', function (e) {
+                if (e.alpha !== null) {
+                    deviceHeading = e.alpha;
+                }
+            }, true);
+        }
+
+        function updateCompass(bearing) {
+            var heading = deviceHeading !== null ? (360 - deviceHeading) : bearing;
+            heading = ((heading % 360) + 360) % 360;
+            ring.style.transform = 'rotate(' + (-heading) + 'deg)';
+            degEl.textContent = Math.round(heading) + '\u00b0';
+            dirEl.textContent = headingToDir(heading);
+        }
+
+        function headingToDir(h) {
+            var dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+            return dirs[Math.round(h / 22.5) % 16];
+        }
+
+        var compassTickInterval = null;
+
+        function startCompassTick() {
+            if (compassTickInterval) return;
+            compassTickInterval = setInterval(function () {
+                if (deviceHeading !== null) {
+                    updateCompass(0);
+                } else {
+                    var center = map.getCenter();
+                    var north = L.latLng(center.lat + 0.01, center.lng);
+                    var bearing = computeBearing(center, north);
+                    updateCompass(bearing);
+                }
+            }, 200);
+        }
+
+        function stopCompassTick() {
+            if (compassTickInterval) {
+                clearInterval(compassTickInterval);
+                compassTickInterval = null;
+            }
+        }
+
+        map.on('move', function () {
+            if (!compassActive || deviceHeading !== null) return;
+            var center = map.getCenter();
+            var north = L.latLng(center.lat + 0.01, center.lng);
+            var bearing = computeBearing(center, north);
+            updateCompass(bearing);
+            updateDeclination();
+        });
+    }
+
+    function computeBearing(from, to) {
+        var dLng = (to.lng - from.lng) * Math.PI / 180;
+        var lat1 = from.lat * Math.PI / 180;
+        var lat2 = to.lat * Math.PI / 180;
+        var y = Math.sin(dLng) * Math.cos(lat2);
+        var x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+        return ((Math.atan2(y, x) * 180 / Math.PI) + 360) % 360;
+    }
+
     L.control.scale({ imperial: false, metric: true }).addTo(map);
 
-    initPanels();
-    initSidebar();
-    initSearch();
-    initRoute();
-    initMarkers();
-    initDownload();
-    initDatasets();
-    initRegions();
-    initCoords();
-    initRuler();
-    initFullscreen();
-    initLocate();
-    initMapEvents();
-    initKeyboard();
+    function initShare() {
+        document.getElementById('btn-share').addEventListener('click', function () {
+            var c = map.getCenter();
+            var z = map.getZoom();
+            var hash = '#' + c.lat.toFixed(5) + '/' + c.lng.toFixed(5) + '/' + z;
+            var url = location.origin + location.pathname + hash;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(function () {
+                    showToast('Ссылка скопирована');
+                });
+            } else {
+                prompt('Скопируйте ссылку:', url);
+            }
+        });
+    }
+
+    function initHash() {
+        function loadHash() {
+            var h = location.hash.slice(1);
+            if (!h) return false;
+            var parts = h.split('/');
+            if (parts.length === 3) {
+                var lat = parseFloat(parts[0]);
+                var lng = parseFloat(parts[1]);
+                var z = parseInt(parts[2]);
+                if (!isNaN(lat) && !isNaN(lng) && !isNaN(z)) {
+                    map.setView([lat, lng], z);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        loadHash();
+
+        map.on('moveend', function () {
+            var c = map.getCenter();
+            var z = map.getZoom();
+            history.replaceState(null, '', '#' + c.lat.toFixed(5) + '/' + c.lng.toFixed(5) + '/' + z);
+        });
+    }
+
+    function showToast(msg) {
+        var t = document.createElement('div');
+        t.textContent = msg;
+        t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;padding:8px 20px;border-radius:var(--radius);font-size:13px;font-family:var(--font);font-weight:600;z-index:9999;box-shadow:var(--shadow);transition:opacity 0.3s;';
+        document.body.appendChild(t);
+        setTimeout(function () { t.style.opacity = '0'; setTimeout(function () { t.remove(); }, 300); }, 2000);
+    }
+
+    function initCalc() {
+        document.getElementById('calc-run').addEventListener('click', calcSurvival);
+    }
+
+    function calcSurvival() {
+        var people = parseInt(document.getElementById('calc-people').value) || 1;
+        var days = parseInt(document.getElementById('calc-days').value) || 3;
+        var temp = parseFloat(document.getElementById('calc-temp').value);
+        var activity = document.getElementById('calc-activity').value;
+
+        var calPerDay = { rest: 1500, light: 2000, moderate: 2800, heavy: 3800 };
+        var waterPerDay = { rest: 2, light: 3, moderate: 4, heavy: 6 };
+
+        var coldFactor = temp < -20 ? 1.6 : temp < -10 ? 1.4 : temp < 0 ? 1.3 : temp < 10 ? 1.15 : 1;
+        var cal = Math.round(calPerDay[activity] * coldFactor);
+        var water = +(waterPerDay[activity] * coldFactor).toFixed(1);
+
+        var totalCal = cal * people * days;
+        var totalWater = water * people * days;
+
+        var shelter = temp < -10 ? 'Критично — каркасная с печкой' : temp < 0 ? 'Обязательно — утеплённое укрытие' : temp < 10 ? 'Желательно — защита от ветра и дождя' : 'Навес от дождя';
+
+        var firewood = activity !== 'rest' ? Math.round(people * days * (temp < 0 ? 15 : temp < 10 ? 8 : 3)) : Math.round(people * days * (temp < 0 ? 12 : temp < 10 ? 5 : 0));
+
+        var risk = temp < -30 ? 'Экстремальный' : temp < -15 ? 'Высокий' : temp < 0 ? 'Повышенный' : temp < 10 ? 'Умеренный' : 'Низкий';
+        var riskColor = temp < -15 ? '#ef4444' : temp < 0 ? '#f97316' : temp < 10 ? '#eab308' : '#22c55e';
+
+        var el = document.getElementById('calc-results');
+        el.innerHTML =
+            '<div style="margin-top:8px;padding:8px;background:var(--bg-hover);border-radius:var(--radius-sm);">' +
+            '<div style="font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:' + riskColor + ';font-weight:700;margin-bottom:6px;">Риск: ' + risk + '</div>' +
+            '<table style="width:100%;font-size:11px;border-collapse:collapse;">' +
+            '<tr><td style="padding:3px 0;color:var(--text-dim)">Вода</td><td style="padding:3px 0;text-align:right;font-family:var(--font-mono);font-weight:600">' + water + ' л/день / чел</td></tr>' +
+            '<tr><td style="padding:3px 0;color:var(--text-dim)">Вода всего</td><td style="padding:3px 0;text-align:right;font-family:var(--font-mono);font-weight:600">' + totalWater + ' л</td></tr>' +
+            '<tr><td style="padding:3px 0;color:var(--text-dim)">Калории</td><td style="padding:3px 0;text-align:right;font-family:var(--font-mono);font-weight:600">' + cal + ' ккал/день / чел</td></tr>' +
+            '<tr><td style="padding:3px 0;color:var(--text-dim)">Калории всего</td><td style="padding:3px 0;text-align:right;font-family:var(--font-mono);font-weight:600">' + totalCal.toLocaleString() + ' ккал</td></tr>' +
+            (firewood > 0 ? '<tr><td style="padding:3px 0;color:var(--text-dim)">Дрова</td><td style="padding:3px 0;text-align:right;font-family:var(--font-mono);font-weight:600">\u2248 ' + firewood + ' кг</td></tr>' : '') +
+            '<tr><td style="padding:3px 0;color:var(--text-dim)">Укрытие</td><td style="padding:3px 0;text-align:right;font-size:10px">' + shelter + '</td></tr>' +
+            '</table>' +
+            '<div style="margin-top:6px;font-size:10px;color:var(--text-dim)">Без воды — 3 дня. Без еды — до 3 недель. Без укрытия при ' + temp + '°C — ' + (temp < -15 ? 'часы' : temp < 0 ? 'до суток' : 'несколько дней') + '</div>' +
+            '</div>';
+    }
+
+    var initFns = [initPanels, initSidebar, initSearch, initRoute, initElevation, initBookmarks, initMarkers, initImport, initDownload, initDatasets, initRegions, initCoords, initSunMoon, initWeather, initAurora, initRuler, initCompass, initTracking, initFullscreen, initLocate, initMapEvents, initKeyboard];
+    initFns.forEach(function (fn) {
+        try { fn(); } catch (e) { console.error('Init error:', fn.name, e); }
+    });
+    var SEASONS_DATA = {
+        hunting: {
+            items: [
+                { name: 'Лось', months: [0,0,0,0,0,0,0,0,1,1,1,0], color: '#854d0e', info: 'Сентябрь-ноябрь. Сафари, загоном, с собаками' },
+                { name: 'Кабан', months: [0,0,0,0,0,0,1,1,1,1,1,1], color: '#a16207', info: 'Июнь-декабрь. Загоном, с вышки, подходом' },
+                { name: 'Медведь', months: [0,0,0,0,0,0,0,0,1,1,0,0], color: '#78350f', info: 'Сентябрь-октябрь. Берлога, на овсах, на рыбе' },
+                { name: 'Глухарь', months: [0,0,0,1,1,0,0,0,0,0,0,0], color: '#166534', info: 'Апрель-май. На току' },
+                { name: 'Тетерев', months: [0,0,0,1,1,0,0,0,0,0,0,0], color: '#15803d', info: 'Апрель-май. На току' },
+                { name: 'Утка', months: [0,0,0,0,0,0,0,1,1,1,0,0], color: '#047857', info: 'Август-октябрь. Летне-осенняя охота' },
+                { name: 'Заяц', months: [0,0,0,0,0,0,0,0,1,1,1,1], color: '#92400e', info: 'Сентябрь-декабрь. Троплением, с гончими' },
+                { name: 'Волк', months: [0,0,0,0,0,0,0,0,1,1,1,1], color: '#6b7280', info: 'Сентябрь-декабрь. Загоном, флажками' },
+                { name: 'Лиса', months: [0,0,0,0,0,0,0,0,1,1,1,1], color: '#ea580c', info: 'Сентябрь-декабрь. С подхода, с собаками' }
+            ]
+        },
+        fishing: {
+            items: [
+                { name: 'Щука', months: [0,0,0,1,1,1,0,0,0,1,1,1], color: '#166534', info: 'Весенний и осенний жор. Спиннинг, живец' },
+                { name: 'Окунь', months: [0,0,0,1,1,1,1,1,1,1,1,0], color: '#15803d', info: 'Круглый год, лучшее — осень. Балабушка, мормышка' },
+                { name: 'Судак', months: [0,0,0,1,1,1,0,0,0,1,1,1], color: '#047857', info: 'Весна и осень. Джиг, троллинг' },
+                { name: 'Карп', months: [0,0,0,0,0,1,1,1,1,0,0,0], color: '#a16207', info: 'Май-сентябрь. Фидер, поплавок' },
+                { name: 'Лещ', months: [0,0,0,0,1,1,1,1,1,1,0,0], color: '#854d0e', info: 'Май-октябрь. Фидер, кольцо' },
+                { name: 'Форель', months: [0,0,0,0,0,1,1,1,1,0,0,0], color: '#0e7490', info: 'Май-сентябрь. Спиннинг, нахлыст' },
+                { name: 'Хариус', months: [0,0,0,0,0,1,1,1,1,0,0,0], color: '#0891b2', info: 'Июнь-сентябрь. Нахлыст, кораблик' },
+                { name: 'Налим', months: [1,1,1,0,0,0,0,0,0,0,1,1], color: '#6b7280', info: 'Зимняя рыбалка. Донка, жерлицы' },
+                { name: 'Карась', months: [0,0,0,0,0,1,1,1,0,0,0,0], color: '#ca8a04', info: 'Июнь-август. Поплавок, фидер' }
+            ]
+        },
+        mushrooms: {
+            items: [
+                { name: 'Белый гриб', months: [0,0,0,0,0,1,1,1,1,0,0,0], color: '#854d0e', info: 'Июнь-сентябрь. Хвойные и смешанные леса' },
+                { name: 'Подберёзовик', months: [0,0,0,0,0,1,1,1,1,0,0,0], color: '#a16207', info: 'Июнь-сентябрь. Берёзовые рощи' },
+                { name: 'Подосиновик', months: [0,0,0,0,0,1,1,1,1,0,0,0], color: '#c2410c', info: 'Июнь-сентябрь. Осинники, смешанный лес' },
+                { name: 'Лисичка', months: [0,0,0,0,0,0,1,1,1,1,0,0], color: '#eab308', info: 'Июнь-октябрь. Хвойники, старый мох' },
+                { name: 'Опёнок', months: [0,0,0,0,0,0,0,1,1,1,0,0], color: '#ca8a04', info: 'Август-октябрь. Пни, поваленные деревья' },
+                { name: 'Маслёнок', months: [0,0,0,0,0,1,1,1,1,0,0,0], color: '#b45309', info: 'Июнь-сентябрь. Сосновые молодняки' },
+                { name: 'Рыжик', months: [0,0,0,0,0,0,0,0,1,1,0,0], color: '#ea580c', info: 'Август-октябрь. Хвойные леса, сосняки' },
+                { name: 'Груздь', months: [0,0,0,0,0,0,0,1,1,1,0,0], color: '#fbbf24', info: 'Август-октябрь. Берёзовые леса' }
+            ]
+        },
+        berries: {
+            items: [
+                { name: 'Клубника', months: [0,0,0,0,0,1,1,0,0,0,0,0], color: '#dc2626', info: 'Июнь-июль. Поляны, опушки' },
+                { name: 'Черника', months: [0,0,0,0,0,0,1,1,0,0,0,0], color: '#4338ca', info: 'Июль-август. Хвойные леса' },
+                { name: 'Малина', months: [0,0,0,0,0,0,1,1,0,0,0,0], color: '#e11d48', info: 'Июль-август. Вырубки, опушки' },
+                { name: 'Смородина', months: [0,0,0,0,0,0,1,1,0,0,0,0], color: '#1e1b4b', info: 'Июль-август. Берега рек, сырые места' },
+                { name: 'Брусника', months: [0,0,0,0,0,0,0,1,1,0,0,0], color: '#b91c1c', info: 'Август-сентябрь. Сосновые боры, тундра' },
+                { name: 'Клюква', months: [0,0,0,0,0,0,0,0,1,1,1,0], color: '#991b1b', info: 'Сентябрь-ноябрь. Болота' },
+                { name: 'Облепиха', months: [0,0,0,0,0,0,0,0,1,1,0,0], color: '#f59e0b', info: 'Сентябрь-октябрь. Берега рек' },
+                { name: 'Шиповник', months: [0,0,0,0,0,0,0,0,1,1,0,0], color: '#ea580c', info: 'Август-октябрь. Поля, овраги' },
+                { name: 'Рябина', months: [0,0,0,0,0,0,0,0,0,1,0,0], color: '#dc2626', info: 'Октябрь. После заморозков' }
+            ]
+        }
+    };
+
+    function initSeasons() {
+        var tabs = document.querySelectorAll('.season-tab');
+        tabs.forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                tabs.forEach(function (t) { t.classList.remove('active'); });
+                tab.classList.add('active');
+                renderSeasonChart(tab.dataset.season);
+            });
+        });
+        renderSeasonChart('hunting');
+    }
+
+    function renderSeasonChart(type) {
+        var data = SEASONS_DATA[type];
+        var chart = document.getElementById('season-chart');
+        var info = document.getElementById('season-info');
+        var months = ['Я','Ф','М','А','М','И','И','А','С','О','Н','Д'];
+        var now = new Date().getMonth();
+
+        var html = '<div class="season-chart">';
+        html += '<div></div>';
+        months.forEach(function (m, i) {
+            html += '<div class="sc-header" style="' + (i === now ? 'color:var(--accent);font-weight:700' : '') + '">' + m + '</div>';
+        });
+
+        data.items.forEach(function (item) {
+            html += '<div class="sc-label" title="' + item.info + '">' + item.name + '</div>';
+            item.months.forEach(function (v, i) {
+                var bg = v ? item.color : 'var(--bg-hover)';
+                var opacity = v ? (i === now ? '1' : '0.6') : '0.3';
+                var border = (v && i === now) ? '2px solid var(--text-bright)' : 'none';
+                html += '<div class="sc-cell" style="background:' + bg + ';opacity:' + opacity + ';border:' + border + '" title="' + item.name + ': ' + item.info + '"></div>';
+            });
+        });
+
+        html += '</div>';
+        chart.innerHTML = html;
+
+        info.textContent = 'Текущий месяц выделен. Наведите на строку — подробности.';
+    }
+
+    function initScreenshot() {
+        document.getElementById('btn-screenshot').addEventListener('click', function () {
+            var mapEl = document.getElementById('map');
+            var canvas = document.createElement('canvas');
+            var w = mapEl.offsetWidth;
+            var h = mapEl.offsetHeight;
+            canvas.width = w * 2;
+            canvas.height = h * 2;
+            var ctx = canvas.getContext('2d');
+            ctx.scale(2, 2);
+
+            var tiles = mapEl.querySelectorAll('.leaflet-tile-loaded');
+            var tilePane = mapEl.querySelector('.leaflet-tile-pane');
+            var paneRect = tilePane.getBoundingClientRect();
+            var mapRect = mapEl.getBoundingClientRect();
+
+            tiles.forEach(function (tile) {
+                if (!tile.complete || !tile.naturalWidth) return;
+                var tr = tile.getBoundingClientRect();
+                var x = tr.left - mapRect.left;
+                var y = tr.top - mapRect.top;
+                try { ctx.drawImage(tile, x, y, tr.width, tr.height); } catch (e) {}
+            });
+
+            var overlayPanes = mapEl.querySelectorAll('.leaflet-overlay-pane svg, .leaflet-overlay-pane canvas');
+            overlayPanes.forEach(function (el) {
+                var r = el.getBoundingClientRect();
+                try { ctx.drawImage(el, r.left - mapRect.left, r.top - mapRect.top, r.width, r.height); } catch (e) {}
+            });
+
+            var c = map.getCenter();
+            var z = map.getZoom();
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.fillRect(0, h - 28, w, 28);
+            ctx.fillStyle = '#00c878';
+            ctx.font = '11px Inter, sans-serif';
+            ctx.fillText(c.lat.toFixed(5) + '\u00b0, ' + c.lng.toFixed(5) + '\u00b0  z' + z + '  |  SURVIVE.CIV', 10, h - 10);
+
+            canvas.toBlob(function (blob) {
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'survive-map-' + Date.now() + '.png';
+                a.click();
+                URL.revokeObjectURL(a.href);
+                showToast('Карта сохранена');
+            }, 'image/png');
+        });
+    }
+
+    function initOffline() {
+        var badge = document.getElementById('offline-badge');
+        function update() {
+            badge.style.display = navigator.onLine ? 'none' : '';
+        }
+        window.addEventListener('online', update);
+        window.addEventListener('offline', update);
+        update();
+
+        document.getElementById('btn-clear-cache').addEventListener('click', function () {
+            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_TILES' });
+                showToast('Кеш тайлов очищен');
+            }
+        });
+    }
+
+    initShare();
+    initCalc();
+    initHash();
+    initSeasons();
+    initScreenshot();
+    initOffline();
 
 })();

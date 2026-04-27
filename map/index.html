@@ -8,6 +8,8 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺️</text></svg>">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="map.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 </head>
 <body>
     <div id="app">
@@ -75,7 +77,15 @@
                                 GPX
                             </button>
                         </div>
-                        <p class="hint">ЛКМ по карте — добавить точку маршрута</p>
+                        <p class="hint">Двойной клик по карте — добавить точку маршрута</p>
+                        <button class="btn btn-ghost" id="btn-elevation" style="width:100%;margin-top:6px">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            Профиль высот
+                        </button>
+                        <div class="elevation-panel" id="elevation-panel" style="display:none">
+                            <canvas id="elevation-canvas" width="300" height="100"></canvas>
+                            <div class="elevation-stats" id="elevation-stats"></div>
+                        </div>
                     </div>
                 </section>
 
@@ -191,6 +201,154 @@
                 </section>
 
                 <section class="panel">
+                    <button class="panel-toggle" data-panel="solar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                        <span>Солнечная активность</span>
+                    </button>
+                    <div class="panel-content" id="panel-solar">
+                        <div id="solar-status"><div class="aurora-loading">Загрузка данных...</div></div>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <button class="panel-toggle" data-panel="weather">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19a4.5 4.5 0 1 0 0-9h-1.8A7 7 0 1 0 4 14.5"/><line x1="12" y1="19" x2="12" y2="3"/><polyline points="8 7 12 3 16 7"/></svg>
+                        <span>Погода</span>
+                    </button>
+                    <div class="panel-content" id="panel-weather">
+                        <div class="weather-location" id="weather-location">55.76°, 37.62°</div>
+                        <div class="weather-main" id="weather-main" style="display:none">
+                            <div class="weather-now">
+                                <div class="weather-temp" id="weather-temp">--°</div>
+                                <div class="weather-icon" id="weather-icon"></div>
+                            </div>
+                            <div class="weather-details">
+                                <div class="weather-detail"><span class="wd-label">Ветер</span><span class="wd-value" id="w-wind">-- м/с</span></div>
+                                <div class="weather-detail"><span class="wd-label">Порывы</span><span class="wd-value" id="w-gust">-- м/с</span></div>
+                                <div class="weather-detail"><span class="wd-label">Влажность</span><span class="wd-value" id="w-hum">--%</span></div>
+                                <div class="weather-detail"><span class="wd-label">Давление</span><span class="wd-value" id="w-pres">-- гПа</span></div>
+                                <div class="weather-detail"><span class="wd-label">Облачность</span><span class="wd-value" id="w-cloud">--%</span></div>
+                                <div class="weather-detail"><span class="wd-label">Осадки</span><span class="wd-value" id="w-rain">-- мм</span></div>
+                            </div>
+                        </div>
+                        <div class="sub-title" id="forecast-title" style="display:none">Прогноз на 5 дней</div>
+                        <div class="forecast-list" id="forecast-list"></div>
+                        <div class="weather-loading" id="weather-loading" style="display:none">Загрузка...</div>
+                        <p class="hint">Обновляется при перемещении карты</p>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <button class="panel-toggle" data-panel="bookmarks">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                        <span>Закладки</span>
+                        <span class="badge" id="bookmarks-badge" style="display:none">0</span>
+                    </button>
+                    <div class="panel-content" id="panel-bookmarks">
+                        <div class="bookmarks-list" id="bookmarks-list"></div>
+                        <div class="bookmark-actions" id="bookmark-actions" style="display:none">
+                            <button class="btn btn-ghost" id="bookmarks-clear" style="width:100%">Удалить все закладки</button>
+                        </div>
+                        <div class="bookmarks-empty" id="bookmarks-empty">Нет сохранённых мест.<br>ПКМ на карте → Сохранить в закладки</div>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <button class="panel-toggle" data-panel="import">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <span>Импорт треков</span>
+                    </button>
+                    <div class="panel-content" id="panel-import">
+                        <div class="import-drop" id="import-drop">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <span>Перетащите GPX / KML / GeoJSON</span>
+                            <button class="btn btn-ghost" id="import-btn">Выбрать файл</button>
+                            <input type="file" id="import-file" accept=".gpx,.kml,.geojson,.json" style="display:none">
+                        </div>
+                        <div class="import-list" id="import-list"></div>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <button class="panel-toggle" data-panel="calc">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
+                        <span>Калькулятор выживания</span>
+                    </button>
+                    <div class="panel-content" id="panel-calc">
+                        <div class="sub-title">Параметры</div>
+                        <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
+                            <label style="display:flex;flex-direction:column;gap:3px;">
+                                <span style="color:var(--text-dim);font-size:10px;">Людей в группе</span>
+                                <input type="number" id="calc-people" value="1" min="1" max="50" style="background:var(--bg-hover);border:1px solid var(--border);border-radius:var(--radius-xs);padding:6px 8px;color:var(--text);font-size:13px;font-family:var(--font-mono);outline:none;">
+                            </label>
+                            <label style="display:flex;flex-direction:column;gap:3px;">
+                                <span style="color:var(--text-dim);font-size:10px;">Дней до спасения</span>
+                                <input type="number" id="calc-days" value="3" min="1" max="365" style="background:var(--bg-hover);border:1px solid var(--border);border-radius:var(--radius-xs);padding:6px 8px;color:var(--text);font-size:13px;font-family:var(--font-mono);outline:none;">
+                            </label>
+                            <label style="display:flex;flex-direction:column;gap:3px;">
+                                <span style="color:var(--text-dim);font-size:10px;">Температура (°C)</span>
+                                <input type="number" id="calc-temp" value="10" style="background:var(--bg-hover);border:1px solid var(--border);border-radius:var(--radius-xs);padding:6px 8px;color:var(--text);font-size:13px;font-family:var(--font-mono);outline:none;">
+                            </label>
+                            <label style="display:flex;flex-direction:column;gap:3px;">
+                                <span style="color:var(--text-dim);font-size:10px;">Активность</span>
+                                <select id="calc-activity" style="background:var(--bg-hover);border:1px solid var(--border);border-radius:var(--radius-xs);padding:6px 8px;color:var(--text);font-size:12px;font-family:var(--font);outline:none;">
+                                    <option value="rest">Отдых / укрытие</option>
+                                    <option value="light">Лёгкая ходьба</option>
+                                    <option value="moderate" selected>Поход / марш</option>
+                                    <option value="heavy">Тяжёлый труд</option>
+                                </select>
+                            </label>
+                            <button class="btn" id="calc-run" style="margin-top:4px;">Рассчитать</button>
+                        </div>
+                        <div id="calc-results" style="margin-top:10px;"></div>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <button class="panel-toggle" data-panel="sunmoon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                        <span>Солнце и Луна</span>
+                    </button>
+                    <div class="panel-content" id="panel-sunmoon">
+                        <div class="sm-location" id="sm-location">55.7558°, 37.6173° — Москва</div>
+                        <div class="sm-grid">
+                            <div class="sm-card">
+                                <div class="sm-card-icon" style="color:#f59e0b">&#9788;</div>
+                                <div class="sm-card-label">Восход</div>
+                                <div class="sm-card-value" id="sm-sunrise">--:--</div>
+                            </div>
+                            <div class="sm-card">
+                                <div class="sm-card-icon" style="color:#f97316">&#127749;</div>
+                                <div class="sm-card-label">Закат</div>
+                                <div class="sm-card-value" id="sm-sunset">--:--</div>
+                            </div>
+                            <div class="sm-card">
+                                <div class="sm-card-icon" style="color:#eab308">&#9200;</div>
+                                <div class="sm-card-label">Световой день</div>
+                                <div class="sm-card-value" id="sm-daylen">--ч --м</div>
+                            </div>
+                            <div class="sm-card">
+                                <div class="sm-card-icon" style="color:#a855f7">&#127769;</div>
+                                <div class="sm-card-label">Фаза луны</div>
+                                <div class="sm-card-value" id="sm-moon">--</div>
+                            </div>
+                        </div>
+                        <div class="sm-moon-visual" id="sm-moon-visual"></div>
+                        <div class="sm-progress">
+                            <div class="sm-progress-bar">
+                                <div class="sm-progress-sun" id="sm-progress-sun"></div>
+                            </div>
+                            <div class="sm-progress-labels">
+                                <span id="sm-label-rise">&#9788; --:--</span>
+                                <span id="sm-label-now" style="color:var(--accent)">Сейчас</span>
+                                <span id="sm-label-set">&#127749; --:--</span>
+                            </div>
+                        </div>
+                        <p class="hint">Данные обновляются при перемещении карты</p>
+                    </div>
+                </section>
+
+                <section class="panel">
                     <button class="panel-toggle" data-panel="datasets">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10A15 15 0 0 1 12 2z"/></svg>
                         <span>Датасеты</span>
@@ -244,7 +402,15 @@
                                     <span class="ds-name">Плотность населения</span>
                                     <span class="ds-desc">По регионам России</span>
                                 </span>
-                            </label>
+                             </label>
+                             <label class="ds-item">
+                                 <input type="checkbox" data-ds="permafrost">
+                                 <span class="ds-icon" style="color:#67e8f9">&#10052;</span>
+                                 <span class="ds-info">
+                                     <span class="ds-name">Вечная мерзлота</span>
+                                     <span class="ds-desc">Зоны распространения</span>
+                                 </span>
+                             </label>
                         </div>
                         <div class="ds-legend" id="ds-legend" style="display:none">
                             <div class="ds-legend-title" id="ds-legend-title"></div>
@@ -271,6 +437,23 @@
                         <div class="quick-nav" id="quick-nav"></div>
                     </div>
                 </section>
+
+                <section class="panel">
+                    <button class="panel-toggle" data-panel="seasons">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                        <span>Календарь сезонов</span>
+                    </button>
+                    <div class="panel-content" id="panel-seasons">
+                        <div style="display:flex;gap:4px;margin-bottom:8px;">
+                            <button class="season-tab active" data-season="hunting">Охота</button>
+                            <button class="season-tab" data-season="fishing">Рыбалка</button>
+                            <button class="season-tab" data-season="mushrooms">Грибы</button>
+                            <button class="season-tab" data-season="berries">Ягоды</button>
+                        </div>
+                        <div id="season-chart"></div>
+                        <div id="season-info" style="margin-top:8px;font-size:11px;color:var(--text-dim)"></div>
+                    </div>
+                </section>
             </div>
 
             <div class="sidebar-foot">
@@ -279,6 +462,10 @@
                     SURVIVE.CIV
                 </a>
                 <span class="version">v2.0</span>
+                <span id="offline-badge" style="display:none;font-size:9px;padding:2px 6px;background:#ef444420;color:#ef4444;border-radius:var(--radius-xs);margin-left:4px">ОФФЛАЙН</span>
+            </div>
+            <div style="padding:0 16px 8px;">
+                <button class="btn btn-ghost" id="btn-clear-cache" style="width:100%;font-size:10px;padding:4px;">Очистить кеш карт</button>
             </div>
         </aside>
 
@@ -303,9 +490,53 @@
                 <button class="tb-btn" id="btn-ruler" title="Линейка (измерение расстояний)">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20M12 2v20M5 9v6M9 7v10M15 7v10M19 9v6"/></svg>
                 </button>
+                <button class="tb-btn" id="btn-compass" title="Компас (C)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor" opacity="0.3"/></svg>
+                </button>
+                <button class="tb-btn" id="btn-tracking" title="GPS-трекинг (G)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
+                </button>
                 <button class="tb-btn" id="btn-fullscreen" title="Полный экран (F)">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
                 </button>
+                <button class="tb-btn" id="btn-share" title="Поделиться ссылкой">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+                <button class="tb-btn" id="btn-screenshot" title="Сохранить карту (PNG)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                </button>
+            </div>
+
+            <div class="compass-widget" id="compass-widget" style="display:none">
+                <div class="compass-ring" id="compass-ring">
+                    <svg viewBox="0 0 120 120" width="110" height="110">
+                        <circle cx="60" cy="60" r="56" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                        <circle cx="60" cy="60" r="48" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+                        <text x="60" y="12" text-anchor="middle" fill="#ff4d4f" font-size="10" font-weight="700" font-family="Inter,sans-serif">N</text>
+                        <text x="108" y="63" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="8" font-family="Inter,sans-serif">E</text>
+                        <text x="60" y="114" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="8" font-family="Inter,sans-serif">S</text>
+                        <text x="12" y="63" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="8" font-family="Inter,sans-serif">W</text>
+                        <text x="60" y="30" text-anchor="middle" fill="rgba(255,255,255,0.25)" font-size="6" font-family="Inter,sans-serif">337</text>
+                        <text x="88" y="28" text-anchor="middle" fill="rgba(255,255,255,0.15)" font-size="6" font-family="Inter,sans-serif">22</text>
+                        <text x="96" y="63" text-anchor="middle" fill="rgba(255,255,255,0.15)" font-size="6" font-family="Inter,sans-serif">67</text>
+                        <text x="88" y="98" text-anchor="middle" fill="rgba(255,255,255,0.15)" font-size="6" font-family="Inter,sans-serif">112</text>
+                        <text x="60" y="106" text-anchor="middle" fill="rgba(255,255,255,0.15)" font-size="6" font-family="Inter,sans-serif">157</text>
+                        <text x="32" y="98" text-anchor="middle" fill="rgba(255,255,255,0.15)" font-size="6" font-family="Inter,sans-serif">202</text>
+                        <text x="24" y="63" text-anchor="middle" fill="rgba(255,255,255,0.15)" font-size="6" font-family="Inter,sans-serif">247</text>
+                        <text x="32" y="28" text-anchor="middle" fill="rgba(255,255,255,0.15)" font-size="6" font-family="Inter,sans-serif">292</text>
+                        <line x1="60" y1="4" x2="60" y2="16" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+                        <line x1="60" y1="104" x2="60" y2="116" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+                        <line x1="4" y1="60" x2="16" y2="60" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+                        <line x1="104" y1="60" x2="116" y2="60" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+                        <polygon id="compass-needle" points="60,18 55,55 60,52 65,55" fill="#ff4d4f" opacity="0.9"/>
+                        <polygon points="60,102 55,65 60,68 65,65" fill="rgba(255,255,255,0.25)"/>
+                        <line id="compass-mag-line" x1="60" y1="60" x2="60" y2="18" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3,2" opacity="0"/>
+                        <circle cx="60" cy="60" r="3" fill="var(--accent)"/>
+                    </svg>
+                </div>
+                <div class="compass-deg" id="compass-deg">0°</div>
+                <div class="compass-dir" id="compass-dir">N</div>
+                <div id="compass-decl" style="font-size:9px;color:var(--text-dim);margin-top:2px;text-align:center"></div>
             </div>
         </main>
     </div>
@@ -313,8 +544,17 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <script src="geomag.js"></script>
     <script src="map.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(function (reg) {
+                console.log('SW registered:', reg.scope);
+                reg.update();
+            }).catch(function (err) {
+                console.log('SW error:', err);
+            });
+        }
+    </script>
 </body>
 </html>
