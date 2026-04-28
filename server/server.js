@@ -2,11 +2,6 @@ const express = require('express');
 const Database = require('better-sqlite3');
 const cors = require('cors');
 const path = require('path');
-const https = require('https');
-const fs = require('fs');
-const crypto = require('crypto');
-
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const app = express();
 const PORT = 3000;
@@ -15,44 +10,6 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '..')));
 app.use('/admin', express.static(path.join(__dirname, '..', 'admin')));
-
-app.get('/tile-proxy', (req, res) => {
-    var url = req.query.url;
-    if (!url || !url.startsWith('https://hutun.ru/')) return res.status(403).send('blocked');
-
-    var cacheDir = path.join(__dirname, '..', 'map', '.tilecache');
-    if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
-    var hash = crypto.createHash('md5').update(url).digest('hex');
-    var cacheFile = path.join(cacheDir, hash);
-
-    if (fs.existsSync(cacheFile)) {
-        var stat = fs.statSync(cacheFile);
-        if (Date.now() - stat.mtimeMs < 30 * 24 * 60 * 60 * 1000) {
-            res.setHeader('Access-Control-Allow-Origin', '*');
-            res.setHeader('Cache-Control', 'public, max-age=2592000');
-            res.setHeader('Content-Type', 'image/jpeg');
-            res.send(fs.readFileSync(cacheFile));
-            return;
-        }
-    }
-
-    https.get(url, { headers: { 'Referer': 'https://retromap.ru/', 'User-Agent': 'Mozilla/5.0' }, rejectUnauthorized: false, timeout: 10000 }, function (proxyRes) {
-        if (proxyRes.statusCode !== 200) {
-            res.status(404).send('');
-            return;
-        }
-        var chunks = [];
-        proxyRes.on('data', function (c) { chunks.push(c); });
-        proxyRes.on('end', function () {
-            var buf = Buffer.concat(chunks);
-            try { fs.writeFileSync(cacheFile, buf); } catch (e) {}
-            res.setHeader('Access-Control-Allow-Origin', '*');
-            res.setHeader('Cache-Control', 'public, max-age=2592000');
-            res.setHeader('Content-Type', proxyRes.headers['content-type'] || 'image/jpeg');
-            res.send(buf);
-        });
-    }).on('error', function () { res.status(502).send(''); }).on('timeout', function () { this.destroy(); res.status(504).send(''); });
-});
 
 const db = new Database(path.join(__dirname, '..', 'survive.db'));
 db.pragma('journal_mode = WAL');

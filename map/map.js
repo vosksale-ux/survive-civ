@@ -150,18 +150,17 @@
     var LAYERS_CONFIG = [
         { id: 'yandex', name: 'Яндекс', icon: '\u{1F4F1}', url: 'https://core-sat.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}&scale=1&lang=ru_RU', opts: { attribution: '\u00a9 Яндекс Карты', maxNativeZoom: 18, maxZoom: 21, subdomains: '' } },
         { id: 'osm', name: 'OSM', icon: '\u{1F5FA}', url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OpenStreetMap', maxNativeZoom: 19, maxZoom: 21 } },
-        { id: 'osmfr', name: 'OSM (FR)', icon: '\u{1F5FA}', url: 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OpenStreetMap France', maxNativeZoom: 19, maxZoom: 21 } },
+        { id: 'osmfr', name: 'OSM (FR)', icon: '\u{1F5FA}', url: 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OSM France', maxNativeZoom: 19, maxZoom: 21 } },
         { id: 'cyclosm', name: 'Цикл', icon: '\u{1F6B2}', url: 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 CyclOSM', maxNativeZoom: 19, maxZoom: 21 } },
         { id: 'topo', name: 'Топо', icon: '\u{26F0}', url: 'https://tile.opentopomap.org/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OpenTopoMap', maxNativeZoom: 17, maxZoom: 21 } },
         { id: 'satellite', name: 'Спутник (Esri)', icon: '\u{1F6F0}', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', opts: { attribution: '\u00a9 Esri', maxNativeZoom: 18, maxZoom: 21 } },
         { id: 'google_sat', name: 'Спутник (Google)', icon: '\u{1F4F7}', url: 'https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', opts: { attribution: '\u00a9 Google', maxNativeZoom: 21, maxZoom: 21, subdomains: '0123' } },
+        { id: 'google_hyb', name: 'Гибрид (Google)', icon: '\u{1F5FA}', url: 'https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', opts: { attribution: '\u00a9 Google', maxNativeZoom: 21, maxZoom: 21, subdomains: '0123' } },
         { id: 'ggc', name: 'ГГЦ', icon: '\u{1F4D0}', url: 'https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OSM Bretagne', maxNativeZoom: 18, maxZoom: 21 } }
     ];
 
-    var HUTUN_LAYERS = [
-        { id: 'gsh500', name: 'Генштаб 500м', icon: '\u{1F3AF}', mcode: '1419909', dir: '9', ext: 'jpg' },
-        { id: 'gsh1km', name: 'Генштаб 1км', icon: '\u{1F3AF}', mcode: '1419909', dir: '9', ext: 'jpg', minZoom: 0, maxNativeZoom: 10 },
-        { id: 'ggc2km', name: 'ГГЦ 2км', icon: '\u{1F4D0}', mcode: '1420012', dir: '0', ext: 'png' }
+    var OVERLAYS_CONFIG = [
+        { id: 'carto_labels', name: 'Подписи (тёмные)', url: 'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', opts: { maxNativeZoom: 20, maxZoom: 21, opacity: 0.8 } }
     ];
 
     var OVERLAYS_CONFIG = [
@@ -199,24 +198,6 @@
 
     LAYERS_CONFIG.forEach(function (cfg) {
         tileLayers[cfg.id] = L.tileLayer(cfg.url, cfg.opts);
-    });
-
-    var HutunTileLayer = L.TileLayer.extend({
-        getTileUrl: function (coords) {
-            var remoteUrl = 'https://hutun.ru/tiles/' + this.options._dir + '/' + this.options._mcode + '/Z' + coords.z + '/' + coords.y + '/' + coords.x + '.' + this.options._ext;
-            return '/tile-proxy?url=' + encodeURIComponent(remoteUrl);
-        }
-    });
-
-    HUTUN_LAYERS.forEach(function (cfg) {
-        tileLayers[cfg.id] = new HutunTileLayer('', {
-            attribution: '\u00a9 hutun.ru',
-            maxNativeZoom: cfg.maxNativeZoom || 14,
-            maxZoom: 21,
-            _dir: cfg.dir,
-            _mcode: cfg.mcode,
-            _ext: cfg.ext
-        });
     });
 
     function setLayer(id) {
