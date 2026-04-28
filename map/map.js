@@ -158,6 +158,12 @@
         { id: 'ggc', name: 'ГГЦ', icon: '\u{1F4D0}', url: 'https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OSM Bretagne', maxNativeZoom: 18, maxZoom: 21 } }
     ];
 
+    var HUTUN_LAYERS = [
+        { id: 'gsh500', name: 'Генштаб 500м', icon: '\u{1F3AF}', mcode: '1419909', dir: '9', ext: 'jpg' },
+        { id: 'gsh1km', name: 'Генштаб 1км', icon: '\u{1F3AF}', mcode: '1419909', dir: '9', ext: 'jpg', minZoom: 0, maxNativeZoom: 10 },
+        { id: 'ggc2km', name: 'ГГЦ 2км', icon: '\u{1F4D0}', mcode: '1420012', dir: '0', ext: 'png' }
+    ];
+
     var OVERLAYS_CONFIG = [
         { id: 'topo_labels', name: 'Топо подписи', url: 'https://tile.opentopomap.org/{z}/{x}/{y}.png', opts: { maxNativeZoom: 17, maxZoom: 21, opacity: 0.7 } },
         { id: 'carto_labels', name: 'Подписи (тёмные)', url: 'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', opts: { maxNativeZoom: 19, maxZoom: 21, opacity: 0.8 } },
@@ -193,6 +199,24 @@
 
     LAYERS_CONFIG.forEach(function (cfg) {
         tileLayers[cfg.id] = L.tileLayer(cfg.url, cfg.opts);
+    });
+
+    var HutunTileLayer = L.TileLayer.extend({
+        getTileUrl: function (coords) {
+            var remoteUrl = 'https://hutun.ru/tiles/' + this.options._dir + '/' + this.options._mcode + '/Z' + coords.z + '/' + coords.y + '/' + coords.x + '.' + this.options._ext;
+            return '/tile-proxy?url=' + encodeURIComponent(remoteUrl);
+        }
+    });
+
+    HUTUN_LAYERS.forEach(function (cfg) {
+        tileLayers[cfg.id] = new HutunTileLayer('', {
+            attribution: '\u00a9 hutun.ru',
+            maxNativeZoom: cfg.maxNativeZoom || 14,
+            maxZoom: 21,
+            _dir: cfg.dir,
+            _mcode: cfg.mcode,
+            _ext: cfg.ext
+        });
     });
 
     function setLayer(id) {

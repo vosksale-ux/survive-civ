@@ -2,6 +2,9 @@ const express = require('express');
 const Database = require('better-sqlite3');
 const cors = require('cors');
 const path = require('path');
+const https = require('https');
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const app = express();
 const PORT = 3000;
@@ -10,6 +13,23 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '..')));
 app.use('/admin', express.static(path.join(__dirname, '..', 'admin')));
+
+app.get('/tile-proxy', (req, res) => {
+    var url = req.query.url;
+    if (!url || !url.startsWith('https://hutun.ru/')) return res.status(403).send('blocked');
+    https.get(url, { headers: { 'Referer': 'https://retromap.ru/', 'User-Agent': 'Mozilla/5.0' }, rejectUnauthorized: false }, function (proxyRes) {
+        if (proxyRes.statusCode !== 200) {
+            res.status(proxyRes.statusCode).send('upstream error');
+            return;
+        }
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Cache-Control', 'public, max-age=2592000');
+        res.setHeader('Content-Type', proxyRes.headers['content-type'] || 'image/jpeg');
+        var chunks = [];
+        proxyRes.on('data', function (c) { chunks.push(c); });
+        proxyRes.on('end', function () { res.send(Buffer.concat(chunks)); });
+    }).on('error', function (e) { res.status(502).send('error: ' + e.message); });
+});
 
 const db = new Database(path.join(__dirname, '..', 'survive.db'));
 db.pragma('journal_mode = WAL');
