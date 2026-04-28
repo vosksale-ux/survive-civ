@@ -2826,7 +2826,7 @@
         }
     }
 
-    var initFns = [initPanels, initSidebar, initSearch, initRoute, initElevation, initBookmarks, initMarkers, initImport, initDownload, initDangers, initRegions, initCoords, initSunMoon, initWeather, initAurora, initRuler, initCompass, initTracking, initFullscreen, initLocate, initMapEvents, initKeyboard];
+    var initFns = [initPanels, initSidebar, initSearch, initRoute, initElevation, initBookmarks, initMarkers, initImport, initDownload, initRegions, initCoords, initSunMoon, initWeather, initAurora, initRuler, initCompass, initTracking, initFullscreen, initLocate, initMapEvents, initKeyboard];
     initFns.forEach(function (fn) {
         try { fn(); } catch (e) { console.error('Init error:', fn.name, e); }
     });
