@@ -81,11 +81,12 @@ self.addEventListener('fetch', function (e) {
 });
 
 function isTileRequest(url) {
-    var hosts = ['tile.openstreetmap.org', 'tile.opentopomap.org', 'tile-cyclosm.openstreetmap.fr',
-        'server.arcgisonline.com', 'basemaps.cartocdn.com', 'tiles.wmflabs.org',
+    var hosts = ['tile.openstreetmap.org', 'tile.opentopomap.org',
+        'a.tile-cyclosm.openstreetmap.fr', 'b.tile-cyclosm.openstreetmap.fr', 'c.tile-cyclosm.openstreetmap.fr',
+        'server.arcgisonline.com', 'basemaps.cartocdn.com',
         'core-sat.maps.yandex.net', 'core-renderer-tiles.maps.yandex.net',
-        'a.tile.osm-tools.org', 'b.tile.osm-tools.org',
         'tile.openstreetmap.bzh',
+        'a.tile.openstreetmap.fr', 'b.tile.openstreetmap.fr', 'c.tile.openstreetmap.fr',
         'mt0.google.com', 'mt1.google.com', 'mt2.google.com', 'mt3.google.com'];
     return hosts.indexOf(url.hostname) !== -1;
 }

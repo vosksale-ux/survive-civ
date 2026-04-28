@@ -150,16 +150,18 @@
     var LAYERS_CONFIG = [
         { id: 'yandex', name: 'Яндекс', icon: '\u{1F4F1}', url: 'https://core-sat.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}&scale=1&lang=ru_RU', opts: { attribution: '\u00a9 Яндекс Карты', maxNativeZoom: 18, maxZoom: 21, subdomains: '' } },
         { id: 'osm', name: 'OSM', icon: '\u{1F5FA}', url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OpenStreetMap', maxNativeZoom: 19, maxZoom: 21 } },
+        { id: 'osmfr', name: 'OSM (FR)', icon: '\u{1F5FA}', url: 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OpenStreetMap France', maxNativeZoom: 19, maxZoom: 21 } },
         { id: 'cyclosm', name: 'Цикл', icon: '\u{1F6B2}', url: 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 CyclOSM', maxNativeZoom: 19, maxZoom: 21 } },
-        { id: 'relief', name: 'Рельеф', icon: '\u{26F0}', url: 'https://tile.opentopomap.org/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OpenTopoMap', maxNativeZoom: 17, maxZoom: 21 } },
+        { id: 'topo', name: 'Топо', icon: '\u{26F0}', url: 'https://tile.opentopomap.org/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OpenTopoMap', maxNativeZoom: 17, maxZoom: 21 } },
         { id: 'satellite', name: 'Спутник (Esri)', icon: '\u{1F6F0}', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', opts: { attribution: '\u00a9 Esri', maxNativeZoom: 18, maxZoom: 21 } },
         { id: 'google_sat', name: 'Спутник (Google)', icon: '\u{1F4F7}', url: 'https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', opts: { attribution: '\u00a9 Google', maxNativeZoom: 21, maxZoom: 21, subdomains: '0123' } },
-        { id: 'gsh', name: 'Генштаб', icon: '\u{1F3AF}', url: 'https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 Wikimedia', maxNativeZoom: 19, maxZoom: 21 } },
-        { id: 'ggc', name: 'ГГЦ', icon: '\u{1F4D0}', url: 'https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OpenStreetMap Bretagne', maxNativeZoom: 18, maxZoom: 21 } }
+        { id: 'ggc', name: 'ГГЦ', icon: '\u{1F4D0}', url: 'https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OSM Bretagne', maxNativeZoom: 18, maxZoom: 21 } }
     ];
 
     var OVERLAYS_CONFIG = [
-        { id: 'hillshade', name: 'Рельеф (затенение)', url: 'https://tiles.wmflabs.org/hillshading/{z}/{x}/{y}.png', opts: { maxZoom: 16, opacity: 0.5 } }
+        { id: 'topo_labels', name: 'Топо подписи', url: 'https://tile.opentopomap.org/{z}/{x}/{y}.png', opts: { maxNativeZoom: 17, maxZoom: 21, opacity: 0.7 } },
+        { id: 'carto_labels', name: 'Подписи (тёмные)', url: 'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', opts: { maxNativeZoom: 19, maxZoom: 21, opacity: 0.8 } },
+        { id: 'carto_nolabels', name: 'Без подписей', url: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', opts: { maxNativeZoom: 19, maxZoom: 21 } }
     ];
 
     var map = L.map('map', {
