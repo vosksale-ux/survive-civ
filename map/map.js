@@ -162,12 +162,6 @@
         { id: 'carto_labels', name: 'Подписи (тёмные)', url: 'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', opts: { maxNativeZoom: 20, maxZoom: 21, opacity: 0.8 } }
     ];
 
-    var OVERLAYS_CONFIG = [
-        { id: 'topo_labels', name: 'Топо подписи', url: 'https://tile.opentopomap.org/{z}/{x}/{y}.png', opts: { maxNativeZoom: 17, maxZoom: 21, opacity: 0.7 } },
-        { id: 'carto_labels', name: 'Подписи (тёмные)', url: 'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', opts: { maxNativeZoom: 19, maxZoom: 21, opacity: 0.8 } },
-        { id: 'carto_nolabels', name: 'Без подписей', url: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', opts: { maxNativeZoom: 19, maxZoom: 21 } }
-    ];
-
     var map = L.map('map', {
         center: [55.7558, 37.6173],
         zoom: 6,
