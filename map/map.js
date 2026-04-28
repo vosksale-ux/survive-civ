@@ -2700,50 +2700,133 @@
         setTimeout(function () { t.style.opacity = '0'; setTimeout(function () { t.remove(); }, 300); }, 2000);
     }
 
-    function initCalc() {
-        document.getElementById('calc-run').addEventListener('click', calcSurvival);
+    function initDangers() {
+        var DANGERS_DATA = {
+            winter: {
+                name: 'Зима (дек — фев)',
+                icon: '&#10052;',
+                color: '#67e8f9',
+                dangers: [
+                    { name: 'Обморожение', severity: 'critical', desc: 'От -15°C открытие участки за 10 мин. Конечности, нос, уши. Признаки: онемение, побеление кожи.' },
+                    { name: 'Гипотермия', severity: 'critical', desc: 'Температура тела ниже 35°C. Смерть без укрытия за 3-6 часов. Дрожь, спутанность сознания.' },
+                    { name: 'Лавины', severity: 'high', desc: 'Склоны 30-45°. После снегопада 48 часов. 90% жертв сами спровоцировали сход.' },
+                    { name: 'Провал под лёд', severity: 'high', desc: 'Лёд < 7 см опасен. Река — 4 см, озеро — 10 см. Выбираться лёжа, ползком.' },
+                    { name: 'Угарный газ', severity: 'high', desc: 'Печка в палатке без вытяжки. Головная боль, тошнота, сонливость = первые признаки.' },
+                    { name: 'Волки', severity: 'medium', desc: 'Стая зимой агрессивнее. Дефицит пищи. Не убегать. Зрительный контакт, палка, огонь.' },
+                    { name: 'Пурга / метель', severity: 'high', desc: 'Видимость 0. Дезориентация за 50м от укрытия. Остановиться, выкопать снежную яму.' }
+                ]
+            },
+            spring: {
+                name: 'Весна (мар — май)',
+                icon: '&#127793;',
+                color: '#22c55e',
+                dangers: [
+                    { name: 'Половодье', severity: 'high', desc: 'Подъём воды на 2-8м. Лёд ломает мосты. Не ставить лагерь в низине у реки.' },
+                    { name: 'Клещи', severity: 'critical', desc: 'Активны с +5°C. Энцефалит, боррелиоз. Осмотр каждые 2 часа. Удалить в первые 24ч.' },
+                    { name: 'Гололёд', severity: 'medium', desc: 'Переломы, травмы. Температура около 0°C + дождь. Подошва с протектором.' },
+                    { name: 'Змеи', severity: 'medium', desc: 'Гадюки просыпаются. Укус — боль, отёк, некроз. Не кричать, не резать, иммобилизация.' },
+                    { name: 'Тонкий лёд', severity: 'high', desc: 'Апрельский лёд — обманчиво крепкий. Не переходить реки, если лёд потемнел.' },
+                    { name: 'Бешенство', severity: 'critical', desc: 'Лисы, еноты, летучие мыши. Укус = немедленно к врачу. Прививка в первые 72ч.' }
+                ]
+            },
+            summer: {
+                name: 'Лето (июн — авг)',
+                icon: '&#9728;',
+                color: '#f59e0b',
+                dangers: [
+                    { name: 'Клещи', severity: 'critical', desc: 'Пик активности июнь-июль. Энцефалит: температура, головная боль, паралич.' },
+                    { name: 'Пожары', severity: 'high', desc: 'Торфяные горят под землёй. Дым = токсично. Идти перпендикулярно ветру.' },
+                    { name: 'Тепловой удар', severity: 'high', desc: '>35°C + влажность. Температура 40+, потеря сознания. В тень, вода на голову.' },
+                    { name: 'Грозы', severity: 'medium', desc: 'Молния бьёт в самое высокое. Не под деревьями. Присесть на корточки, ноги вместе.' },
+                    { name: 'Змеи', severity: 'medium', desc: 'Гадюки активны. Камни, дрова — сначала тронуть палкой. Сыворотка в аптечке.' },
+                    { name: 'Комары / слепни', severity: 'low', desc: 'Не опасны, но истощают. ДЭТА, дым, сетка. Слепни переносят сибирскую язву.' },
+                    { name: 'Ядовитые растения', severity: 'medium', desc: 'Борщевик Сосновского — ожоги 3 степени на солнце. Вёх — смертельно ядовит.' },
+                    { name: 'Медведь', severity: 'high', desc: 'Встреча на ягодниках. Не убегать. Говорить спокойно. Место для него = уступить.' }
+                ]
+            },
+            autumn: {
+                name: 'Осень (сен — ноя)',
+                icon: '&#127810;',
+                color: '#f97316',
+                dangers: [
+                    { name: 'Клещи', severity: 'high', desc: 'Вторая волна активности сентябрь-октябрь. Тёплая осень = клещи до ноября.' },
+                    { name: 'Листья / слякоть', severity: 'low', desc: 'Скользко. Аналог гололёда. Ботинки с протектором. Треккинговые палки.' },
+                    { name: 'Туман', severity: 'medium', desc: 'Видимость < 50м. Потеря ориентации. Компас обязателен, GPS быстро садится.' },
+                    { name: 'Ранние заморозки', severity: 'medium', desc: '-5°C ночью в сентябре. Гипотермия если без спальника. Фольга NLF в кармане.' },
+                    { name: 'Паводки', severity: 'medium', desc: 'Дожди размывают дороги и мосты. Не переходить вброд выше колена.' },
+                    { name: 'Бешенство', severity: 'critical', desc: 'Осенью животные мигрируют. Любое укушенное животное = угроза.' }
+                ]
+            }
+        };
+
+        var month = new Date().getMonth();
+        var seasonKey = month >= 2 && month <= 4 ? 'spring' : month >= 5 && month <= 7 ? 'summer' : month >= 8 && month <= 10 ? 'autumn' : 'winter';
+        var season = DANGERS_DATA[seasonKey];
+
+        var nameEl = document.getElementById('dangers-season-name');
+        if (nameEl) nameEl.innerHTML = season.icon + ' ' + season.name;
+
+        var listEl = document.getElementById('dangers-list');
+        if (!listEl) return;
+
+        listEl.innerHTML = season.dangers.map(function (d) {
+            var sevColors = { critical: '#ef4444', high: '#f97316', medium: '#eab308', low: '#22c55e' };
+            var sevNames = { critical: 'Критично', high: 'Высокая', medium: 'Средняя', low: 'Низкая' };
+            var c = sevColors[d.severity] || '#6b7280';
+            return '<div style="padding:8px 10px;background:var(--bg-hover);border-radius:var(--radius-sm);border-left:3px solid ' + c + '">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">' +
+                '<span style="font-size:12px;font-weight:600;color:var(--text)">' + escHtml(d.name) + '</span>' +
+                '<span style="font-size:9px;padding:2px 6px;border-radius:var(--radius-xs);background:' + c + '20;color:' + c + ';font-weight:600;text-transform:uppercase">' + sevNames[d.severity] + '</span>' +
+                '</div>' +
+                '<div style="font-size:11px;color:var(--text-dim);line-height:1.4">' + escHtml(d.desc) + '</div>' +
+                '</div>';
+        }).join('');
+
+        var allSeasons = ['winter', 'spring', 'summer', 'autumn'];
+        var tabsHtml = '<div style="display:flex;gap:4px;margin-top:12px;margin-bottom:6px">' + allSeasons.map(function (k) {
+            var s = DANGERS_DATA[k];
+            var active = k === seasonKey;
+            return '<button class="dangers-season-tab" data-season="' + k + '" style="flex:1;padding:4px 6px;font-size:10px;border:1px solid ' + (active ? s.color : 'var(--border)') + ';background:' + (active ? s.color + '20' : 'transparent') + ';color:' + (active ? s.color : 'var(--text-dim)') + ';border-radius:var(--radius-xs);cursor:pointer;font-family:var(--font)">' + s.icon + '</button>';
+        }).join('') + '</div>';
+        listEl.insertAdjacentHTML('beforeend', tabsHtml);
+
+        listEl.querySelectorAll('.dangers-season-tab').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var k = this.dataset.season;
+                var s = DANGERS_DATA[k];
+                nameEl.innerHTML = s.icon + ' ' + s.name;
+                renderDangersSeason(k, DANGERS_DATA);
+            });
+        });
+
+        function renderDangersSeason(key, data) {
+            var s = data[key];
+            var items = s.dangers.map(function (d) {
+                var sevColors = { critical: '#ef4444', high: '#f97316', medium: '#eab308', low: '#22c55e' };
+                var sevNames = { critical: 'Критично', high: 'Высокая', medium: 'Средняя', low: 'Низкая' };
+                var c = sevColors[d.severity] || '#6b7280';
+                return '<div style="padding:8px 10px;background:var(--bg-hover);border-radius:var(--radius-sm);border-left:3px solid ' + c + '">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">' +
+                    '<span style="font-size:12px;font-weight:600;color:var(--text)">' + escHtml(d.name) + '</span>' +
+                    '<span style="font-size:9px;padding:2px 6px;border-radius:var(--radius-xs);background:' + c + '20;color:' + c + ';font-weight:600;text-transform:uppercase">' + sevNames[d.severity] + '</span>' +
+                    '</div>' +
+                    '<div style="font-size:11px;color:var(--text-dim);line-height:1.4">' + escHtml(d.desc) + '</div>' +
+                    '</div>';
+            }).join('');
+            var tabsContainer = listEl.querySelector('.dangers-season-tab').parentElement;
+            listEl.innerHTML = items;
+            listEl.appendChild(tabsContainer);
+            listEl.querySelectorAll('.dangers-season-tab').forEach(function (btn) {
+                var isActive = btn.dataset.season === key;
+                btn.style.borderColor = isActive ? s.color : 'var(--border)';
+                btn.style.background = isActive ? s.color + '20' : 'transparent';
+                btn.style.color = isActive ? s.color : 'var(--text-dim)';
+                btn.onclick = function () { renderDangersSeason(btn.dataset.season, data); };
+            });
+        }
     }
 
-    function calcSurvival() {
-        var people = parseInt(document.getElementById('calc-people').value) || 1;
-        var days = parseInt(document.getElementById('calc-days').value) || 3;
-        var temp = parseFloat(document.getElementById('calc-temp').value);
-        var activity = document.getElementById('calc-activity').value;
-
-        var calPerDay = { rest: 1500, light: 2000, moderate: 2800, heavy: 3800 };
-        var waterPerDay = { rest: 2, light: 3, moderate: 4, heavy: 6 };
-
-        var coldFactor = temp < -20 ? 1.6 : temp < -10 ? 1.4 : temp < 0 ? 1.3 : temp < 10 ? 1.15 : 1;
-        var cal = Math.round(calPerDay[activity] * coldFactor);
-        var water = +(waterPerDay[activity] * coldFactor).toFixed(1);
-
-        var totalCal = cal * people * days;
-        var totalWater = water * people * days;
-
-        var shelter = temp < -10 ? 'Критично — каркасная с печкой' : temp < 0 ? 'Обязательно — утеплённое укрытие' : temp < 10 ? 'Желательно — защита от ветра и дождя' : 'Навес от дождя';
-
-        var firewood = activity !== 'rest' ? Math.round(people * days * (temp < 0 ? 15 : temp < 10 ? 8 : 3)) : Math.round(people * days * (temp < 0 ? 12 : temp < 10 ? 5 : 0));
-
-        var risk = temp < -30 ? 'Экстремальный' : temp < -15 ? 'Высокий' : temp < 0 ? 'Повышенный' : temp < 10 ? 'Умеренный' : 'Низкий';
-        var riskColor = temp < -15 ? '#ef4444' : temp < 0 ? '#f97316' : temp < 10 ? '#eab308' : '#22c55e';
-
-        var el = document.getElementById('calc-results');
-        el.innerHTML =
-            '<div style="margin-top:8px;padding:8px;background:var(--bg-hover);border-radius:var(--radius-sm);">' +
-            '<div style="font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:' + riskColor + ';font-weight:700;margin-bottom:6px;">Риск: ' + risk + '</div>' +
-            '<table style="width:100%;font-size:11px;border-collapse:collapse;">' +
-            '<tr><td style="padding:3px 0;color:var(--text-dim)">Вода</td><td style="padding:3px 0;text-align:right;font-family:var(--font-mono);font-weight:600">' + water + ' л/день / чел</td></tr>' +
-            '<tr><td style="padding:3px 0;color:var(--text-dim)">Вода всего</td><td style="padding:3px 0;text-align:right;font-family:var(--font-mono);font-weight:600">' + totalWater + ' л</td></tr>' +
-            '<tr><td style="padding:3px 0;color:var(--text-dim)">Калории</td><td style="padding:3px 0;text-align:right;font-family:var(--font-mono);font-weight:600">' + cal + ' ккал/день / чел</td></tr>' +
-            '<tr><td style="padding:3px 0;color:var(--text-dim)">Калории всего</td><td style="padding:3px 0;text-align:right;font-family:var(--font-mono);font-weight:600">' + totalCal.toLocaleString() + ' ккал</td></tr>' +
-            (firewood > 0 ? '<tr><td style="padding:3px 0;color:var(--text-dim)">Дрова</td><td style="padding:3px 0;text-align:right;font-family:var(--font-mono);font-weight:600">\u2248 ' + firewood + ' кг</td></tr>' : '') +
-            '<tr><td style="padding:3px 0;color:var(--text-dim)">Укрытие</td><td style="padding:3px 0;text-align:right;font-size:10px">' + shelter + '</td></tr>' +
-            '</table>' +
-            '<div style="margin-top:6px;font-size:10px;color:var(--text-dim)">Без воды — 3 дня. Без еды — до 3 недель. Без укрытия при ' + temp + '°C — ' + (temp < -15 ? 'часы' : temp < 0 ? 'до суток' : 'несколько дней') + '</div>' +
-            '</div>';
-    }
-
-    var initFns = [initPanels, initSidebar, initSearch, initRoute, initElevation, initBookmarks, initMarkers, initImport, initDownload, initDatasets, initRegions, initCoords, initSunMoon, initWeather, initAurora, initRuler, initCompass, initTracking, initFullscreen, initLocate, initMapEvents, initKeyboard];
+    var initFns = [initPanels, initSidebar, initSearch, initRoute, initElevation, initBookmarks, initMarkers, initImport, initDownload, initDangers, initRegions, initCoords, initSunMoon, initWeather, initAurora, initRuler, initCompass, initTracking, initFullscreen, initLocate, initMapEvents, initKeyboard];
     initFns.forEach(function (fn) {
         try { fn(); } catch (e) { console.error('Init error:', fn.name, e); }
     });

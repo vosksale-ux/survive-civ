@@ -270,41 +270,6 @@
                 </section>
 
                 <section class="panel">
-                    <button class="panel-toggle" data-panel="calc">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
-                        <span>Калькулятор выживания</span>
-                    </button>
-                    <div class="panel-content" id="panel-calc">
-                        <div class="sub-title">Параметры</div>
-                        <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
-                            <label style="display:flex;flex-direction:column;gap:3px;">
-                                <span style="color:var(--text-dim);font-size:10px;">Людей в группе</span>
-                                <input type="number" id="calc-people" value="1" min="1" max="50" style="background:var(--bg-hover);border:1px solid var(--border);border-radius:var(--radius-xs);padding:6px 8px;color:var(--text);font-size:13px;font-family:var(--font-mono);outline:none;">
-                            </label>
-                            <label style="display:flex;flex-direction:column;gap:3px;">
-                                <span style="color:var(--text-dim);font-size:10px;">Дней до спасения</span>
-                                <input type="number" id="calc-days" value="3" min="1" max="365" style="background:var(--bg-hover);border:1px solid var(--border);border-radius:var(--radius-xs);padding:6px 8px;color:var(--text);font-size:13px;font-family:var(--font-mono);outline:none;">
-                            </label>
-                            <label style="display:flex;flex-direction:column;gap:3px;">
-                                <span style="color:var(--text-dim);font-size:10px;">Температура (°C)</span>
-                                <input type="number" id="calc-temp" value="10" style="background:var(--bg-hover);border:1px solid var(--border);border-radius:var(--radius-xs);padding:6px 8px;color:var(--text);font-size:13px;font-family:var(--font-mono);outline:none;">
-                            </label>
-                            <label style="display:flex;flex-direction:column;gap:3px;">
-                                <span style="color:var(--text-dim);font-size:10px;">Активность</span>
-                                <select id="calc-activity" style="background:var(--bg-hover);border:1px solid var(--border);border-radius:var(--radius-xs);padding:6px 8px;color:var(--text);font-size:12px;font-family:var(--font);outline:none;">
-                                    <option value="rest">Отдых / укрытие</option>
-                                    <option value="light">Лёгкая ходьба</option>
-                                    <option value="moderate" selected>Поход / марш</option>
-                                    <option value="heavy">Тяжёлый труд</option>
-                                </select>
-                            </label>
-                            <button class="btn" id="calc-run" style="margin-top:4px;">Рассчитать</button>
-                        </div>
-                        <div id="calc-results" style="margin-top:10px;"></div>
-                    </div>
-                </section>
-
-                <section class="panel">
                     <button class="panel-toggle" data-panel="sunmoon">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
                         <span>Солнце и Луна</span>
@@ -349,73 +314,14 @@
                 </section>
 
                 <section class="panel">
-                    <button class="panel-toggle" data-panel="datasets">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10A15 15 0 0 1 12 2z"/></svg>
-                        <span>Датасеты</span>
+                    <button class="panel-toggle" data-panel="dangers">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        <span>Опасности по сезонам</span>
                     </button>
-                    <div class="panel-content" id="panel-datasets">
-                        <div class="ds-list">
-                            <label class="ds-item">
-                                <input type="checkbox" data-ds="water">
-                                <span class="ds-icon" style="color:#3b9eff">&#9749;</span>
-                                <span class="ds-info">
-                                    <span class="ds-name">Источники воды</span>
-                                    <span class="ds-desc">Реки, озёра, родники</span>
-                                </span>
-                            </label>
-                            <label class="ds-item">
-                                <input type="checkbox" data-ds="dangers">
-                                <span class="ds-icon" style="color:#ff4d4f">&#9888;</span>
-                                <span class="ds-info">
-                                    <span class="ds-name">Зоны опасности</span>
-                                    <span class="ds-desc">Радиация, пожары, клещи</span>
-                                </span>
-                            </label>
-                            <label class="ds-item">
-                                <input type="checkbox" data-ds="abandoned">
-                                <span class="ds-icon" style="color:#a855f7">&#9960;</span>
-                                <span class="ds-info">
-                                    <span class="ds-name">Заброшенные места</span>
-                                    <span class="ds-desc">Деревни, бункеры, базы</span>
-                                </span>
-                            </label>
-                            <label class="ds-item">
-                                <input type="checkbox" data-ds="biomes">
-                                <span class="ds-icon" style="color:#22c55e">&#9752;</span>
-                                <span class="ds-info">
-                                    <span class="ds-name">Природные зоны</span>
-                                    <span class="ds-desc">Тайга, тундра, степь</span>
-                                </span>
-                            </label>
-                            <label class="ds-item">
-                                <input type="checkbox" data-ds="evacuation">
-                                <span class="ds-icon" style="color:#f97316">&#10148;</span>
-                                <span class="ds-info">
-                                    <span class="ds-name">Маршруты эвакуации</span>
-                                    <span class="ds-desc">Пути отхода из городов</span>
-                                </span>
-                            </label>
-                            <label class="ds-item">
-                                <input type="checkbox" data-ds="population">
-                                <span class="ds-icon" style="color:#eab308">&#9679;</span>
-                                <span class="ds-info">
-                                    <span class="ds-name">Плотность населения</span>
-                                    <span class="ds-desc">По регионам России</span>
-                                </span>
-                             </label>
-                             <label class="ds-item">
-                                 <input type="checkbox" data-ds="permafrost">
-                                 <span class="ds-icon" style="color:#67e8f9">&#10052;</span>
-                                 <span class="ds-info">
-                                     <span class="ds-name">Вечная мерзлота</span>
-                                     <span class="ds-desc">Зоны распространения</span>
-                                 </span>
-                             </label>
-                        </div>
-                        <div class="ds-legend" id="ds-legend" style="display:none">
-                            <div class="ds-legend-title" id="ds-legend-title"></div>
-                            <div class="ds-legend-body" id="ds-legend-body"></div>
-                        </div>
+                    <div class="panel-content" id="panel-dangers">
+                        <div class="sub-title" style="margin-bottom:8px">Текущий сезон</div>
+                        <div id="dangers-season-name" style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:10px;"></div>
+                        <div id="dangers-list" style="display:flex;flex-direction:column;gap:8px;"></div>
                     </div>
                 </section>
 
