@@ -168,6 +168,8 @@
         return r.json();
     }
 
+    function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
     // NAVIGATION
     document.querySelectorAll('.sidebar-link[data-page]').forEach(el => {
         el.addEventListener('click', () => {
@@ -195,13 +197,13 @@
         const data = await api('/api/scenarios');
         currentData.scenarios = data;
         document.getElementById('tbl-scenarios').innerHTML = data.map(s => `<tr>
-            <td style="font-family:var(--font-m);font-size:12px;color:var(--text3)">${s.id}</td>
-            <td>${s.icon}</td>
-            <td class="td-title">${s.title}</td>
+            <td style="font-family:var(--font-m);font-size:12px;color:var(--text3)"></td>
+            <td></td>
+            <td class="td-title"></td>
             <td>${s.probability}%</td>
             <td><span class="badge badge-${s.severity}">${s.severity}</span></td>
             <td>${s.survival_rate}</td>
-            <td><button class="btn" onclick="openScenarioModal('${s.id}')">✎</button> <button class="btn btn-red" onclick="del('scenarios','${s.id}')">✕</button></td>
+            <td><button class="btn" onclick="openScenarioModal('')">✎</button> <button class="btn btn-red" onclick="del('scenarios','')">✕</button></td>
         </tr>`).join('');
     }
 
@@ -210,7 +212,7 @@
         document.getElementById('modal-content').innerHTML = `<h2>${id ? 'Редактировать' : 'Новый'} сценарий</h2>
             <div class="form-row"><div class="form-group"><label>ID</label><input id="f-id" value="${s.id||''}" ${id?'readonly':''}></div><div class="form-group"><label>Иконка</label><input id="f-icon" value="${s.icon||''}"></div></div>
             <div class="form-group"><label>Название</label><input id="f-title" value="${s.title||''}"></div>
-            <div class="form-group"><label>Описание</label><textarea id="f-desc">${s.description||''}</textarea></div>
+            <div class="form-group"><label>Описание</label><textarea id="f-desc"></textarea></div>
             <div class="form-row"><div class="form-group"><label>Вероятность %</label><input type="number" id="f-prob" value="${s.probability||0}"></div><div class="form-group"><label>Severity</label><select id="f-sev"><option ${s.severity==='critical'?'selected':''}>critical</option><option ${s.severity==='high'?'selected':''}>high</option><option ${s.severity==='medium'?'selected':''}>medium</option></select></div></div>
             <div class="form-row"><div class="form-group"><label>Таймфрейм</label><input id="f-time" value="${s.timeframe||''}"></div><div class="form-group"><label>Выжившие</label><input id="f-surv" value="${s.survival_rate||''}"></div></div>
             <div class="form-group"><label>Заголовок деталей</label><input id="f-dtitle" value="${s.detail_title||''}"></div>
@@ -232,7 +234,7 @@
         document.getElementById('tbl-articles').innerHTML = data.map(a => `<tr>
             <td style="font-family:var(--font-m);color:var(--text3)">${a.id}</td>
             <td><span class="badge badge-medium">${a.cat_label}</span></td>
-            <td class="td-title">${a.title}</td>
+            <td class="td-title"></td>
             <td>${a.read_time}</td>
             <td><button class="btn" onclick="openArticleModal(${a.id})">✎</button> <button class="btn btn-red" onclick="del('articles',${a.id})">✕</button></td>
         </tr>`).join('');
@@ -243,7 +245,7 @@
         document.getElementById('modal-content').innerHTML = `<h2>${id ? 'Редактировать' : 'Новая'} статья</h2>
             <div class="form-row"><div class="form-group"><label>Категория</label><select id="f-cat"><option value="basics" ${a.category==='basics'?'selected':''}>Основы</option><option value="medicine" ${a.category==='medicine'?'selected':''}>Медицина</option><option value="engineering" ${a.category==='engineering'?'selected':''}>Инженерия</option><option value="food" ${a.category==='food'?'selected':''}>Еда и вода</option><option value="science" ${a.category==='science'?'selected':''}>Наука</option></select></div><div class="form-group"><label>Время чтения</label><input id="f-rt" value="${a.read_time||'5 мин'}"></div></div>
             <div class="form-group"><label>Заголовок</label><input id="f-title" value="${a.title||''}"></div>
-            <div class="form-group"><label>Отрывок</label><textarea id="f-excerpt">${a.excerpt||''}</textarea></div>
+            <div class="form-group"><label>Отрывок</label><textarea id="f-excerpt"></textarea></div>
             <div class="form-group"><label>Тело (HTML)</label><textarea id="f-body" style="min-height:250px">${a.body||''}</textarea></div>
             <div class="form-group"><label>Градиент</label><input id="f-grad" value="${a.gradient||'linear-gradient(135deg, #1a1a2e, #16213e)'}"></div>
             <button class="btn btn-accent" onclick="saveArticle(${id||0})">Сохранить</button>`;
@@ -264,7 +266,7 @@
         currentData.videos = data;
         document.getElementById('tbl-videos').innerHTML = data.map(v => `<tr>
             <td style="font-family:var(--font-m);color:var(--text3)">${v.id}</td>
-            <td class="td-title">${v.title}</td>
+            <td class="td-title"></td>
             <td>${v.tag}</td><td>${v.duration}</td>
             <td><button class="btn" onclick="openVideoModal(${v.id})">✎</button> <button class="btn btn-red" onclick="del('videos',${v.id})">✕</button></td>
         </tr>`).join('');
@@ -274,7 +276,7 @@
         const v = id ? currentData.videos.find(x => x.id === id) : {};
         document.getElementById('modal-content').innerHTML = `<h2>${id ? 'Редактировать' : 'Новое'} видео</h2>
             <div class="form-group"><label>Название</label><input id="f-title" value="${v.title||''}"></div>
-            <div class="form-group"><label>Описание</label><textarea id="f-desc">${v.description||''}</textarea></div>
+            <div class="form-group"><label>Описание</label><textarea id="f-desc"></textarea></div>
             <div class="form-row"><div class="form-group"><label>Длительность</label><input id="f-dur" value="${v.duration||'10:00'}"></div><div class="form-group"><label>Тег</label><input id="f-tag" value="${v.tag||''}"></div></div>
             <div class="form-group"><label>Цвет фона</label><input id="f-color" value="${v.color||'#1a1a2e'}"></div>
             <button class="btn btn-accent" onclick="saveVideo(${id||0})">Сохранить</button>`;
@@ -293,7 +295,7 @@
         currentData.books = data;
         document.getElementById('tbl-books').innerHTML = data.map(b => `<tr>
             <td style="font-family:var(--font-m);color:var(--text3)">${b.id}</td>
-            <td>${b.type}</td><td class="td-title">${b.title}</td><td>${b.author}</td><td>${'★'.repeat(b.stars)}</td>
+            <td>${b.type}</td><td class="td-title"></td><td></td><td>${'★'.repeat(b.stars)}</td>
             <td><button class="btn" onclick="openBookModal(${b.id})">✎</button> <button class="btn btn-red" onclick="del('books',${b.id})">✕</button></td>
         </tr>`).join('');
     }
@@ -321,8 +323,8 @@
         currentData.facts = data;
         document.getElementById('tbl-facts').innerHTML = data.map(f => `<tr>
             <td style="font-family:var(--font-m);color:var(--text3)">${f.id}</td>
-            <td class="td-desc" style="max-width:500px">${f.text}</td>
-            <td style="color:var(--text3);font-size:12px">${f.source||''}</td>
+            <td class="td-desc" style="max-width:500px"></td>
+            <td style="color:var(--text3);font-size:12px"></td>
             <td><button class="btn btn-red" onclick="del('facts',${f.id})">✕</button></td>
         </tr>`).join('');
     }
@@ -354,9 +356,9 @@
         const data = await api('/api/shop');
         currentData.shop = data;
         document.getElementById('tbl-shop').innerHTML = data.map(s => `<tr>
-            <td style="font-family:var(--font-m);color:var(--text3)">${s.id}</td>
-            <td class="td-title">${s.icon} ${s.title}</td><td>${s.price}</td><td>${s.badge||'—'}</td>
-            <td><button class="btn btn-red" onclick="del('shop',${s.id})">✕</button></td>
+            <td style="font-family:var(--font-m);color:var(--text3)"></td>
+            <td class="td-title"> </td><td>${s.price}</td><td>${s.badge||'—'}</td>
+            <td><button class="btn btn-red" onclick="del('shop',)">✕</button></td>
         </tr>`).join('');
     }
 

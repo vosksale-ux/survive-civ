@@ -2,27 +2,59 @@ const express = require('express');
 const Database = require('better-sqlite3');
 const cors = require('cors');
 const path = require('path');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const compression = require('compression');
+const morgan = require('morgan');
 
 const app = express();
-const PORT = 3000;
-const API_KEY = process.env.ADMIN_KEY || 'survive-admin-2026';
+const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+if (!process.env.ADMIN_KEY) {
+    console.error('\n  ERROR: ADMIN_KEY environment variable is required.');
+    console.error('  Usage: ADMIN_KEY=your-secret-key node server/server.js\n');
+    process.exit(1);
+}
+const API_KEY = process.env.ADMIN_KEY;
+
+app.use(helmet({ contentSecurityPolicy: false }));
+app.use(compression());
+app.use(morgan('combined'));
+app.use(cors({ origin: process.env.CORS_ORIGIN || false }));
 app.use(express.json({ limit: '10mb' }));
+
+const apiLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, standardHeaders: true, legacyHeaders: false });
+app.use('/api/', apiLimiter);
+
 app.use(express.static(path.join(__dirname, '..')));
 app.use('/admin', express.static(path.join(__dirname, '..', 'admin')));
 
 function requireAuth(req, res, next) {
-    const key = req.headers['x-admin-key'] || req.query.key;
+    const key = req.headers['x-admin-key'];
     if (key !== API_KEY) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
     next();
 }
 
-function sanitize(str) {
+function escapeHtml(str) {
     if (typeof str !== 'string') return str;
-    return str.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+function sanitizeHtml(str) {
+    if (typeof str !== 'string') return str;
+    const allowed = /<(\/?\s*(?:p|br|b|i|em|strong|a|ul|ol|li|h[1-6]|blockquote|pre|code|span|div|table|thead|tbody|tr|th|td|img|hr|figure|figcaption)\s*[^>]*?)>/gi;
+    var parts = str.split(/(<[^>]+>)/g);
+    return parts.map(function (part) {
+        if (part.startsWith('<')) {
+            if (allowed.test(part)) {
+                return part.replace(/on\w+\s*=\s*["'][^"']*["']/gi, '').replace(/javascript:/gi, '');
+            }
+            return '';
+        }
+        return part;
+    }).join('');
 }
 
 function validate(required, obj) {
@@ -154,8 +186,9 @@ function initDB() {
 }
 
 function seedDB() {
-    const count = db.prepare('SELECT COUNT(*) as c FROM scenarios').get();
-    if (count.c > 0) return;
+    const tables = ['scenarios','articles','videos','books','facts','guides','guide_steps','timeline','shop_items'];
+    const allSeeded = tables.every(t => db.prepare('SELECT COUNT(*) as c FROM ' + t).get().c > 0);
+    if (allSeeded) return;
 
     const insertScenario = db.prepare(`
         INSERT INTO scenarios (id, icon, title, description, probability, severity, timeframe, survival_rate, detail_title, detail_body, sort_order)
@@ -345,8 +378,8 @@ app.post('/api/scenarios', requireAuth, (req, res) => {
     const s = req.body;
     const missing = validate(['id', 'title'], s);
     if (missing) return res.status(400).json({ error: `Missing field: ${missing}` });
-    s.title = sanitize(s.title);
-    if (s.description) s.description = sanitize(s.description);
+    s.title = escapeHtml(s.title);
+    if (s.description) s.description = escapeHtml(s.description);
     db.prepare(`INSERT OR REPLACE INTO scenarios (id, icon, title, description, probability, severity, timeframe, survival_rate, detail_title, detail_body, sort_order)
         VALUES (@id, @icon, @title, @description, @probability, @severity, @timeframe, @survival_rate, @detail_title, @detail_body, @sort_order)`).run(s);
     res.json({ ok: true });
@@ -354,8 +387,8 @@ app.post('/api/scenarios', requireAuth, (req, res) => {
 app.put('/api/scenarios/:id', requireAuth, (req, res) => {
     const s = { ...req.body, id: req.params.id };
     if (!s.title) return res.status(400).json({ error: 'Missing field: title' });
-    s.title = sanitize(s.title);
-    if (s.description) s.description = sanitize(s.description);
+    s.title = escapeHtml(s.title);
+    if (s.description) s.description = escapeHtml(s.description);
     db.prepare(`UPDATE scenarios SET icon=@icon, title=@title, description=@description, probability=@probability, severity=@severity, timeframe=@timeframe, survival_rate=@survival_rate, detail_title=@detail_title, detail_body=@detail_body, sort_order=@sort_order, updated_at=CURRENT_TIMESTAMP WHERE id=@id`).run(s);
     res.json({ ok: true });
 });
@@ -376,17 +409,17 @@ app.post('/api/articles', requireAuth, (req, res) => {
     const a = req.body;
     const missing = validate(['title', 'body'], a);
     if (missing) return res.status(400).json({ error: `Missing field: ${missing}` });
-    a.title = sanitize(a.title);
-    a.body = sanitize(a.body);
-    if (a.excerpt) a.excerpt = sanitize(a.excerpt);
+    a.title = escapeHtml(a.title);
+    a.body = sanitizeHtml(a.body);
+    if (a.excerpt) a.excerpt = escapeHtml(a.excerpt);
     const r = db.prepare('INSERT INTO articles (category, cat_label, title, excerpt, body, read_time, gradient) VALUES (@category, @cat_label, @title, @excerpt, @body, @read_time, @gradient)').run(a);
     res.json({ ok: true, id: r.lastInsertRowid });
 });
 app.put('/api/articles/:id', requireAuth, (req, res) => {
     const a = { ...req.body, id: req.params.id };
-    a.title = sanitize(a.title);
-    a.body = sanitize(a.body);
-    if (a.excerpt) a.excerpt = sanitize(a.excerpt);
+    a.title = escapeHtml(a.title);
+    a.body = sanitizeHtml(a.body);
+    if (a.excerpt) a.excerpt = escapeHtml(a.excerpt);
     db.prepare('UPDATE articles SET category=@category, cat_label=@cat_label, title=@title, excerpt=@excerpt, body=@body, read_time=@read_time, gradient=@gradient, updated_at=CURRENT_TIMESTAMP WHERE id=@id').run(a);
     res.json({ ok: true });
 });
@@ -403,13 +436,13 @@ app.post('/api/videos', requireAuth, (req, res) => {
     const v = req.body;
     const missing = validate(['title'], v);
     if (missing) return res.status(400).json({ error: `Missing field: ${missing}` });
-    v.title = sanitize(v.title);
+    v.title = escapeHtml(v.title);
     const r = db.prepare('INSERT INTO videos (title, description, duration, tag, color) VALUES (@title, @description, @duration, @tag, @color)').run(v);
     res.json({ ok: true, id: r.lastInsertRowid });
 });
 app.put('/api/videos/:id', requireAuth, (req, res) => {
     const v = { ...req.body, id: req.params.id };
-    v.title = sanitize(v.title);
+    v.title = escapeHtml(v.title);
     db.prepare('UPDATE videos SET title=@title, description=@description, duration=@duration, tag=@tag, color=@color WHERE id=@id').run(v);
     res.json({ ok: true });
 });
@@ -426,13 +459,13 @@ app.post('/api/books', requireAuth, (req, res) => {
     const b = req.body;
     const missing = validate(['title', 'author'], b);
     if (missing) return res.status(400).json({ error: `Missing field: ${missing}` });
-    b.title = sanitize(b.title);
+    b.title = escapeHtml(b.title);
     const r = db.prepare('INSERT INTO books (type, title, author, year, description, stars) VALUES (@type, @title, @author, @year, @description, @stars)').run(b);
     res.json({ ok: true, id: r.lastInsertRowid });
 });
 app.put('/api/books/:id', requireAuth, (req, res) => {
     const b = { ...req.body, id: req.params.id };
-    b.title = sanitize(b.title);
+    b.title = escapeHtml(b.title);
     db.prepare('UPDATE books SET type=@type, title=@title, author=@author, year=@year, description=@description, stars=@stars WHERE id=@id').run(b);
     res.json({ ok: true });
 });
@@ -457,7 +490,7 @@ app.post('/api/facts', requireAuth, (req, res) => {
     const f = req.body;
     const missing = validate(['text'], f);
     if (missing) return res.status(400).json({ error: `Missing field: ${missing}` });
-    f.text = sanitize(f.text);
+    f.text = escapeHtml(f.text);
     const r = db.prepare('INSERT INTO facts (text, source) VALUES (@text, @source)').run(f);
     res.json({ ok: true, id: r.lastInsertRowid });
 });
