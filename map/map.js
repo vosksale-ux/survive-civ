@@ -148,18 +148,24 @@
     ];
 
     var LAYERS_CONFIG = [
-        { id: 'osm', name: 'OSM', icon: '\u{1F5FA}', url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OpenStreetMap', maxNativeZoom: 19, maxZoom: 21 } },
-        { id: 'google_map', name: 'Google', icon: '\u{1F5FA}', url: 'https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', opts: { attribution: '\u00a9 Google', maxNativeZoom: 21, maxZoom: 21, subdomains: '0123' } },
-        { id: 'google_ter', name: 'Рельеф', icon: '\u{26F0}', url: 'https://mt{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', opts: { attribution: '\u00a9 Google', maxNativeZoom: 21, maxZoom: 21, subdomains: '0123' } },
-        { id: 'google_hyb', name: 'Гибрид', icon: '\u{1F5FA}', url: 'https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', opts: { attribution: '\u00a9 Google', maxNativeZoom: 21, maxZoom: 21, subdomains: '0123' } },
-        { id: 'google_sat', name: 'Спутник', icon: '\u{1F6F0}', url: 'https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', opts: { attribution: '\u00a9 Google', maxNativeZoom: 21, maxZoom: 21, subdomains: '0123' } },
-        { id: 'yandex', name: 'Яндекс', icon: '\u{1F4F1}', url: 'https://core-sat.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}&scale=1&lang=ru_RU', opts: { attribution: '\u00a9 Яндекс', maxNativeZoom: 18, maxZoom: 21, subdomains: '' } },
-        { id: 'esri', name: 'Esri', icon: '\u{1F6F0}', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', opts: { attribution: '\u00a9 Esri', maxNativeZoom: 18, maxZoom: 21 } },
-        { id: 'cyclosm', name: 'Цикл', icon: '\u{1F6B2}', url: 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 CyclOSM', maxNativeZoom: 19, maxZoom: 21 } }
+        { id: 'osm', name: 'OSM', icon: '\u{1F5FA}', url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 OpenStreetMap', maxNativeZoom: 19, maxZoom: 21, crossOrigin: 'anonymous' } },
+        { id: 'google_map', name: 'Google', icon: '\u{1F5FA}', url: 'https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', opts: { attribution: '\u00a9 Google', maxNativeZoom: 21, maxZoom: 21, subdomains: '0123', crossOrigin: 'anonymous' } },
+        { id: 'google_ter', name: 'Рельеф', icon: '\u{26F0}', url: 'https://mt{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', opts: { attribution: '\u00a9 Google', maxNativeZoom: 21, maxZoom: 21, subdomains: '0123', crossOrigin: 'anonymous' } },
+        { id: 'google_hyb', name: 'Гибрид', icon: '\u{1F5FA}', url: 'https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', opts: { attribution: '\u00a9 Google', maxNativeZoom: 21, maxZoom: 21, subdomains: '0123', crossOrigin: 'anonymous' } },
+        { id: 'google_sat', name: 'Спутник', icon: '\u{1F6F0}', url: 'https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', opts: { attribution: '\u00a9 Google', maxNativeZoom: 21, maxZoom: 21, subdomains: '0123', crossOrigin: 'anonymous' } },
+        { id: 'yandex', name: 'Яндекс', icon: '\u{1F4F1}', url: 'https://core-sat.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}&scale=1&lang=ru_RU', opts: { attribution: '\u00a9 Яндекс', maxNativeZoom: 18, maxZoom: 21, subdomains: '', crossOrigin: 'anonymous' } },
+        { id: 'esri', name: 'Esri', icon: '\u{1F6F0}', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', opts: { attribution: '\u00a9 Esri', maxNativeZoom: 18, maxZoom: 21, crossOrigin: 'anonymous' } },
+        { id: 'cyclosm', name: 'Цикл', icon: '\u{1F6B2}', url: 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', opts: { attribution: '\u00a9 CyclOSM', maxNativeZoom: 19, maxZoom: 21, crossOrigin: 'anonymous' } }
     ];
 
     var OVERLAYS_CONFIG = [
-        { id: 'carto_labels', name: 'Подписи (тёмные)', url: 'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', opts: { maxNativeZoom: 20, maxZoom: 21, opacity: 0.8 } }
+        { id: 'carto_dark_labels', name: 'Подписи (тёмные)', url: 'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', opts: { maxNativeZoom: 20, maxZoom: 21, opacity: 0.85 } },
+        { id: 'carto_light_labels', name: 'Подписи (светлые)', url: 'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', opts: { maxNativeZoom: 20, maxZoom: 21, opacity: 0.85 } },
+        { id: 'hiking_trails', name: 'Пешие маршруты', url: 'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', opts: { maxNativeZoom: 18, maxZoom: 21, opacity: 0.7 } },
+        { id: 'cycling_trails', name: 'Веломаршруты', url: 'https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png', opts: { maxNativeZoom: 18, maxZoom: 21, opacity: 0.7 } },
+        { id: 'waymarked_all', name: 'Все маршруты', url: 'https://tile.waymarkedtrails.org/routes/{z}/{x}/{y}.png', opts: { maxNativeZoom: 18, maxZoom: 21, opacity: 0.6 } },
+        { id: 'osm_boundaries', name: 'Границы', url: 'https://tiles.wmflabs.org/boundaries/{z}/{x}/{y}.png', opts: { maxNativeZoom: 15, maxZoom: 21, opacity: 0.7 } },
+        { id: 'openrailway', name: 'Ж/Д', url: 'https://tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', opts: { maxNativeZoom: 18, maxZoom: 21, opacity: 0.6 } }
     ];
 
     var map = L.map('map', {
@@ -230,18 +236,132 @@
         var div = document.createElement('div');
         div.className = 'overlay-item';
         var id = cfg.id;
-        div.innerHTML = '<label><input type="checkbox" data-overlay="' + id + '"> ' + cfg.name + '</label>';
-        div.querySelector('input').addEventListener('change', function () {
+        var defaultOp = Math.round((cfg.opts.opacity || 1) * 100);
+        div.innerHTML = '<label><input type="checkbox" data-overlay="' + id + '"> ' + cfg.name + '</label>' +
+            '<div class="opacity-control" data-overlay-op="' + id + '" style="display:none">' +
+            '<input type="range" min="5" max="100" value="' + defaultOp + '" class="opacity-slider" data-op-target="' + id + '">' +
+            '<span class="opacity-value">' + defaultOp + '%</span></div>';
+
+        div.querySelector('input[type="checkbox"]').addEventListener('change', function () {
+            var opCtrl = div.querySelector('.opacity-control');
             if (this.checked) {
                 overlays[id] = L.tileLayer(cfg.url, cfg.opts);
                 overlays[id].addTo(map);
+                opCtrl.style.display = '';
             } else if (overlays[id]) {
                 map.removeLayer(overlays[id]);
                 delete overlays[id];
+                opCtrl.style.display = 'none';
             }
         });
+
+        div.querySelector('.opacity-slider').addEventListener('input', function () {
+            var op = parseInt(this.value) / 100;
+            div.querySelector('.opacity-value').textContent = this.value + '%';
+            if (overlays[id]) overlays[id].setOpacity(op);
+        });
+
         overlayList.appendChild(div);
     });
+
+    var hutsLayer = null;
+    var hutsTimeout = null;
+
+    (function () {
+        var div = document.createElement('div');
+        div.className = 'overlay-item';
+        div.innerHTML = '<label><input type="checkbox" id="huts-toggle"> Избушки лесников</label>' +
+            '<div style="font-size:10px;color:var(--text-dim);padding:2px 0 0 22px;display:none" id="huts-status"></div>';
+
+        div.querySelector('#huts-toggle').addEventListener('change', function () {
+            var status = document.getElementById('huts-status');
+            if (this.checked) {
+                hutsLayer = L.layerGroup().addTo(map);
+                status.style.display = '';
+                status.textContent = 'Загрузка...';
+                fetchHuts();
+                map.on('moveend', onHutsMove);
+            } else {
+                map.off('moveend', onHutsMove);
+                if (hutsLayer) { map.removeLayer(hutsLayer); hutsLayer = null; }
+                status.style.display = 'none';
+            }
+        });
+
+        overlayList.appendChild(div);
+    })();
+
+    function onHutsMove() {
+        clearTimeout(hutsTimeout);
+        hutsTimeout = setTimeout(fetchHuts, 1500);
+    }
+
+    function fetchHuts() {
+        if (!hutsLayer) return;
+        var bounds = map.getBounds();
+        var zoom = map.getZoom();
+        if (zoom < 8) {
+            document.getElementById('huts-status').textContent = 'Увеличьте масштаб (z8+)';
+            return;
+        }
+        var bbox = bounds.getSouth() + ',' + bounds.getWest() + ',' + bounds.getNorth() + ',' + bounds.getEast();
+        var query = '[out:json][timeout:15];(' +
+            'node["tourism"="wilderness_hut"](' + bbox + ');' +
+            'node["building"="cabin"](' + bbox + ');' +
+            'node["amenity"="ranger_station"](' + bbox + ');' +
+            'node["shelter_type"](' + bbox + ');' +
+            'node["tourism"="camp_site"](' + bbox + ');' +
+            'way["tourism"="wilderness_hut"](' + bbox + ');' +
+            'way["building"="cabin"](' + bbox + ');' +
+            ');out body center;';
+
+        fetch('https://overpass-api.de/api/interpreter', {
+            method: 'POST',
+            body: 'data=' + encodeURIComponent(query)
+        }).then(function (r) { return r.json(); }).then(function (data) {
+            if (!hutsLayer) return;
+            hutsLayer.clearLayers();
+            var els = data.elements || [];
+            var count = 0;
+            els.forEach(function (el) {
+                var lat = el.lat || (el.center && el.center.lat);
+                var lng = el.lon || (el.center && el.center.lon);
+                if (!lat || !lng) return;
+                var tags = el.tags || {};
+                var name = tags['name'] || tags['name:ru'] || '';
+                var type = tags['tourism'] || tags['building'] || tags['amenity'] || tags['shelter_type'] || '';
+                var typeLabel = '';
+                if (type === 'wilderness_hut') typeLabel = 'Лесная избушка';
+                else if (type === 'cabin') typeLabel = 'Хижина / балаган';
+                else if (type === 'ranger_station') typeLabel = 'Кордон лесника';
+                else if (type === 'camp_site') typeLabel = 'Стоянка';
+                else if (tags['shelter_type']) typeLabel = 'Укрытие';
+                if (!typeLabel) return;
+
+                var icon = L.divIcon({
+                    className: '',
+                    html: '<div style="background:rgba(180,120,60,0.9);border:1.5px solid #fff;border-radius:4px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:11px;box-shadow:0 1px 4px rgba(0,0,0,0.4);">\u{1F3E0}</div>',
+                    iconSize: [18, 18],
+                    iconAnchor: [9, 9],
+                    popupAnchor: [0, -10]
+                });
+
+                var popup = '<div style="font-family:Inter,sans-serif;max-width:200px">' +
+                    '<div style="font-weight:600;color:#b4783c;font-size:13px;margin-bottom:4px">' + (name || typeLabel) + '</div>' +
+                    '<div style="font-size:11px;color:#888">' + typeLabel + '</div>';
+                if (tags['description']) popup += '<div style="font-size:11px;color:#666;margin-top:4px">' + tags['description'] + '</div>';
+                if (tags['operator']) popup += '<div style="font-size:10px;color:#999;margin-top:2px">' + tags['operator'] + '</div>';
+                popup += '</div>';
+
+                L.marker([lat, lng], { icon: icon }).bindPopup(popup).addTo(hutsLayer);
+                count++;
+            });
+            document.getElementById('huts-status').textContent = count + ' объектов найдено';
+        }).catch(function () {
+            var s = document.getElementById('huts-status');
+            if (s) s.textContent = 'Ошибка загрузки';
+        });
+    }
 
     function initPanels() {
         document.querySelectorAll('.panel-toggle').forEach(function (toggle) {
@@ -381,6 +501,7 @@
             }).addTo(map);
         }
         updateRouteUI();
+        updateSegments();
     }
 
     function undoRoutePoint() {
@@ -401,6 +522,7 @@
             m.setIcon(createRouteMarkerIcon(i));
         });
         updateRouteUI();
+        updateSegments();
     }
 
     function clearRoute() {
@@ -409,6 +531,7 @@
         routeMarkers = [];
         if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
         updateRouteUI();
+        updateSegments();
     }
 
     function exportGPX() {
@@ -661,6 +784,12 @@
     function initMapEvents() {
         map.on('dblclick', function (e) {
             addRoutePoint(e.latlng);
+        });
+
+        map.on('click', function (e) {
+            if (rulerMode) {
+                addRulerPoint(e.latlng);
+            }
         });
 
         map.on('zoomend', function () {
@@ -1208,303 +1337,6 @@
         }
     }
 
-    var dsLayers = {};
-    var dsCache = {};
-    var dsLegendEl = document.getElementById('ds-legend');
-    var dsLegendTitle = document.getElementById('ds-legend-title');
-    var dsLegendBody = document.getElementById('ds-legend-body');
-
-    var DS_LEGENDS = {
-        water: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#3b9eff"></span> Река / озеро</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#80d4ff"></span> Родники / источники</div><p style="margin-top:6px">Тепловая карта — плотность источников воды</p>',
-        dangers: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#ff4d4f"></span> Радиация</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#ff8c00"></span> Пожары</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#a855f7"></span> Клещи</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#3b9eff"></span> Наводнения</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#fff"></span> Лавины / вулканы</div>',
-        abandoned: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#a855f7"></span> Город-призрак</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#7c3aed"></span> Бункер ГО</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#c084fc"></span> Заброшенная база</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#ff4d4f"></span> Опасная зона</div>',
-        biomes: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#1a5c1a"></span> Тайга</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#2d8f2d"></span> Смешанные леса</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#8fbc5a"></span> Лесостепь</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#d4a843"></span> Степь</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#6b8f8f"></span> Тундра</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#b8d4e3"></span> Арктическая пустыня</div>',
-        evacuation: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#f97316"></span> Автомобильный</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#3b82f6"></span> Водный</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#ef4444"></span> Внедорожный</div><p style="margin-top:6px">Клик на маршрут — подробности</p>',
-        population: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#eab308"></span> Высокая плотность</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#854d0e"></span> Средняя</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#365314"></span> Низкая</div><p style="margin-top:6px">Размер круга = население региона</p>',
-        permafrost: '<div class="ds-legend-row"><span class="ds-legend-color" style="background:#0e7490"></span> Сплошная (200-1500 м)</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#22d3ee"></span> Прерывистая (50-300 м)</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#67e8f9"></span> Островная (10-100 м)</div><div class="ds-legend-row"><span class="ds-legend-color" style="background:#a5f3fc"></span> Отдельные очаги (5-30 м)</div>'
-    };
-
-    function loadJSON(url, cb) {
-        if (dsCache[url]) { cb(dsCache[url]); return; }
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                var data = JSON.parse(xhr.responseText);
-                dsCache[url] = data;
-                cb(data);
-            }
-        };
-        xhr.send();
-    }
-
-    function makePopup(props, tagClass) {
-        var html = '<div class="marker-popup">';
-        html += '<h4>' + escHtml(props.name || '') + '</h4>';
-        if (props.desc) html += '<p>' + escHtml(props.desc) + '</p>';
-        if (props.type) html += '<span class="tag ' + tagClass + '">' + escHtml(props.type) + '</span>';
-        if (props.danger) html += ' <span class="tag tag-danger">' + escHtml(props.danger) + '</span>';
-        if (props.dist) html += '<p style="margin-top:4px">' + escHtml(props.dist) + '</p>';
-        if (props.population) html += '<p style="margin-top:4px">Население: ' + Number(props.population).toLocaleString() + '</p>';
-        if (props.density) html += '<br>Плотность: ' + escHtml(String(props.density)) + ' чел/км²';
-        html += '</div>';
-        return html;
-    }
-
-    function toggleDataset(dsId, checked) {
-        if (checked) {
-            if (dsLayers[dsId]) { map.addLayer(dsLayers[dsId]); }
-            else { loadDataset(dsId); }
-            dsLegendTitle.textContent = document.querySelector('[data-ds="' + dsId + '"]').closest('.ds-item').querySelector('.ds-name').textContent;
-            dsLegendBody.innerHTML = DS_LEGENDS[dsId];
-            dsLegendEl.style.display = '';
-        } else {
-            if (dsLayers[dsId]) map.removeLayer(dsLayers[dsId]);
-            dsLegendEl.style.display = 'none';
-        }
-    }
-
-    function loadDataset(dsId) {
-        loadJSON('data/' + dsId + '.json', function (data) {
-            switch (dsId) {
-                case 'water': renderWater(data); break;
-                case 'dangers': renderDangers(data); break;
-                case 'abandoned': renderAbandoned(data); break;
-                case 'biomes': renderBiomes(data); break;
-                case 'evacuation': renderEvacuation(data); break;
-                case 'population': renderPopulation(data); break;
-                case 'permafrost': renderPermafrost(data); break;
-            }
-        });
-    }
-
-    function renderWater(data) {
-        var group = L.layerGroup();
-        var heatPoints = [];
-
-        data.features.forEach(function (f) {
-            var latlng = [f.geometry.coordinates[1], f.geometry.coordinates[0]];
-            var color = f.properties.type === 'springs' ? '#80d4ff' : '#3b9eff';
-            var radius = f.properties.type === 'lake' ? 8 : f.properties.type === 'springs' ? 5 : 4;
-
-            L.circleMarker(latlng, {
-                radius: radius, color: color, fillColor: color,
-                fillOpacity: 0.7, weight: 1, opacity: 0.8
-            }).bindPopup(makePopup(f.properties, 'tag-water')).addTo(group);
-
-            var intensity = f.properties.type === 'lake' ? 0.8 : f.properties.type === 'river' ? 0.5 : 0.3;
-            heatPoints.push([latlng[0], latlng[1], intensity]);
-        });
-
-        var heat = L.heatLayer(heatPoints, {
-            radius: 35, blur: 25, maxZoom: 10,
-            gradient: { 0.2: '#003366', 0.4: '#3b9eff', 0.7: '#80d4ff', 1.0: '#ffffff' }
-        }).addTo(group);
-
-        dsLayers['water'] = group;
-        map.addLayer(group);
-    }
-
-    function renderDangers(data) {
-        var group = L.layerGroup();
-
-        data.features.forEach(function (f) {
-            var latlng = [f.geometry.coordinates[1], f.geometry.coordinates[0]];
-            var p = f.properties;
-            var color, radius;
-
-            if (p.type === 'radiation') { color = '#ff4d4f'; radius = 10; }
-            else if (p.type === 'fire') { color = '#ff8c00'; radius = 8; }
-            else if (p.type === 'ticks') { color = '#a855f7'; radius = 7; }
-            else if (p.type === 'flood') { color = '#3b9eff'; radius = 7; }
-            else if (p.type === 'avalanche') { color = '#ffffff'; radius = 6; }
-            else if (p.type === 'volcano') { color = '#ff2020'; radius = 10; }
-            else if (p.type === 'earthquake') { color = '#ffcc00'; radius = 8; }
-            else { color = '#ff4d4f'; radius = 6; }
-
-            L.circleMarker(latlng, {
-                radius: radius, color: color, fillColor: color,
-                fillOpacity: 0.5, weight: 2, opacity: 0.8,
-                dashArray: p.level === 'seasonal' ? '4,3' : null
-            }).bindPopup(makePopup(p, 'tag-danger')).addTo(group);
-        });
-
-        dsLayers['dangers'] = group;
-        map.addLayer(group);
-    }
-
-    function renderAbandoned(data) {
-        var markers = L.markerClusterGroup({
-            iconCreateFunction: function (cluster) {
-                return L.divIcon({
-                    html: '<div>' + cluster.getChildCount() + '</div>',
-                    className: 'custom-marker-cluster',
-                    iconSize: L.point(40, 40)
-                });
-            },
-            spiderfyOnMaxZoom: true, showCoverageOnHover: false, maxClusterRadius: 50
-        });
-
-        data.features.forEach(function (f) {
-            var latlng = [f.geometry.coordinates[1], f.geometry.coordinates[0]];
-            var p = f.properties;
-            var iconColor = p.type === 'ghost_town' ? '#a855f7' : p.type === 'bunker' ? '#7c3aed' : '#c084fc';
-            var iconSymbol = p.type === 'ghost_town' ? '&#9960;' : p.type === 'bunker' ? '&#9650;' : '&#9672;';
-
-            var icon = L.divIcon({
-                html: '<div style="background:' + iconColor + ';border:2px solid rgba(255,255,255,0.6);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 0 8px ' + iconColor + '80;">' + iconSymbol + '</div>',
-                className: '',
-                iconSize: [24, 24],
-                iconAnchor: [12, 12]
-            });
-
-            L.marker(latlng, { icon: icon }).bindPopup(makePopup(p, 'tag-abandoned')).addTo(markers);
-        });
-
-        dsLayers['abandoned'] = markers;
-        map.addLayer(markers);
-    }
-
-    function renderBiomes(data) {
-        var group = L.layerGroup();
-
-        data.features.forEach(function (f) {
-            var coords = f.geometry.coordinates.map(function (ring) {
-                return ring.map(function (c) { return [c[1], c[0]]; });
-            });
-
-            L.polygon(coords, {
-                color: f.properties.color,
-                fillColor: f.properties.color,
-                fillOpacity: 0.2,
-                weight: 1.5,
-                opacity: 0.5
-            }).bindPopup(makePopup(f.properties, 'tag-biome')).addTo(group);
-        });
-
-        dsLayers['biomes'] = group;
-        map.addLayer(group);
-    }
-
-    function renderEvacuation(data) {
-        var group = L.layerGroup();
-
-        data.features.forEach(function (f) {
-            var coords = f.geometry.coordinates.map(function (c) { return [c[1], c[0]]; });
-            var p = f.properties;
-            var color = p.type === 'water' ? '#3b82f6' : p.type === 'offroad' ? '#ef4444' : '#f97316';
-            var weight = p.type === 'water' ? 3 : 4;
-
-            L.polyline(coords, {
-                color: color, weight: weight, opacity: 0.7,
-                dashArray: p.type === 'water' ? '8,6' : null,
-                lineCap: 'round', lineJoin: 'round'
-            }).bindPopup(makePopup(p, 'tag-evac')).addTo(group);
-
-            if (coords.length > 0) {
-                var startIcon = L.divIcon({
-                    html: '<div style="background:' + color + ';color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;box-shadow:0 0 6px ' + color + '80;">S</div>',
-                    className: '', iconSize: [18, 18], iconAnchor: [9, 9]
-                });
-                var endIcon = L.divIcon({
-                    html: '<div style="background:#00c878;color:#0c1117;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;box-shadow:0 0 6px rgba(0,200,120,0.4);">E</div>',
-                    className: '', iconSize: [18, 18], iconAnchor: [9, 9]
-                });
-                L.marker(coords[0], { icon: startIcon }).addTo(group);
-                L.marker(coords[coords.length - 1], { icon: endIcon }).addTo(group);
-            }
-        });
-
-        dsLayers['evacuation'] = group;
-        map.addLayer(group);
-    }
-
-    function renderPopulation(data) {
-        var group = L.layerGroup();
-        var heatPoints = [];
-
-        data.features.forEach(function (f) {
-            var latlng = [f.geometry.coordinates[1], f.geometry.coordinates[0]];
-            var p = f.properties;
-            var pop = p.population || 0;
-            var radius = Math.max(4, Math.min(20, Math.sqrt(pop / 100000) * 3));
-            var intensity = Math.min(1, p.density / 500);
-
-            var color;
-            if (p.density > 100) color = '#eab308';
-            else if (p.density > 10) color = '#a16207';
-            else color = '#365314';
-
-            L.circleMarker(latlng, {
-                radius: radius, color: color, fillColor: color,
-                fillOpacity: 0.5, weight: 1, opacity: 0.6
-            }).bindPopup(makePopup(p, 'tag-pop')).addTo(group);
-
-            heatPoints.push([latlng[0], latlng[1], intensity]);
-        });
-
-        L.heatLayer(heatPoints, {
-            radius: 40, blur: 30, maxZoom: 9,
-            gradient: { 0.1: '#365314', 0.3: '#854d0e', 0.6: '#eab308', 1.0: '#fef08a' }
-        }).addTo(group);
-
-        dsLayers['population'] = group;
-        map.addLayer(group);
-    }
-
-    function renderPermafrost(data) {
-        var group = L.layerGroup();
-        var zoneColors = {
-            continuous: { fill: '#0e7490', stroke: '#0891b2' },
-            discontinuous: { fill: '#22d3ee', stroke: '#06b6d4' },
-            sporadic: { fill: '#67e8f9', stroke: '#22d3ee' },
-            isolated: { fill: '#a5f3fc', stroke: '#67e8f9' }
-        };
-        var zoneNames = {
-            continuous: 'Сплошная',
-            discontinuous: 'Прерывистая',
-            sporadic: 'Островная',
-            isolated: 'Отдельные очаги'
-        };
-
-        data.features.forEach(function (f) {
-            var zone = f.properties.zone;
-            var colors = zoneColors[zone] || zoneColors.isolated;
-            L.geoJSON(f, {
-                style: {
-                    fillColor: colors.fill,
-                    fillOpacity: 0.25,
-                    color: colors.stroke,
-                    weight: 1.5,
-                    opacity: 0.6,
-                    dashArray: zone === 'isolated' ? '4,4' : zone === 'sporadic' ? '6,4' : null
-                },
-                onEachFeature: function (feature, layer) {
-                    var p = feature.properties;
-                    layer.bindPopup(
-                        '<div class="marker-popup">' +
-                        '<h4>' + p.name + '</h4>' +
-                        '<p>Тип: <b>' + zoneNames[zone] + '</b></p>' +
-                        '<p>Глубина: ' + p.depth + '</p>' +
-                        '<p>Температура грунта: ' + p.temp + '</p>' +
-                        '</div>'
-                    );
-                }
-            }).addTo(group);
-        });
-
-        dsLayers['permafrost'] = group;
-        map.addLayer(group);
-    }
-
-    function initDatasets() {
-        document.querySelectorAll('[data-ds]').forEach(function (cb) {
-            cb.addEventListener('change', function () {
-                toggleDataset(this.dataset.ds, this.checked);
-            });
-        });
-    }
-
     var compassActive = false;
     var deviceHeading = null;
 
@@ -1941,7 +1773,7 @@
         var lng = center.lng.toFixed(4);
         document.getElementById('weather-location').textContent = lat + '\u00b0, ' + lng + '\u00b0';
 
-        var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lng + '&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m,wind_gusts_10m,cloud_cover,precipitation,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max&timezone=auto&forecast_days=5';
+        var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lng + '&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m,wind_gusts_10m,cloud_cover,precipitation,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max&hourly=temperature_2m,precipitation_probability,wind_speed_10m,weather_code&timezone=auto&forecast_days=3';
 
         document.getElementById('weather-loading').style.display = '';
         document.getElementById('weather-main').style.display = 'none';
@@ -1980,6 +1812,9 @@
 
             if (data.daily) {
                 renderForecast(data.daily);
+            }
+            if (data.hourly) {
+                renderHourly(data.hourly);
             }
         }).catch(function () {
             document.getElementById('weather-loading').style.display = 'none';
@@ -2694,230 +2529,189 @@
         setTimeout(function () { t.style.opacity = '0'; setTimeout(function () { t.remove(); }, 300); }, 2000);
     }
 
-    function initDangers() {
-        var DANGERS_DATA = {
-            winter: {
-                name: 'Зима (дек — фев)',
-                icon: '&#10052;',
-                color: '#67e8f9',
-                dangers: [
-                    { name: 'Обморожение', severity: 'critical', desc: 'От -15°C открытие участки за 10 мин. Конечности, нос, уши. Признаки: онемение, побеление кожи.' },
-                    { name: 'Гипотермия', severity: 'critical', desc: 'Температура тела ниже 35°C. Смерть без укрытия за 3-6 часов. Дрожь, спутанность сознания.' },
-                    { name: 'Лавины', severity: 'high', desc: 'Склоны 30-45°. После снегопада 48 часов. 90% жертв сами спровоцировали сход.' },
-                    { name: 'Провал под лёд', severity: 'high', desc: 'Лёд < 7 см опасен. Река — 4 см, озеро — 10 см. Выбираться лёжа, ползком.' },
-                    { name: 'Угарный газ', severity: 'high', desc: 'Печка в палатке без вытяжки. Головная боль, тошнота, сонливость = первые признаки.' },
-                    { name: 'Волки', severity: 'medium', desc: 'Стая зимой агрессивнее. Дефицит пищи. Не убегать. Зрительный контакт, палка, огонь.' },
-                    { name: 'Пурга / метель', severity: 'high', desc: 'Видимость 0. Дезориентация за 50м от укрытия. Остановиться, выкопать снежную яму.' }
-                ]
-            },
-            spring: {
-                name: 'Весна (мар — май)',
-                icon: '&#127793;',
-                color: '#22c55e',
-                dangers: [
-                    { name: 'Половодье', severity: 'high', desc: 'Подъём воды на 2-8м. Лёд ломает мосты. Не ставить лагерь в низине у реки.' },
-                    { name: 'Клещи', severity: 'critical', desc: 'Активны с +5°C. Энцефалит, боррелиоз. Осмотр каждые 2 часа. Удалить в первые 24ч.' },
-                    { name: 'Гололёд', severity: 'medium', desc: 'Переломы, травмы. Температура около 0°C + дождь. Подошва с протектором.' },
-                    { name: 'Змеи', severity: 'medium', desc: 'Гадюки просыпаются. Укус — боль, отёк, некроз. Не кричать, не резать, иммобилизация.' },
-                    { name: 'Тонкий лёд', severity: 'high', desc: 'Апрельский лёд — обманчиво крепкий. Не переходить реки, если лёд потемнел.' },
-                    { name: 'Бешенство', severity: 'critical', desc: 'Лисы, еноты, летучие мыши. Укус = немедленно к врачу. Прививка в первые 72ч.' }
-                ]
-            },
-            summer: {
-                name: 'Лето (июн — авг)',
-                icon: '&#9728;',
-                color: '#f59e0b',
-                dangers: [
-                    { name: 'Клещи', severity: 'critical', desc: 'Пик активности июнь-июль. Энцефалит: температура, головная боль, паралич.' },
-                    { name: 'Пожары', severity: 'high', desc: 'Торфяные горят под землёй. Дым = токсично. Идти перпендикулярно ветру.' },
-                    { name: 'Тепловой удар', severity: 'high', desc: '>35°C + влажность. Температура 40+, потеря сознания. В тень, вода на голову.' },
-                    { name: 'Грозы', severity: 'medium', desc: 'Молния бьёт в самое высокое. Не под деревьями. Присесть на корточки, ноги вместе.' },
-                    { name: 'Змеи', severity: 'medium', desc: 'Гадюки активны. Камни, дрова — сначала тронуть палкой. Сыворотка в аптечке.' },
-                    { name: 'Комары / слепни', severity: 'low', desc: 'Не опасны, но истощают. ДЭТА, дым, сетка. Слепни переносят сибирскую язву.' },
-                    { name: 'Ядовитые растения', severity: 'medium', desc: 'Борщевик Сосновского — ожоги 3 степени на солнце. Вёх — смертельно ядовит.' },
-                    { name: 'Медведь', severity: 'high', desc: 'Встреча на ягодниках. Не убегать. Говорить спокойно. Место для него = уступить.' }
-                ]
-            },
-            autumn: {
-                name: 'Осень (сен — ноя)',
-                icon: '&#127810;',
-                color: '#f97316',
-                dangers: [
-                    { name: 'Клещи', severity: 'high', desc: 'Вторая волна активности сентябрь-октябрь. Тёплая осень = клещи до ноября.' },
-                    { name: 'Листья / слякоть', severity: 'low', desc: 'Скользко. Аналог гололёда. Ботинки с протектором. Треккинговые палки.' },
-                    { name: 'Туман', severity: 'medium', desc: 'Видимость < 50м. Потеря ориентации. Компас обязателен, GPS быстро садится.' },
-                    { name: 'Ранние заморозки', severity: 'medium', desc: '-5°C ночью в сентябре. Гипотермия если без спальника. Фольга NLF в кармане.' },
-                    { name: 'Паводки', severity: 'medium', desc: 'Дожди размывают дороги и мосты. Не переходить вброд выше колена.' },
-                    { name: 'Бешенство', severity: 'critical', desc: 'Осенью животные мигрируют. Любое укушенное животное = угроза.' }
-                ]
+    var gridLayer = null;
+    var gridVisible = false;
+    var elevBarCache = {};
+
+    function initGrid() {
+        var btn = document.getElementById('grid-toggle');
+        btn.addEventListener('click', function () {
+            gridVisible = !gridVisible;
+            btn.classList.toggle('active', gridVisible);
+            if (gridVisible) {
+                drawGrid();
+            } else if (gridLayer) {
+                map.removeLayer(gridLayer);
+                gridLayer = null;
             }
-        };
-
-        var month = new Date().getMonth();
-        var seasonKey = month >= 2 && month <= 4 ? 'spring' : month >= 5 && month <= 7 ? 'summer' : month >= 8 && month <= 10 ? 'autumn' : 'winter';
-        var season = DANGERS_DATA[seasonKey];
-
-        var nameEl = document.getElementById('dangers-season-name');
-        if (nameEl) nameEl.innerHTML = season.icon + ' ' + season.name;
-
-        var listEl = document.getElementById('dangers-list');
-        if (!listEl) return;
-
-        listEl.innerHTML = season.dangers.map(function (d) {
-            var sevColors = { critical: '#ef4444', high: '#f97316', medium: '#eab308', low: '#22c55e' };
-            var sevNames = { critical: 'Критично', high: 'Высокая', medium: 'Средняя', low: 'Низкая' };
-            var c = sevColors[d.severity] || '#6b7280';
-            return '<div style="padding:8px 10px;background:var(--bg-hover);border-radius:var(--radius-sm);border-left:3px solid ' + c + '">' +
-                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">' +
-                '<span style="font-size:12px;font-weight:600;color:var(--text)">' + escHtml(d.name) + '</span>' +
-                '<span style="font-size:9px;padding:2px 6px;border-radius:var(--radius-xs);background:' + c + '20;color:' + c + ';font-weight:600;text-transform:uppercase">' + sevNames[d.severity] + '</span>' +
-                '</div>' +
-                '<div style="font-size:11px;color:var(--text-dim);line-height:1.4">' + escHtml(d.desc) + '</div>' +
-                '</div>';
-        }).join('');
-
-        var allSeasons = ['winter', 'spring', 'summer', 'autumn'];
-        var tabsHtml = '<div style="display:flex;gap:4px;margin-top:12px;margin-bottom:6px">' + allSeasons.map(function (k) {
-            var s = DANGERS_DATA[k];
-            var active = k === seasonKey;
-            return '<button class="dangers-season-tab" data-season="' + k + '" style="flex:1;padding:4px 6px;font-size:10px;border:1px solid ' + (active ? s.color : 'var(--border)') + ';background:' + (active ? s.color + '20' : 'transparent') + ';color:' + (active ? s.color : 'var(--text-dim)') + ';border-radius:var(--radius-xs);cursor:pointer;font-family:var(--font)">' + s.icon + '</button>';
-        }).join('') + '</div>';
-        listEl.insertAdjacentHTML('beforeend', tabsHtml);
-
-        listEl.querySelectorAll('.dangers-season-tab').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var k = this.dataset.season;
-                var s = DANGERS_DATA[k];
-                nameEl.innerHTML = s.icon + ' ' + s.name;
-                renderDangersSeason(k, DANGERS_DATA);
-            });
         });
-
-        function renderDangersSeason(key, data) {
-            var s = data[key];
-            var items = s.dangers.map(function (d) {
-                var sevColors = { critical: '#ef4444', high: '#f97316', medium: '#eab308', low: '#22c55e' };
-                var sevNames = { critical: 'Критично', high: 'Высокая', medium: 'Средняя', low: 'Низкая' };
-                var c = sevColors[d.severity] || '#6b7280';
-                return '<div style="padding:8px 10px;background:var(--bg-hover);border-radius:var(--radius-sm);border-left:3px solid ' + c + '">' +
-                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">' +
-                    '<span style="font-size:12px;font-weight:600;color:var(--text)">' + escHtml(d.name) + '</span>' +
-                    '<span style="font-size:9px;padding:2px 6px;border-radius:var(--radius-xs);background:' + c + '20;color:' + c + ';font-weight:600;text-transform:uppercase">' + sevNames[d.severity] + '</span>' +
-                    '</div>' +
-                    '<div style="font-size:11px;color:var(--text-dim);line-height:1.4">' + escHtml(d.desc) + '</div>' +
-                    '</div>';
-            }).join('');
-            var tabsContainer = listEl.querySelector('.dangers-season-tab').parentElement;
-            listEl.innerHTML = items;
-            listEl.appendChild(tabsContainer);
-            listEl.querySelectorAll('.dangers-season-tab').forEach(function (btn) {
-                var isActive = btn.dataset.season === key;
-                btn.style.borderColor = isActive ? s.color : 'var(--border)';
-                btn.style.background = isActive ? s.color + '20' : 'transparent';
-                btn.style.color = isActive ? s.color : 'var(--text-dim)';
-                btn.onclick = function () { renderDangersSeason(btn.dataset.season, data); };
-            });
-        }
+        map.on('moveend zoomend', function () {
+            if (gridVisible) drawGrid();
+        });
     }
 
-    var initFns = [initPanels, initSidebar, initSearch, initRoute, initElevation, initBookmarks, initMarkers, initImport, initDownload, initRegions, initCoords, initSunMoon, initWeather, initAurora, initRuler, initCompass, initTracking, initFullscreen, initLocate, initMapEvents, initKeyboard];
+    function drawGrid() {
+        if (gridLayer) { map.removeLayer(gridLayer); gridLayer = null; }
+        var bounds = map.getBounds();
+        var zoom = map.getZoom();
+        var step;
+        if (zoom >= 14) step = 0.01;
+        else if (zoom >= 11) step = 0.05;
+        else if (zoom >= 8) step = 0.5;
+        else if (zoom >= 5) step = 2;
+        else step = 10;
+
+        var lines = [];
+        var south = Math.floor(bounds.getSouth() / step) * step;
+        var north = Math.ceil(bounds.getNorth() / step) * step;
+        var west = Math.floor(bounds.getWest() / step) * step;
+        var east = Math.ceil(bounds.getEast() / step) * step;
+
+        for (var lat = south; lat <= north; lat += step) {
+            lines.push([[lat, west], [lat, east]]);
+        }
+        for (var lng = west; lng <= east; lng += step) {
+            lines.push([[south, lng], [north, lng]]);
+        }
+
+        gridLayer = L.layerGroup();
+        lines.forEach(function (coords) {
+            L.polyline(coords, {
+                color: 'rgba(0,200,120,0.5)',
+                weight: 1.2,
+                interactive: false
+            }).addTo(gridLayer);
+        });
+
+        if (zoom >= 8) {
+            for (var lat2 = south; lat2 <= north; lat2 += step) {
+                for (var lng2 = west; lng2 <= east; lng2 += step) {
+                    L.marker([lat2, lng2], {
+                        icon: L.divIcon({
+                            className: '',
+                            html: '<span style="font-family:JetBrains Mono,monospace;font-size:9px;color:#00e68a;white-space:nowrap;background:rgba(0,0,0,0.65);padding:1px 3px;border-radius:2px;line-height:1.2;">' + lat2.toFixed(step < 1 ? (step < 0.05 ? 2 : 1) : 0) + ',' + lng2.toFixed(step < 1 ? (step < 0.05 ? 2 : 1) : 0) + '</span>',
+                            iconSize: [0, 0],
+                            iconAnchor: [-4, -4]
+                        }),
+                        interactive: false
+                    }).addTo(gridLayer);
+                }
+            }
+        }
+
+        gridLayer.addTo(map);
+    }
+
+    function initElevationBar() {
+        var elevEl = document.getElementById('coords-elev');
+        map.on('mousemove', function (e) {
+            var key = e.latlng.lat.toFixed(3) + ',' + e.latlng.lng.toFixed(3);
+            if (elevBarCache[key] !== undefined) {
+                elevEl.innerHTML = '&#9650; ' + Math.round(elevBarCache[key]) + ' м';
+                return;
+            }
+        });
+        map.on('moveend', function () {
+            var center = map.getCenter();
+            var lat = center.lat.toFixed(4);
+            var lng = center.lng.toFixed(4);
+            var key = center.lat.toFixed(3) + ',' + center.lng.toFixed(3);
+            if (elevBarCache[key] !== undefined) {
+                elevEl.innerHTML = '&#9650; ' + Math.round(elevBarCache[key]) + ' м';
+                return;
+            }
+            fetch('https://api.open-meteo.com/v1/elevation?latitude=' + lat + '&longitude=' + lng)
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    var elev = (data.elevation && data.elevation[0]) || 0;
+                    elevBarCache[key] = elev;
+                    elevEl.innerHTML = '&#9650; ' + Math.round(elev) + ' м';
+                })
+                .catch(function () {
+                    elevEl.innerHTML = '&#9650; -- м';
+                });
+        });
+        var center = map.getCenter();
+        fetch('https://api.open-meteo.com/v1/elevation?latitude=' + center.lat.toFixed(4) + '&longitude=' + center.lng.toFixed(4))
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                var elev = (data.elevation && data.elevation[0]) || 0;
+                var key = center.lat.toFixed(3) + ',' + center.lng.toFixed(3);
+                elevBarCache[key] = elev;
+                elevEl.innerHTML = '&#9650; ' + Math.round(elev) + ' м';
+            });
+    }
+
+    function initSegments() {
+    }
+
+    function updateSegments() {
+        var title = document.getElementById('segments-title');
+        var list = document.getElementById('segments-list');
+        if (routePoints.length < 2) {
+            title.style.display = 'none';
+            list.innerHTML = '';
+            return;
+        }
+        title.style.display = '';
+        var html = '';
+        var cumul = 0;
+        for (var i = 1; i < routePoints.length; i++) {
+            var d = routePoints[i - 1].distanceTo(routePoints[i]);
+            cumul += d;
+            html += '<div class="segment-row">' +
+                '<span class="segment-idx">' + i + '</span>' +
+                '<span class="segment-dist">' + (d > 1000 ? (d / 1000).toFixed(2) + ' км' : Math.round(d) + ' м') + '</span>' +
+                '<span class="segment-cumul">' + (cumul > 1000 ? (cumul / 1000).toFixed(1) + ' км' : Math.round(cumul) + ' м') + '</span>' +
+                '</div>';
+        }
+        list.innerHTML = html;
+    }
+
+    function initPrint() {
+        document.getElementById('btn-print').addEventListener('click', function () {
+            window.print();
+        });
+    }
+
+    function renderHourly(hourly) {
+        var scroll = document.getElementById('hourly-scroll');
+        var title = document.getElementById('hourly-title');
+        if (!hourly || !hourly.time) { scroll.innerHTML = ''; return; }
+        title.style.display = '';
+
+        var now = new Date();
+        var startIdx = 0;
+        for (var i = 0; i < hourly.time.length; i++) {
+            if (new Date(hourly.time[i]) >= now) { startIdx = i; break; }
+        }
+
+        var count = Math.min(48, hourly.time.length - startIdx);
+        var html = '';
+        for (var j = 0; j < count; j++) {
+            var idx = startIdx + j;
+            var t = new Date(hourly.time[idx]);
+            var h = t.getHours();
+            var temp = hourly.temperature_2m[idx];
+            var code = hourly.weather_code[idx];
+            var rain = hourly.precipitation_probability ? hourly.precipitation_probability[idx] : null;
+            var wind = hourly.wind_speed_10m[idx];
+
+            html += '<div class="hourly-item">' +
+                '<span class="h-time">' + (j === 0 ? 'Сейчас' : h + ':00') + '</span>' +
+                '<span class="h-icon">' + weatherEmoji(code) + '</span>' +
+                '<span class="h-temp">' + (temp > 0 ? '+' : '') + Math.round(temp) + '°</span>' +
+                (rain !== null ? '<span class="h-rain">' + rain + '%</span>' : '') +
+                '<span class="h-wind">' + Math.round(wind) + '</span>' +
+                '</div>';
+        }
+        scroll.innerHTML = html;
+    }
+
+    var initFns = [initPanels, initSidebar, initSearch, initRoute, initElevation, initBookmarks, initMarkers, initImport, initDownload, initRegions, initCoords, initSunMoon, initWeather, initAurora, initRuler, initCompass, initTracking, initFullscreen, initLocate, initMapEvents, initKeyboard, initGrid, initElevationBar, initSegments, initPrint];
     initFns.forEach(function (fn) {
         try { fn(); } catch (e) { console.error('Init error:', fn.name, e); }
     });
-    var SEASONS_DATA = {
-        hunting: {
-            items: [
-                { name: 'Лось', months: [0,0,0,0,0,0,0,0,1,1,1,0], color: '#854d0e', info: 'Сентябрь-ноябрь. Сафари, загоном, с собаками' },
-                { name: 'Кабан', months: [0,0,0,0,0,0,1,1,1,1,1,1], color: '#a16207', info: 'Июнь-декабрь. Загоном, с вышки, подходом' },
-                { name: 'Медведь', months: [0,0,0,0,0,0,0,0,1,1,0,0], color: '#78350f', info: 'Сентябрь-октябрь. Берлога, на овсах, на рыбе' },
-                { name: 'Глухарь', months: [0,0,0,1,1,0,0,0,0,0,0,0], color: '#166534', info: 'Апрель-май. На току' },
-                { name: 'Тетерев', months: [0,0,0,1,1,0,0,0,0,0,0,0], color: '#15803d', info: 'Апрель-май. На току' },
-                { name: 'Утка', months: [0,0,0,0,0,0,0,1,1,1,0,0], color: '#047857', info: 'Август-октябрь. Летне-осенняя охота' },
-                { name: 'Заяц', months: [0,0,0,0,0,0,0,0,1,1,1,1], color: '#92400e', info: 'Сентябрь-декабрь. Троплением, с гончими' },
-                { name: 'Волк', months: [0,0,0,0,0,0,0,0,1,1,1,1], color: '#6b7280', info: 'Сентябрь-декабрь. Загоном, флажками' },
-                { name: 'Лиса', months: [0,0,0,0,0,0,0,0,1,1,1,1], color: '#ea580c', info: 'Сентябрь-декабрь. С подхода, с собаками' }
-            ]
-        },
-        fishing: {
-            items: [
-                { name: 'Щука', months: [0,0,0,1,1,1,0,0,0,1,1,1], color: '#166534', info: 'Весенний и осенний жор. Спиннинг, живец' },
-                { name: 'Окунь', months: [0,0,0,1,1,1,1,1,1,1,1,0], color: '#15803d', info: 'Круглый год, лучшее — осень. Балабушка, мормышка' },
-                { name: 'Судак', months: [0,0,0,1,1,1,0,0,0,1,1,1], color: '#047857', info: 'Весна и осень. Джиг, троллинг' },
-                { name: 'Карп', months: [0,0,0,0,0,1,1,1,1,0,0,0], color: '#a16207', info: 'Май-сентябрь. Фидер, поплавок' },
-                { name: 'Лещ', months: [0,0,0,0,1,1,1,1,1,1,0,0], color: '#854d0e', info: 'Май-октябрь. Фидер, кольцо' },
-                { name: 'Форель', months: [0,0,0,0,0,1,1,1,1,0,0,0], color: '#0e7490', info: 'Май-сентябрь. Спиннинг, нахлыст' },
-                { name: 'Хариус', months: [0,0,0,0,0,1,1,1,1,0,0,0], color: '#0891b2', info: 'Июнь-сентябрь. Нахлыст, кораблик' },
-                { name: 'Налим', months: [1,1,1,0,0,0,0,0,0,0,1,1], color: '#6b7280', info: 'Зимняя рыбалка. Донка, жерлицы' },
-                { name: 'Карась', months: [0,0,0,0,0,1,1,1,0,0,0,0], color: '#ca8a04', info: 'Июнь-август. Поплавок, фидер' }
-            ]
-        },
-        mushrooms: {
-            items: [
-                { name: 'Белый гриб', months: [0,0,0,0,0,1,1,1,1,0,0,0], color: '#854d0e', info: 'Июнь-сентябрь. Хвойные и смешанные леса' },
-                { name: 'Подберёзовик', months: [0,0,0,0,0,1,1,1,1,0,0,0], color: '#a16207', info: 'Июнь-сентябрь. Берёзовые рощи' },
-                { name: 'Подосиновик', months: [0,0,0,0,0,1,1,1,1,0,0,0], color: '#c2410c', info: 'Июнь-сентябрь. Осинники, смешанный лес' },
-                { name: 'Лисичка', months: [0,0,0,0,0,0,1,1,1,1,0,0], color: '#eab308', info: 'Июнь-октябрь. Хвойники, старый мох' },
-                { name: 'Опёнок', months: [0,0,0,0,0,0,0,1,1,1,0,0], color: '#ca8a04', info: 'Август-октябрь. Пни, поваленные деревья' },
-                { name: 'Маслёнок', months: [0,0,0,0,0,1,1,1,1,0,0,0], color: '#b45309', info: 'Июнь-сентябрь. Сосновые молодняки' },
-                { name: 'Рыжик', months: [0,0,0,0,0,0,0,0,1,1,0,0], color: '#ea580c', info: 'Август-октябрь. Хвойные леса, сосняки' },
-                { name: 'Груздь', months: [0,0,0,0,0,0,0,1,1,1,0,0], color: '#fbbf24', info: 'Август-октябрь. Берёзовые леса' }
-            ]
-        },
-        berries: {
-            items: [
-                { name: 'Клубника', months: [0,0,0,0,0,1,1,0,0,0,0,0], color: '#dc2626', info: 'Июнь-июль. Поляны, опушки' },
-                { name: 'Черника', months: [0,0,0,0,0,0,1,1,0,0,0,0], color: '#4338ca', info: 'Июль-август. Хвойные леса' },
-                { name: 'Малина', months: [0,0,0,0,0,0,1,1,0,0,0,0], color: '#e11d48', info: 'Июль-август. Вырубки, опушки' },
-                { name: 'Смородина', months: [0,0,0,0,0,0,1,1,0,0,0,0], color: '#1e1b4b', info: 'Июль-август. Берега рек, сырые места' },
-                { name: 'Брусника', months: [0,0,0,0,0,0,0,1,1,0,0,0], color: '#b91c1c', info: 'Август-сентябрь. Сосновые боры, тундра' },
-                { name: 'Клюква', months: [0,0,0,0,0,0,0,0,1,1,1,0], color: '#991b1b', info: 'Сентябрь-ноябрь. Болота' },
-                { name: 'Облепиха', months: [0,0,0,0,0,0,0,0,1,1,0,0], color: '#f59e0b', info: 'Сентябрь-октябрь. Берега рек' },
-                { name: 'Шиповник', months: [0,0,0,0,0,0,0,0,1,1,0,0], color: '#ea580c', info: 'Август-октябрь. Поля, овраги' },
-                { name: 'Рябина', months: [0,0,0,0,0,0,0,0,0,1,0,0], color: '#dc2626', info: 'Октябрь. После заморозков' }
-            ]
-        }
-    };
-
-    function initSeasons() {
-        var tabs = document.querySelectorAll('.season-tab');
-        tabs.forEach(function (tab) {
-            tab.addEventListener('click', function () {
-                tabs.forEach(function (t) { t.classList.remove('active'); });
-                tab.classList.add('active');
-                renderSeasonChart(tab.dataset.season);
-            });
-        });
-        renderSeasonChart('hunting');
-    }
-
-    function renderSeasonChart(type) {
-        var data = SEASONS_DATA[type];
-        var chart = document.getElementById('season-chart');
-        var info = document.getElementById('season-info');
-        var months = ['Я','Ф','М','А','М','И','И','А','С','О','Н','Д'];
-        var now = new Date().getMonth();
-
-        var html = '<div class="season-chart">';
-        html += '<div></div>';
-        months.forEach(function (m, i) {
-            html += '<div class="sc-header" style="' + (i === now ? 'color:var(--accent);font-weight:700' : '') + '">' + m + '</div>';
-        });
-
-        data.items.forEach(function (item) {
-            html += '<div class="sc-label" title="' + item.info + '">' + item.name + '</div>';
-            item.months.forEach(function (v, i) {
-                var bg = v ? item.color : 'var(--bg-hover)';
-                var opacity = v ? (i === now ? '1' : '0.6') : '0.3';
-                var border = (v && i === now) ? '2px solid var(--text-bright)' : 'none';
-                html += '<div class="sc-cell" style="background:' + bg + ';opacity:' + opacity + ';border:' + border + '" title="' + item.name + ': ' + item.info + '"></div>';
-            });
-        });
-
-        html += '</div>';
-        chart.innerHTML = html;
-
-        info.textContent = 'Текущий месяц выделен. Наведите на строку — подробности.';
-    }
 
     function initScreenshot() {
         document.getElementById('btn-screenshot').addEventListener('click', function () {
@@ -2929,18 +2723,16 @@
             canvas.height = h * 2;
             var ctx = canvas.getContext('2d');
             ctx.scale(2, 2);
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillRect(0, 0, w, h);
 
             var tiles = mapEl.querySelectorAll('.leaflet-tile-loaded');
-            var tilePane = mapEl.querySelector('.leaflet-tile-pane');
-            var paneRect = tilePane.getBoundingClientRect();
             var mapRect = mapEl.getBoundingClientRect();
 
             tiles.forEach(function (tile) {
                 if (!tile.complete || !tile.naturalWidth) return;
                 var tr = tile.getBoundingClientRect();
-                var x = tr.left - mapRect.left;
-                var y = tr.top - mapRect.top;
-                try { ctx.drawImage(tile, x, y, tr.width, tr.height); } catch (e) {}
+                try { ctx.drawImage(tile, tr.left - mapRect.left, tr.top - mapRect.top, tr.width, tr.height); } catch (e) {}
             });
 
             var overlayPanes = mapEl.querySelectorAll('.leaflet-overlay-pane svg, .leaflet-overlay-pane canvas');
@@ -2957,14 +2749,43 @@
             ctx.font = '11px Inter, sans-serif';
             ctx.fillText(c.lat.toFixed(5) + '\u00b0, ' + c.lng.toFixed(5) + '\u00b0  z' + z + '  |  SURVIVE.CIV', 10, h - 10);
 
-            canvas.toBlob(function (blob) {
-                var a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'survive-map-' + Date.now() + '.png';
-                a.click();
-                URL.revokeObjectURL(a.href);
-                showToast('Карта сохранена');
-            }, 'image/png');
+            var fileName = 'survive-map-' + Date.now();
+
+            if (window.showSaveFilePicker) {
+                var pngBlob, jpgBlob;
+                var p1 = new Promise(function (res) { canvas.toBlob(function (b) { pngBlob = b; res(); }, 'image/png'); });
+                var p2 = new Promise(function (res) { canvas.toBlob(function (b) { jpgBlob = b; res(); }, 'image/jpeg', 0.92); });
+                Promise.all([p1, p2]).then(function () {
+                    if (!pngBlob && !jpgBlob) {
+                        showToast('Ошибка: не удалось создать изображение (CORS)');
+                        return;
+                    }
+                    window.showSaveFilePicker({
+                        suggestedName: fileName + '.png',
+                        types: [
+                            { description: 'PNG (высокое качество)', accept: { 'image/png': ['.png'] } },
+                            { description: 'JPEG (меньше размер)', accept: { 'image/jpeg': ['.jpg'] } }
+                        ]
+                    }).then(function (handle) {
+                        return handle.createWritable().then(function (writable) {
+                            var ext = handle.name.split('.').pop().toLowerCase();
+                            writable.write(ext === 'jpg' || ext === 'jpeg' ? (jpgBlob || pngBlob) : pngBlob);
+                            writable.close();
+                            showToast('Карта сохранена: ' + handle.name);
+                        });
+                    }).catch(function () {});
+                });
+            } else {
+                canvas.toBlob(function (blob) {
+                    if (!blob) { showToast('Ошибка сохранения'); return; }
+                    var a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = fileName + '.png';
+                    a.click();
+                    URL.revokeObjectURL(a.href);
+                    showToast('Карта сохранена в Загрузки');
+                }, 'image/png');
+            }
         });
     }
 
@@ -2986,9 +2807,7 @@
     }
 
     initShare();
-    initCalc();
     initHash();
-    initSeasons();
     initScreenshot();
     initOffline();
 

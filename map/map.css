@@ -742,17 +742,17 @@ body {
     z-index: 999;
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    background: var(--bg-elevated);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    gap: 8px;
+    padding: 8px 18px;
+    background: rgba(15,15,20,0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--border);
-    border-radius: 20px;
+    border-radius: 24px;
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
-    font-size: 11px;
-    color: var(--text-dim);
-    box-shadow: var(--shadow-sm);
+    font-size: 13px;
+    color: var(--text-bright);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     user-select: none;
     cursor: pointer;
     transition: border-color var(--transition);
@@ -1992,4 +1992,197 @@ body {
     flex: 1;
     font-size: 10px;
     padding: 5px 6px;
+}
+
+.grid-toggle {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    transition: color var(--transition);
+}
+
+.grid-toggle.active {
+    color: var(--accent);
+}
+
+.grid-toggle:hover {
+    color: var(--accent);
+}
+
+.hourly-scroll {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding: 4px 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+
+.hourly-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+
+.hourly-scroll::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
+}
+
+.hourly-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 42px;
+    padding: 4px 2px;
+    border-radius: var(--radius-xs);
+    font-size: 10px;
+    color: var(--text-dim);
+    transition: background var(--transition);
+}
+
+.hourly-item:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.hourly-item .h-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+}
+
+.hourly-item .h-icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.hourly-item .h-temp {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--text-bright);
+}
+
+.hourly-item .h-rain {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: #60a5fa;
+}
+
+.hourly-item .h-wind {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+}
+
+.segments-list {
+    max-height: 180px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+
+.segment-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 6px;
+    font-size: 11px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.segment-row:last-child {
+    border-bottom: none;
+}
+
+.segment-idx {
+    width: 20px;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 10px;
+}
+
+.segment-dist {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-bright);
+    font-size: 11px;
+}
+
+.segment-total {
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+}
+
+.segment-cumul {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    font-size: 10px;
+}
+
+.opacity-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.opacity-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+
+.opacity-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid var(--bg-elevated);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.opacity-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid var(--bg-elevated);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.opacity-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    min-width: 32px;
+    text-align: right;
+}
+
+#coords-elev {
+    color: var(--text-dim);
+    font-size: 11px;
+}
+
+@media print {
+    #sidebar, .toolbar, .coords-bar, .compass-widget, .tracking-widget {
+        display: none !important;
+    }
+    #map {
+        width: 100% !important;
+        height: 100% !important;
+    }
 }

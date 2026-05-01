@@ -27,7 +27,7 @@
             <div class="sidebar-body">
                 <section class="panel">
                     <button class="panel-toggle" data-panel="layers">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2" fill="rgba(59,130,246,0.13)" stroke="#3b82f6"/><polyline points="2 17 12 22 22 17" stroke="#3b82f6" opacity="0.6"/><polyline points="2 12 12 17 22 12" stroke="#3b82f6" opacity="0.3"/></svg>
                         <span>Слои карты</span>
                         <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                     </button>
@@ -40,7 +40,7 @@
 
                 <section class="panel">
                     <button class="panel-toggle" data-panel="search">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7" stroke="#f59e0b" fill="rgba(245,158,11,0.08)"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="#f59e0b" stroke-linecap="round"/></svg>
                         <span>Поиск</span>
                         <kbd>/</kbd>
                     </button>
@@ -57,7 +57,7 @@
 
                 <section class="panel">
                     <button class="panel-toggle" data-panel="route">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="6" cy="6" r="2.5" fill="#00c878" stroke="#00c878"/><circle cx="18" cy="18" r="2.5" fill="#ef4444" stroke="#ef4444"/><path d="M6 6 C6 14, 12 12, 18 18" stroke="#00c878" stroke-dasharray="3,2"/></svg>
                         <span>Маршрут</span>
                         <span class="badge" id="route-badge" style="display:none">0</span>
                     </button>
@@ -86,12 +86,14 @@
                             <canvas id="elevation-canvas" width="300" height="100"></canvas>
                             <div class="elevation-stats" id="elevation-stats"></div>
                         </div>
+                        <div class="sub-title" id="segments-title" style="display:none">Сегменты маршрута</div>
+                        <div class="segments-list" id="segments-list"></div>
                     </div>
                 </section>
 
                 <section class="panel">
                     <button class="panel-toggle" data-panel="markers">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="rgba(239,68,68,0.19)" stroke="#ef4444"/><circle cx="12" cy="9" r="2.5" fill="#fff"/></svg>
                         <span>Маркеры</span>
                         <span class="badge" id="markers-badge" style="display:none">0</span>
                     </button>
@@ -106,8 +108,8 @@
 
                 <section class="panel">
                     <button class="panel-toggle" data-panel="download">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        <span>Скачать карту</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="#a78bfa"/><polyline points="7 10 12 15 17 10" stroke="#a78bfa"/><line x1="12" y1="15" x2="12" y2="3" stroke="#a78bfa"/></svg>
+                        <span>Скачать</span>
                     </button>
                     <div class="panel-content" id="panel-download">
                         <div class="dl-mode-toggle">
@@ -202,8 +204,8 @@
 
                 <section class="panel">
                     <button class="panel-toggle" data-panel="solar">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                        <span>Солнечная активность</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="4" fill="rgba(245,158,11,0.25)" stroke="#f59e0b"/><line x1="12" y1="1" x2="12" y2="4" stroke="#f59e0b"/><line x1="12" y1="20" x2="12" y2="23" stroke="#f59e0b"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34" stroke="#f59e0b" opacity="0.7"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78" stroke="#f59e0b" opacity="0.7"/><line x1="1" y1="12" x2="4" y2="12" stroke="#f59e0b"/><line x1="20" y1="12" x2="23" y2="12" stroke="#f59e0b"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66" stroke="#f59e0b" opacity="0.7"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22" stroke="#f59e0b" opacity="0.7"/></svg>
+                        <span>Космос</span>
                     </button>
                     <div class="panel-content" id="panel-solar">
                         <div id="solar-status"><div class="aurora-loading">Загрузка данных...</div></div>
@@ -212,7 +214,7 @@
 
                 <section class="panel">
                     <button class="panel-toggle" data-panel="weather">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19a4.5 4.5 0 1 0 0-9h-1.8A7 7 0 1 0 4 14.5"/><line x1="12" y1="19" x2="12" y2="3"/><polyline points="8 7 12 3 16 7"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2v2" stroke="#f59e0b" stroke-linecap="round"/><circle cx="12" cy="8" r="3" fill="rgba(245,158,11,0.19)" stroke="#f59e0b"/><path d="M6.5 13a5.5 5.5 0 0 0 11 0H6.5z" fill="rgba(96,165,250,0.15)" stroke="#60a5fa"/><path d="M3 18h18" stroke="#60a5fa" opacity="0.5" stroke-dasharray="2,2"/></svg>
                         <span>Погода</span>
                     </button>
                     <div class="panel-content" id="panel-weather">
@@ -231,8 +233,10 @@
                                 <div class="weather-detail"><span class="wd-label">Осадки</span><span class="wd-value" id="w-rain">-- мм</span></div>
                             </div>
                         </div>
-                        <div class="sub-title" id="forecast-title" style="display:none">Прогноз на 5 дней</div>
+                        <div class="sub-title" id="forecast-title" style="display:none">Прогноз на 3 дня</div>
                         <div class="forecast-list" id="forecast-list"></div>
+                        <div class="sub-title" id="hourly-title" style="display:none">Почасовой прогноз (48ч)</div>
+                        <div class="hourly-scroll" id="hourly-scroll"></div>
                         <div class="weather-loading" id="weather-loading" style="display:none">Загрузка...</div>
                         <p class="hint">Обновляется при перемещении карты</p>
                     </div>
@@ -240,7 +244,7 @@
 
                 <section class="panel">
                     <button class="panel-toggle" data-panel="bookmarks">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" fill="rgba(245,158,11,0.13)" stroke="#f59e0b"/></svg>
                         <span>Закладки</span>
                         <span class="badge" id="bookmarks-badge" style="display:none">0</span>
                     </button>
@@ -255,8 +259,8 @@
 
                 <section class="panel">
                     <button class="panel-toggle" data-panel="import">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                        <span>Импорт треков</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="rgba(16,185,129,0.08)" stroke="#10b981"/><polyline points="14 2 14 8 20 8" stroke="#10b981"/><line x1="12" y1="18" x2="12" y2="12" stroke="#10b981"/><polyline points="9 15 12 12 15 15" stroke="#10b981"/></svg>
+                        <span>Импорт</span>
                     </button>
                     <div class="panel-content" id="panel-import">
                         <div class="import-drop" id="import-drop">
@@ -271,8 +275,8 @@
 
                 <section class="panel">
                     <button class="panel-toggle" data-panel="sunmoon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                        <span>Солнце и Луна</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="rgba(167,139,250,0.13)" stroke="#a78bfa"/></svg>
+                        <span>Солнце / Луна</span>
                     </button>
                     <div class="panel-content" id="panel-sunmoon">
                         <div class="sm-location" id="sm-location">55.7558°, 37.6173° — Москва</div>
@@ -315,7 +319,7 @@
 
                 <section class="panel">
                     <button class="panel-toggle" data-panel="regions">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9" fill="rgba(6,182,212,0.08)" stroke="#06b6d4"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z" stroke="#06b6d4" opacity="0.5"/></svg>
                         <span>Регионы</span>
                     </button>
                     <div class="panel-content" id="panel-regions">
@@ -340,7 +344,7 @@
                     SURVIVE.CIV
                 </a>
                 <span class="version">v2.0</span>
-                <span id="offline-badge" style="display:none;font-size:9px;padding:2px 6px;background:#ef444420;color:#ef4444;border-radius:var(--radius-xs);margin-left:4px">ОФФЛАЙН</span>
+                <span id="offline-badge" style="display:none;font-size:9px;padding:2px 6px;background:rgba(239,68,68,0.13);color:#ef4444;border-radius:var(--radius-xs);margin-left:4px">ОФФЛАЙН</span>
             </div>
             <div style="padding:0 16px 8px;">
                 <button class="btn btn-ghost" id="btn-clear-cache" style="width:100%;font-size:10px;padding:4px;">Очистить кеш карт</button>
@@ -356,32 +360,41 @@
             <div class="coords-bar" id="coords-bar">
                 <span id="coords-lat">55.7558</span>°N,&nbsp;<span id="coords-lng">37.6173</span>°E
                 <span class="sep">|</span>
+                <span id="coords-elev" title="Высота">&#9650; -- м</span>
+                <span class="sep">|</span>
                 <span id="coords-zoom">z6</span>
                 <span class="sep">|</span>
                 <span id="coords-scale">~1:2.5M</span>
+                <span class="sep">|</span>
+                <button class="grid-toggle" id="grid-toggle" title="Координатная сетка">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+                </button>
             </div>
 
             <div class="toolbar" id="toolbar">
                 <button class="tb-btn" id="btn-locate" title="Моё местоположение">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3" fill="#3b82f6" stroke="#3b82f6"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4" stroke="#3b82f6" stroke-linecap="round"/></svg>
                 </button>
-                <button class="tb-btn" id="btn-ruler" title="Линейка (измерение расстояний)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20M12 2v20M5 9v6M9 7v10M15 7v10M19 9v6"/></svg>
+                <button class="tb-btn" id="btn-ruler" title="Линейка">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 20L20 4" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/><circle cx="4" cy="20" r="2" fill="#f59e0b"/><circle cx="20" cy="4" r="2" fill="#f59e0b"/><path d="M10 14l2 2m-2-2l-2-2" stroke="#f59e0b" opacity="0.5"/></svg>
                 </button>
                 <button class="tb-btn" id="btn-compass" title="Компас (C)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor" opacity="0.3"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10" stroke="#ef4444" opacity="0.4"/><polygon points="12 3, 10 10, 12 12, 14 10" fill="#ef4444"/><polygon points="12 21, 10 14, 12 12, 14 14" fill="#fff" opacity="0.4"/></svg>
                 </button>
                 <button class="tb-btn" id="btn-tracking" title="GPS-трекинг (G)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10" stroke="#10b981" opacity="0.4"/><circle cx="12" cy="12" r="3" fill="#10b981"/><line x1="12" y1="2" x2="12" y2="5" stroke="#10b981"/><line x1="12" y1="19" x2="12" y2="22" stroke="#10b981"/><line x1="2" y1="12" x2="5" y2="12" stroke="#10b981"/><line x1="19" y1="12" x2="22" y2="12" stroke="#10b981"/></svg>
                 </button>
                 <button class="tb-btn" id="btn-fullscreen" title="Полный экран (F)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="15 3 21 3 21 9" stroke="#a78bfa" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9 21 3 21 3 15" stroke="#a78bfa" stroke-linecap="round" stroke-linejoin="round"/><line x1="21" y1="3" x2="14" y2="10" stroke="#a78bfa" opacity="0.6"/><line x1="3" y1="21" x2="10" y2="14" stroke="#a78bfa" opacity="0.6"/></svg>
                 </button>
                 <button class="tb-btn" id="btn-share" title="Поделиться ссылкой">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="18" cy="5" r="3" fill="rgba(6,182,212,0.19)" stroke="#06b6d4"/><circle cx="6" cy="12" r="3" fill="rgba(6,182,212,0.19)" stroke="#06b6d4"/><circle cx="18" cy="19" r="3" fill="rgba(6,182,212,0.19)" stroke="#06b6d4"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="#06b6d4"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="#06b6d4"/></svg>
                 </button>
                 <button class="tb-btn" id="btn-screenshot" title="Сохранить карту (PNG)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#f472b6"/><circle cx="8.5" cy="8.5" r="1.5" fill="#f472b6"/><path d="M21 15l-5-5L5 21" stroke="#f472b6" opacity="0.6"/></svg>
+                </button>
+                <button class="tb-btn" id="btn-print" title="Распечатать карту">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9" stroke="#94a3b8"/><path d="M6 17H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2" stroke="#94a3b8"/><rect x="6" y="14" width="12" height="7" fill="rgba(148,163,184,0.08)" stroke="#94a3b8" rx="1"/><line x1="8" y1="18" x2="16" y2="18" stroke="#94a3b8" opacity="0.4"/></svg>
                 </button>
             </div>
 

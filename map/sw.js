@@ -1,4 +1,4 @@
-var CACHE_NAME = 'survive-map-v3';
+var CACHE_NAME = 'survive-map-v4';
 var PRECACHE_URLS = [
     './',
     './map.js',

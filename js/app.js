@@ -1817,9 +1817,15 @@
         });
     }
 
+    function waitForThree(cb) {
+        if (typeof THREE !== 'undefined') return cb();
+        var t = setInterval(function () { if (typeof THREE !== 'undefined') { clearInterval(t); cb(); } }, 50);
+        setTimeout(function () { clearInterval(t); }, 10000);
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         initLoading();
-        initThreeJS();
+        waitForThree(initThreeJS);
         loadCart();
         renderScenarios();
         renderTimeline();

@@ -152,6 +152,8 @@
 
     <script>
     const API = '';
+    const ADMIN_KEY = localStorage.getItem('admin_key') || prompt('Введите ключ администратора:');
+    if (ADMIN_KEY) localStorage.setItem('admin_key', ADMIN_KEY);
     let currentData = {};
 
     function toast(msg) {
@@ -161,7 +163,8 @@
     }
 
     async function api(url, opts = {}) {
-        const r = await fetch(API + url, { headers: { 'Content-Type': 'application/json' }, ...opts });
+        const r = await fetch(API + url, { headers: { 'Content-Type': 'application/json', 'X-Admin-Key': ADMIN_KEY }, ...opts });
+        if (r.status === 401) { localStorage.removeItem('admin_key'); location.reload(); }
         return r.json();
     }
 

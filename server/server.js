@@ -5,12 +5,34 @@ const path = require('path');
 
 const app = express();
 const PORT = 3000;
+const API_KEY = process.env.ADMIN_KEY || 'survive-admin-2026';
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '..')));
 app.use('/admin', express.static(path.join(__dirname, '..', 'admin')));
 
+function requireAuth(req, res, next) {
+    const key = req.headers['x-admin-key'] || req.query.key;
+    if (key !== API_KEY) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+    next();
+}
+
+function sanitize(str) {
+    if (typeof str !== 'string') return str;
+    return str.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+}
+
+function validate(required, obj) {
+    for (const field of required) {
+        if (!obj[field] || (typeof obj[field] === 'string' && !obj[field].trim())) {
+            return field;
+        }
+    }
+    return null;
+}
 const db = new Database(path.join(__dirname, '..', 'survive.db'));
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
@@ -319,18 +341,25 @@ app.get('/api/scenarios/:id', (req, res) => {
     const row = db.prepare('SELECT * FROM scenarios WHERE id = ?').get(req.params.id);
     row ? res.json(row) : res.status(404).json({ error: 'Not found' });
 });
-app.post('/api/scenarios', (req, res) => {
+app.post('/api/scenarios', requireAuth, (req, res) => {
     const s = req.body;
+    const missing = validate(['id', 'title'], s);
+    if (missing) return res.status(400).json({ error: `Missing field: ${missing}` });
+    s.title = sanitize(s.title);
+    if (s.description) s.description = sanitize(s.description);
     db.prepare(`INSERT OR REPLACE INTO scenarios (id, icon, title, description, probability, severity, timeframe, survival_rate, detail_title, detail_body, sort_order)
         VALUES (@id, @icon, @title, @description, @probability, @severity, @timeframe, @survival_rate, @detail_title, @detail_body, @sort_order)`).run(s);
     res.json({ ok: true });
 });
-app.put('/api/scenarios/:id', (req, res) => {
+app.put('/api/scenarios/:id', requireAuth, (req, res) => {
     const s = { ...req.body, id: req.params.id };
+    if (!s.title) return res.status(400).json({ error: 'Missing field: title' });
+    s.title = sanitize(s.title);
+    if (s.description) s.description = sanitize(s.description);
     db.prepare(`UPDATE scenarios SET icon=@icon, title=@title, description=@description, probability=@probability, severity=@severity, timeframe=@timeframe, survival_rate=@survival_rate, detail_title=@detail_title, detail_body=@detail_body, sort_order=@sort_order, updated_at=CURRENT_TIMESTAMP WHERE id=@id`).run(s);
     res.json({ ok: true });
 });
-app.delete('/api/scenarios/:id', (req, res) => {
+app.delete('/api/scenarios/:id', requireAuth, (req, res) => {
     db.prepare('UPDATE scenarios SET is_active = 0 WHERE id = ?').run(req.params.id);
     res.json({ ok: true });
 });
@@ -343,17 +372,25 @@ app.get('/api/articles/:id', (req, res) => {
     const row = db.prepare('SELECT * FROM articles WHERE id = ?').get(req.params.id);
     row ? res.json(row) : res.status(404).json({ error: 'Not found' });
 });
-app.post('/api/articles', (req, res) => {
+app.post('/api/articles', requireAuth, (req, res) => {
     const a = req.body;
+    const missing = validate(['title', 'body'], a);
+    if (missing) return res.status(400).json({ error: `Missing field: ${missing}` });
+    a.title = sanitize(a.title);
+    a.body = sanitize(a.body);
+    if (a.excerpt) a.excerpt = sanitize(a.excerpt);
     const r = db.prepare('INSERT INTO articles (category, cat_label, title, excerpt, body, read_time, gradient) VALUES (@category, @cat_label, @title, @excerpt, @body, @read_time, @gradient)').run(a);
     res.json({ ok: true, id: r.lastInsertRowid });
 });
-app.put('/api/articles/:id', (req, res) => {
+app.put('/api/articles/:id', requireAuth, (req, res) => {
     const a = { ...req.body, id: req.params.id };
+    a.title = sanitize(a.title);
+    a.body = sanitize(a.body);
+    if (a.excerpt) a.excerpt = sanitize(a.excerpt);
     db.prepare('UPDATE articles SET category=@category, cat_label=@cat_label, title=@title, excerpt=@excerpt, body=@body, read_time=@read_time, gradient=@gradient, updated_at=CURRENT_TIMESTAMP WHERE id=@id').run(a);
     res.json({ ok: true });
 });
-app.delete('/api/articles/:id', (req, res) => {
+app.delete('/api/articles/:id', requireAuth, (req, res) => {
     db.prepare('UPDATE articles SET is_active = 0 WHERE id = ?').run(req.params.id);
     res.json({ ok: true });
 });
@@ -362,17 +399,21 @@ app.delete('/api/articles/:id', (req, res) => {
 app.get('/api/videos', (req, res) => {
     res.json(db.prepare('SELECT * FROM videos WHERE is_active = 1 ORDER BY id').all());
 });
-app.post('/api/videos', (req, res) => {
+app.post('/api/videos', requireAuth, (req, res) => {
     const v = req.body;
+    const missing = validate(['title'], v);
+    if (missing) return res.status(400).json({ error: `Missing field: ${missing}` });
+    v.title = sanitize(v.title);
     const r = db.prepare('INSERT INTO videos (title, description, duration, tag, color) VALUES (@title, @description, @duration, @tag, @color)').run(v);
     res.json({ ok: true, id: r.lastInsertRowid });
 });
-app.put('/api/videos/:id', (req, res) => {
+app.put('/api/videos/:id', requireAuth, (req, res) => {
     const v = { ...req.body, id: req.params.id };
+    v.title = sanitize(v.title);
     db.prepare('UPDATE videos SET title=@title, description=@description, duration=@duration, tag=@tag, color=@color WHERE id=@id').run(v);
     res.json({ ok: true });
 });
-app.delete('/api/videos/:id', (req, res) => {
+app.delete('/api/videos/:id', requireAuth, (req, res) => {
     db.prepare('UPDATE videos SET is_active = 0 WHERE id = ?').run(req.params.id);
     res.json({ ok: true });
 });
@@ -381,17 +422,21 @@ app.delete('/api/videos/:id', (req, res) => {
 app.get('/api/books', (req, res) => {
     res.json(db.prepare('SELECT * FROM books WHERE is_active = 1 ORDER BY id').all());
 });
-app.post('/api/books', (req, res) => {
+app.post('/api/books', requireAuth, (req, res) => {
     const b = req.body;
+    const missing = validate(['title', 'author'], b);
+    if (missing) return res.status(400).json({ error: `Missing field: ${missing}` });
+    b.title = sanitize(b.title);
     const r = db.prepare('INSERT INTO books (type, title, author, year, description, stars) VALUES (@type, @title, @author, @year, @description, @stars)').run(b);
     res.json({ ok: true, id: r.lastInsertRowid });
 });
-app.put('/api/books/:id', (req, res) => {
+app.put('/api/books/:id', requireAuth, (req, res) => {
     const b = { ...req.body, id: req.params.id };
+    b.title = sanitize(b.title);
     db.prepare('UPDATE books SET type=@type, title=@title, author=@author, year=@year, description=@description, stars=@stars WHERE id=@id').run(b);
     res.json({ ok: true });
 });
-app.delete('/api/books/:id', (req, res) => {
+app.delete('/api/books/:id', requireAuth, (req, res) => {
     db.prepare('UPDATE books SET is_active = 0 WHERE id = ?').run(req.params.id);
     res.json({ ok: true });
 });
@@ -408,12 +453,15 @@ app.get('/api/facts', (req, res) => {
 app.get('/api/facts/all', (req, res) => {
     res.json(db.prepare('SELECT * FROM facts WHERE is_active = 1').all());
 });
-app.post('/api/facts', (req, res) => {
+app.post('/api/facts', requireAuth, (req, res) => {
     const f = req.body;
+    const missing = validate(['text'], f);
+    if (missing) return res.status(400).json({ error: `Missing field: ${missing}` });
+    f.text = sanitize(f.text);
     const r = db.prepare('INSERT INTO facts (text, source) VALUES (@text, @source)').run(f);
     res.json({ ok: true, id: r.lastInsertRowid });
 });
-app.delete('/api/facts/:id', (req, res) => {
+app.delete('/api/facts/:id', requireAuth, (req, res) => {
     db.prepare('UPDATE facts SET is_active = 0 WHERE id = ?').run(req.params.id);
     res.json({ ok: true });
 });
