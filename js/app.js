@@ -1,6 +1,8 @@
 (function() {
     'use strict';
 
+    function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
     const DATA = {
         scenarios: [
             {
@@ -891,13 +893,14 @@
 
     function renderScenarios() {
         var grid = document.getElementById('scenarios-grid');
+        if (!grid) return;
         var all = DATA.scenarios.concat(DATA.newScenarios);
         var html = '';
         all.forEach(function(s) {
-            html += '<div class="scenario-card" data-severity="' + s.severity + '" data-id="' + s.id + '">' +
+            html += '<div class="scenario-card" data-severity="' + s.severity + '" data-id="' + esc(s.id) + '">' +
                 '<div class="scenario-icon">' + s.icon + '</div>' +
-                '<div class="scenario-title">' + s.title + '</div>' +
-                '<div class="scenario-desc">' + s.desc + '</div>' +
+                '<div class="scenario-title">' + esc(s.title) + '</div>' +
+                '<div class="scenario-desc">' + esc(s.desc) + '</div>' +
                 '<div class="scenario-meta">' +
                     '<span>📊 ' + s.probability + '%</span>' +
                     '<span>⏱ ' + s.timeframe + '</span>' +
@@ -940,6 +943,7 @@
 
     function renderTimeline() {
         var container = document.getElementById('timeline-container');
+        if (!container) return;
         var html = '<div class="timeline-line"></div>';
         DATA.timeline.forEach(function(item, i) {
             html += '<div class="timeline-item reveal">' +
@@ -956,19 +960,20 @@
 
     function renderArticles() {
         var grid = document.getElementById('articles-grid');
+        if (!grid) return;
         var html = '';
         var allArticles = DATA.articles.concat(DATA.newArticles);
         allArticles.forEach(function(a) {
-            html += '<div class="article-card reveal" data-category="' + a.category + '" data-id="' + a.id + '">' +
+            html += '<div class="article-card reveal" data-category="' + a.category + '" data-id="' + esc(a.id) + '">' +
                 '<div class="article-thumb" style="background:' + a.gradient + '">' +
-                    '<div style="position:absolute;bottom:15px;left:20px;z-index:1"><span class="article-category">' + a.catLabel + '</span></div>' +
+                    '<div style="position:absolute;bottom:15px;left:20px;z-index:1"><span class="article-category">' + esc(a.catLabel) + '</span></div>' +
                 '</div>' +
                 '<div class="article-body">' +
-                    '<div class="article-title">' + a.title + '</div>' +
-                    '<div class="article-excerpt">' + a.excerpt + '</div>' +
+                    '<div class="article-title">' + esc(a.title) + '</div>' +
+                    '<div class="article-excerpt">' + esc(a.excerpt) + '</div>' +
                     '<div class="article-meta">' +
-                        '<span>' + a.date + '</span>' +
-                        '<span class="article-reading">📖 ' + a.readTime + '</span>' +
+                        '<span>' + esc(a.date) + '</span>' +
+                        '<span class="article-reading">📖 ' + esc(a.readTime) + '</span>' +
                     '</div>' +
                 '</div>' +
             '</div>';
@@ -988,6 +993,7 @@
 
     function renderLifehacks() {
         var grid = document.getElementById('lifehacks-grid');
+        if (!grid) return;
         var html = '';
         DATA.lifehacks.forEach(function(h, i) {
             html += '<div class="lifehack-card reveal" style="animation-delay:' + (i * 0.05) + 's">' +
@@ -1002,6 +1008,7 @@
 
     function renderAutonomyArticles() {
         var grid = document.getElementById('autonomy-grid');
+        if (!grid) return;
         var html = '';
         DATA.autonomyArticles.forEach(function(a) {
             html += '<div class="article-card reveal autonomy-article" data-category="' + a.category + '" data-id="' + a.id + '">' +
@@ -1032,6 +1039,7 @@
 
     function renderGuides() {
         var container = document.getElementById('guides-container');
+        if (!container) return;
         var html = '';
         DATA.guides.forEach(function(g, gi) {
             html += '<div class="guide-card reveal">' +
@@ -1061,6 +1069,7 @@
 
     function renderVideos() {
         var grid = document.getElementById('videos-grid');
+        if (!grid) return;
         var html = '';
         var allVideos = DATA.videos.concat(DATA.newVideos);
         allVideos.forEach(function(v) {
@@ -1081,6 +1090,7 @@
 
     function renderChecklist() {
         var container = document.getElementById('survival-checklist');
+        if (!container) return;
         var totalItems = 0;
         var html = '';
         DATA.checklist.forEach(function(cat) {
@@ -1118,6 +1128,7 @@
     }
 
     function initCalculators() {
+        if (!document.getElementById('water-people')) return;
         function calcWater() {
             var people = parseInt(document.getElementById('water-people').value) || 1;
             var days = parseInt(document.getElementById('water-days').value) || 1;
@@ -1145,6 +1156,7 @@
     function renderRiskAssessment() {
         var select = document.getElementById('region-select');
         var container = document.getElementById('risk-assessment');
+        if (!select || !container) return;
 
         function updateRisks() {
             var region = select.value;
@@ -1170,6 +1182,7 @@
     function renderShop() {
         var filterContainer = document.getElementById('shop-filter');
         var grid = document.getElementById('shop-grid');
+        if (!grid) return;
 
         // Render filter buttons
         var filterHtml = '';
@@ -1362,6 +1375,7 @@
 
     function initCartUI() {
         var cartToggle = document.getElementById('cart-toggle');
+        if (!cartToggle) return;
         var cartPanel = document.getElementById('cart-panel');
         var cartOverlay = document.getElementById('cart-overlay');
         var cartClose = document.getElementById('cart-close');
@@ -1517,6 +1531,7 @@
     function renderBooks() {
         var container = document.getElementById('books-grid');
         if (!container) return;
+        if (!container) return;
         var html = '';
         var typeLabels = { book: '📖 КНИГА', film: '🎬 ФИЛЬМ', game: '🎮 ИГРА' };
         DATA.books.forEach(function(b) {
@@ -1553,12 +1568,14 @@
     function renderFacts() {
         var ticker = document.getElementById('facts-ticker');
         if (!ticker) return;
+        if (!ticker) return;
         var fact = DATA.facts[Math.floor(Math.random() * DATA.facts.length)];
         ticker.innerHTML = '<span class="fact-text">' + fact.text + '</span><span class="fact-source">' + fact.source + '</span>';
     }
 
     function renderMonetization() {
         var block = document.getElementById('monetization-info');
+        if (!block) return;
         block.innerHTML = '';
     }
 
@@ -1647,6 +1664,7 @@
 
     function initModal() {
         var modal = document.getElementById('article-modal');
+        if (!modal) return;
         var closeBtn = document.getElementById('modal-close');
 
         closeBtn.addEventListener('click', function() {
@@ -1802,6 +1820,7 @@
 
     function initAudio() {
         var audioToggle = document.getElementById('audio-toggle');
+        if (!audioToggle) return;
         var audioOn = false;
 
         audioToggle.addEventListener('click', function() {
@@ -1812,6 +1831,7 @@
 
     function initTheme() {
         var themeToggle = document.getElementById('theme-toggle');
+        if (!themeToggle) return;
         themeToggle.addEventListener('click', function() {
             document.body.classList.toggle('light-mode');
         });
