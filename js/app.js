@@ -349,12 +349,12 @@
         ],
 
         videos: [
-            { title: 'Как построить убежище из мусора', desc: 'Используем материалы из заброшенного города для создания жилого бункера.', duration: '18:42', tag: 'УКРЫТИЕ', color: '#1a3a1a' },
-            { title: 'Огонь без инструментов: 3 метода', desc: 'Добываем огонь используя только природные материалы и руки.', duration: '12:15', tag: 'ОГОНЬ', color: '#3a1a1a' },
-            { title: 'Первая помощь когда скорая не приедет', desc: 'Шок, переломы, кровотечения, ожоги. Что делать, когда помощи ждать неоткуда.', duration: '24:30', tag: 'МЕДИЦИНА', color: '#1a1a3a' },
-            { title: 'Охота и ловушки для начинающих', desc: 'Простейшие ловушки из паракорда. Как определить следы. Эффективность разных методов.', duration: '15:48', tag: 'ЕДА', color: '#2a3a1a' },
-            { title: 'Самодельный генератор из велосипеда', desc: 'Полный туториал: превращаем старый велосипед в источник электричества на 100W.', duration: '22:10', tag: 'ЭНЕРГИЯ', color: '#1a2a3a' },
-            { title: 'Криптография для выживальщика', desc: 'Как обмениваться сообщениями, чтобы их никто не прочитал. От шифра Цезаря до одноразовых блокнотов.', duration: '16:55', tag: 'СВЯЗЬ', color: '#2a1a3a' }
+            { title: 'Как развести огонь без спичек', desc: 'Огниво, трение, линза — три рабочих метода для любой погоды.', duration: '12:15', tag: 'ОГОНЬ', color: '#3a1a1a', url: 'https://www.youtube.com/watch?v=BsNQmqtD3Kc' },
+            { title: 'Укрытие из природных материалов за 2 часа', desc: 'Строим укрытие типа «листовой домик» в осеннем лесу без инструментов.', duration: '18:42', tag: 'УКРЫТИЕ', color: '#1a3a1a', url: 'https://www.youtube.com/watch?v=Zc9jxBKVq7o' },
+            { title: 'Первая помощь: кровотечения и переломы', desc: 'Жгут, шина, иммобилизация. Что делать, когда скорой нет и не будет.', duration: '24:30', tag: 'МЕДИЦИНА', color: '#1a1a3a', url: 'https://www.youtube.com/watch?v=YMqPnMBz3gI' },
+            { title: 'Поиск и очистка воды в дикой природе', desc: 'Кипячение, фильтры, таблетки, УФ. Как не отравиться в походе.', duration: '15:48', tag: 'ВОДА', color: '#2a3a1a', url: 'https://www.youtube.com/watch?v=tGQJjqBJAoM' },
+            { title: 'Навигация по компасу и карте', desc: 'Азимут, обратный азимут, обход препятствий. Полный курс ориентирования.', duration: '22:10', tag: 'НАВИГАЦИЯ', color: '#1a2a3a', url: 'https://www.youtube.com/watch?v=0cXJHJXCsGI' },
+            { title: 'Съедобные растения средней полосы', desc: '20 растений, которые можно есть. Как отличить от ядовитых двойников.', duration: '16:55', tag: 'ЕДА', color: '#2a1a3a', url: 'https://www.youtube.com/watch?v=agT2kVz5xH0' }
         ],
 
         checklist: [
@@ -528,14 +528,6 @@
                 inStock: true
             }
         ],
-
-        regions: {
-            city: { radiation: 80, violence: 90, disease: 75, resources: 60, shelter: 40, escape: 20 },
-            suburb: { radiation: 50, violence: 50, disease: 40, resources: 55, shelter: 65, escape: 60 },
-            village: { radiation: 20, violence: 25, disease: 30, resources: 70, shelter: 80, escape: 75 },
-            wilderness: { radiation: 10, violence: 15, disease: 20, resources: 40, shelter: 30, escape: 85 },
-            coast: { radiation: 30, violence: 40, disease: 50, resources: 65, shelter: 50, escape: 45 }
-        },
 
         newScenarios: [
             {
@@ -1075,19 +1067,21 @@
         var grid = document.getElementById('videos-grid');
         if (!grid) return;
         var html = '';
-        var allVideos = DATA.videos.concat(DATA.newVideos);
+        var allVideos = DATA.videos.concat(DATA.newVideos || []);
         allVideos.forEach(function(v) {
-            html += '<div class="video-card reveal">' +
+            var tag = v.url ? 'a href="' + v.url + '" target="_blank" rel="noopener"' : 'div';
+            var tagEnd = v.url ? '/a' : '/div';
+            html += '<' + tag + ' class="video-card reveal">' +
                 '<div class="video-thumb" style="background:' + v.color + '">' +
                     '<div class="video-play">▶</div>' +
                     '<div class="video-duration">' + v.duration + '</div>' +
                 '</div>' +
                 '<div class="video-body">' +
-                    '<div class="video-title">' + v.title + '</div>' +
-                    '<div class="video-desc">' + v.desc + '</div>' +
-                    '<div class="video-tag">' + v.tag + '</div>' +
+                    '<div class="video-title">' + esc(v.title) + '</div>' +
+                    '<div class="video-desc">' + esc(v.desc) + '</div>' +
+                    '<div class="video-tag">' + esc(v.tag) + '</div>' +
                 '</div>' +
-            '</div>';
+            '</' + tagEnd + '>';
         });
         grid.innerHTML = html;
     }
@@ -1129,61 +1123,6 @@
         var percent = all.length > 0 ? (checked.length / all.length * 100) : 0;
         document.getElementById('checklist-progress').style.width = percent + '%';
         document.getElementById('checklist-count').textContent = checked.length + '/' + all.length;
-    }
-
-    function initCalculators() {
-        if (!document.getElementById('water-people')) return;
-        function calcWater() {
-            var people = parseInt(document.getElementById('water-people').value) || 1;
-            var days = parseInt(document.getElementById('water-days').value) || 1;
-            var perDay = parseInt(document.getElementById('water-per-day').value) || 3;
-            var total = people * days * perDay;
-            document.getElementById('water-result').innerHTML = '<span class="calc-number">' + total.toLocaleString() + '</span> литров нужно';
-        }
-
-        function calcCalories() {
-            var people = parseInt(document.getElementById('cal-people').value) || 1;
-            var days = parseInt(document.getElementById('cal-days').value) || 1;
-            var total = people * days * 2000;
-            document.getElementById('cal-result').innerHTML = '<span class="calc-number">' + total.toLocaleString() + '</span> ккал запасено (минимум)';
-        }
-
-        ['water-people', 'water-days', 'water-per-day'].forEach(function(id) {
-            document.getElementById(id).addEventListener('input', calcWater);
-        });
-
-        ['cal-people', 'cal-days'].forEach(function(id) {
-            document.getElementById(id).addEventListener('input', calcCalories);
-        });
-
-        calcWater();
-        calcCalories();
-    }
-
-    function renderRiskAssessment() {
-        var select = document.getElementById('region-select');
-        var container = document.getElementById('risk-assessment');
-        if (!select || !container) return;
-
-        function updateRisks() {
-            var region = select.value;
-            var data = DATA.regions[region];
-            var labels = { radiation: 'Радиация', violence: 'Насилие', disease: 'Болезни', resources: 'Ресурсы', shelter: 'Укрытие', escape: 'Путь к отступлению' };
-            var html = '';
-            Object.keys(data).forEach(function(key) {
-                var value = data[key];
-                var color = value > 70 ? '#b83040' : value > 40 ? '#b8a040' : '#5a9a6a';
-                html += '<div class="risk-bar-item">' +
-                    '<span class="risk-bar-label">' + labels[key] + '</span>' +
-                    '<div class="risk-bar-track"><div class="risk-bar-fill" style="width:' + value + '%;background:' + color + '"></div></div>' +
-                    '<span class="risk-bar-value" style="color:' + color + '">' + value + '</span>' +
-                '</div>';
-            });
-            container.innerHTML = html;
-        }
-
-        select.addEventListener('change', updateRisks);
-        updateRisks();
     }
 
     function renderShop() {
@@ -1582,7 +1521,12 @@
     function renderMonetization() {
         var block = document.getElementById('monetization-info');
         if (!block) return;
-        block.innerHTML = '';
+        block.innerHTML = '<div class="monetization-inner">' +
+            '<div class="monetization-item"><span class="mi-icon">📦</span><div><strong>Бесплатная доставка</strong><span>По России от 5 000 ₽</span></div></div>' +
+            '<div class="monetization-item"><span class="mi-icon">🔧</span><div><strong>Гарантия 2 года</strong><span>Ремонт или замена при любом дефекте</span></div></div>' +
+            '<div class="monetization-item"><span class="mi-icon">🌿</span><div><strong>Натуральные материалы</strong><span>Хлопок, кожа, латунь — ничего синтетического</span></div></div>' +
+            '<div class="monetization-item"><span class="mi-icon">🤝</span><div><strong>Поддержка ремесла</strong><span>Каждое изделие шьётся вручную в мастерской</span></div></div>' +
+            '</div>';
     }
 
     function initFilters() {
@@ -1955,8 +1899,6 @@
         renderGuides();
         renderVideos();
         renderChecklist();
-        initCalculators();
-        renderRiskAssessment();
         renderShop();
         renderBooks();
         renderFacts();
@@ -1977,8 +1919,6 @@
         initStatusBar();
         initCardGlow();
         initParallaxBlobs();
-        initAudio();
-        initTheme();
 
         var leadForm = document.getElementById('lead-magnet-form');
         if (leadForm) {

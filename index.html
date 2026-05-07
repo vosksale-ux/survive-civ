@@ -100,8 +100,6 @@
             <button class="btn-icon cart-btn" id="cart-toggle" aria-label="Корзина">
                 🛒<span class="cart-count" id="cart-count">0</span>
             </button>
-            <button class="btn-icon" id="theme-toggle" aria-label="Переключить тему">◐</button>
-            <button class="btn-icon" id="audio-toggle" aria-label="Звук">🔇</button>
         </div>
         <button class="nav-burger" id="nav-burger" aria-label="Меню">☰</button>
     </nav>
@@ -343,8 +341,9 @@
         <section id="tools" class="section">
             <div class="section-header">
                 <div class="section-stamp">РАЗДЕЛ VIII</div>
-                <span class="section-tag">// ПОЛЕЗНЫЕ ИНСТРУМЕНТЫ</span>
-                <h2 class="section-title" data-text="Калькуляторы и чеклисты">Калькуляторы и чеклисты</h2>
+                <span class="section-tag">// НАБОР ВЫЖИВАЛЬЩИКА</span>
+                <h2 class="section-title" data-text="Чеклист и нормативы">Чеклист и нормативы</h2>
+                <p class="section-desc">Минимальный набор для автономии на 30+ дней. Отмечайте собранное — прогресс сохраняется.</p>
             </div>
             <div class="tools-grid">
                 <div class="tool-card" id="checklist-tool">
@@ -360,51 +359,51 @@
                         </div>
                     </div>
                 </div>
-                <div class="tool-card" id="water-calc">
+                <div class="tool-card">
                     <div class="tool-header">
                         <span class="tool-icon">💧</span>
-                        <h3>Калькулятор воды</h3>
+                        <h3>Нормативы воды</h3>
                     </div>
                     <div class="tool-body">
-                        <div class="calc-inputs">
-                            <label>Людей в группе: <input type="number" id="water-people" value="4" min="1" max="100"></label>
-                            <label>Дней автономии: <input type="number" id="water-days" value="30" min="1" max="365"></label>
-                            <label>Л/чел/день: <input type="number" id="water-per-day" value="3" min="1" max="10"></label>
-                        </div>
-                        <div class="calc-result" id="water-result">
-                            <span class="calc-number">360</span> литров нужно
+                        <div class="info-table">
+                            <div class="info-row"><span>Питьё (минимум)</span><strong>2 л/чел/день</strong></div>
+                            <div class="info-row"><span>Питьё (норма)</span><strong>3-4 л/чел/день</strong></div>
+                            <div class="info-row"><span>Приготовление еды</span><strong>2 л/чел/день</strong></div>
+                            <div class="info-row"><span>Гигиена</span><strong>5-10 л/чел/день</strong></div>
+                            <div class="info-row"><span>Группа 4 чел / 30 дней</span><strong>~840 литров</strong></div>
+                            <div class="info-row"><span>Группа 4 чел / 90 дней</span><strong>~2 520 литров</strong></div>
                         </div>
                     </div>
                 </div>
-                <div class="tool-card" id="calorie-calc">
+                <div class="tool-card">
                     <div class="tool-header">
                         <span class="tool-icon">🔥</span>
-                        <h3>Калькулятор калорий</h3>
+                        <h3>Калорийный минимум</h3>
                     </div>
                     <div class="tool-body">
-                        <div class="calc-inputs">
-                            <label>Людей: <input type="number" id="cal-people" value="4" min="1" max="100"></label>
-                            <label>Дней: <input type="number" id="cal-days" value="30" min="1" max="365"></label>
-                        </div>
-                        <div class="calc-result" id="cal-result">
-                            <span class="calc-number">960,000</span> ккал запасено (минимум)
+                        <div class="info-table">
+                            <div class="info-row"><span>Выживание (минимум)</span><strong>1 200 ккал/чел/день</strong></div>
+                            <div class="info-row"><span>Малоподвижный режим</span><strong>1 800 ккал/чел/день</strong></div>
+                            <div class="info-row"><span>Физический труд</span><strong>2 500-3 000 ккал/чел/день</strong></div>
+                            <div class="info-row"><span>Группа 4 чел / 30 дней</span><strong>~300 000 ккал</strong></div>
+                            <div class="info-row"><span>Эквивалент в крупе</span><strong>~85 кг (3 500 ккал/кг)</strong></div>
                         </div>
                     </div>
                 </div>
-                <div class="tool-card" id="risk-map">
+                <div class="tool-card">
                     <div class="tool-header">
-                        <span class="tool-icon">🗺</span>
-                        <h3>Оценка угроз по региону</h3>
+                        <span class="tool-icon">🌡</span>
+                        <h3>Критические температуры</h3>
                     </div>
                     <div class="tool-body">
-                        <select id="region-select">
-                            <option value="city">Мегаполис</option>
-                            <option value="suburb">Пригород</option>
-                            <option value="village">Деревня</option>
-                            <option value="wilderness">Дикая природа</option>
-                            <option value="coast">Побережье</option>
-                        </select>
-                        <div id="risk-assessment" class="risk-bars"></div>
+                        <div class="info-table">
+                            <div class="info-row"><span>Гипотермия начинается</span><strong>ниже +35°C тела</strong></div>
+                            <div class="info-row"><span>Обморожение I ст.</span><strong>за 10 мин при −15°C</strong></div>
+                            <div class="info-row"><span>Обморожение II ст.</span><strong>за 5 мин при −25°C</strong></div>
+                            <div class="info-row"><span>Тепловой удар</span><strong>выше +40°C тела</strong></div>
+                            <div class="info-row"><span>Смерть без воды</span><strong>3-5 дней</strong></div>
+                            <div class="info-row"><span>Смерть без еды</span><strong>30-60 дней</strong></div>
+                        </div>
                     </div>
                 </div>
             </div>
