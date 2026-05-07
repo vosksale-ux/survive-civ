@@ -799,7 +799,7 @@
         accessories: 'Аксессуары'
     };
 
-    let scene, camera, renderer, particles, mouseX = 0, mouseY = 0;
+    let scene, camera, renderer, particles, mouseX = 0, mouseY = 0, initialPositions = null;
 
     function initThreeJS() {
         scene = new THREE.Scene();
@@ -851,6 +851,7 @@
 
         particles = new THREE.Points(geometry, material);
         scene.add(particles);
+        initialPositions = new Float32Array(positions);
 
         var ambientLight = new THREE.AmbientLight(0xc8a96e, 0.15);
         scene.add(ambientLight);
@@ -879,7 +880,9 @@
             var time = Date.now() * 0.001;
 
             for (var i = 0; i < positions.length; i += 3) {
-                positions[i + 1] += Math.sin(time + positions[i] * 0.01) * 0.01;
+                if (initialPositions) {
+                    positions[i + 1] = initialPositions[i + 1] + Math.sin(time + initialPositions[i] * 0.01) * 0.3;
+                }
             }
             particles.geometry.attributes.position.needsUpdate = true;
         }
@@ -915,7 +918,8 @@
             var card = e.target.closest('.scenario-card');
             if (!card) return;
             var id = card.dataset.id;
-            var scenario = DATA.scenarios.find(function(s) { return s.id === id; });
+            var all = DATA.scenarios.concat(DATA.newScenarios);
+            var scenario = all.find(function(s) { return s.id === id; });
             if (!scenario) return;
             showScenarioDetail(scenario);
         });
@@ -1151,6 +1155,9 @@
         ['cal-people', 'cal-days'].forEach(function(id) {
             document.getElementById(id).addEventListener('input', calcCalories);
         });
+
+        calcWater();
+        calcCalories();
     }
 
     function renderRiskAssessment() {
@@ -1568,7 +1575,6 @@
     function renderFacts() {
         var ticker = document.getElementById('facts-ticker');
         if (!ticker) return;
-        if (!ticker) return;
         var fact = DATA.facts[Math.floor(Math.random() * DATA.facts.length)];
         ticker.innerHTML = '<span class="fact-text">' + fact.text + '</span><span class="fact-source">' + fact.source + '</span>';
     }
@@ -1609,6 +1615,80 @@
         setupFilter('.articles-filter .filter-btn', '#articles-grid', '.article-card:not(.autonomy-article)');
         setupFilter('.books-filter', '#books-grid', '.book-card');
         setupFilter('.autonomy-filter-btn', '#autonomy-grid', '.autonomy-article');
+    }
+
+    function initSearch() {
+        var toggle = document.getElementById('search-toggle');
+        var overlay = document.getElementById('search-overlay');
+        var close = document.getElementById('search-close');
+        var input = document.getElementById('search-input');
+        var results = document.getElementById('search-results');
+        if (!toggle || !overlay) return;
+
+        toggle.addEventListener('click', function() {
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            if (input) input.focus();
+        });
+
+        if (close) close.addEventListener('click', function() {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) {
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && overlay.classList.contains('active')) {
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        if (!input || !results) return;
+        input.addEventListener('input', function() {
+            var q = this.value.toLowerCase().trim();
+            if (!q) { results.innerHTML = ''; return; }
+            var items = [];
+            var allArticles = DATA.articles.concat(DATA.newArticles || []);
+            allArticles.forEach(function(a) {
+                if ((a.title && a.title.toLowerCase().indexOf(q) > -1) || (a.excerpt && a.excerpt.toLowerCase().indexOf(q) > -1)) {
+                    items.push({ type: 'Статья', title: a.title, desc: a.excerpt, id: a.id });
+                }
+            });
+            (DATA.guides || []).forEach(function(g) {
+                if (g.title && g.title.toLowerCase().indexOf(q) > -1) {
+                    items.push({ type: 'Гайд', title: g.title, desc: g.tag });
+                }
+            });
+            (DATA.lifehacks || []).forEach(function(h) {
+                if (h.title && h.title.toLowerCase().indexOf(q) > -1) {
+                    items.push({ type: 'Лайфхак', title: h.title, desc: h.desc });
+                }
+            });
+            var allScenarios = DATA.scenarios.concat(DATA.newScenarios || []);
+            allScenarios.forEach(function(s) {
+                if (s.title && s.title.toLowerCase().indexOf(q) > -1) {
+                    items.push({ type: 'Сценарий', title: s.title, desc: s.desc });
+                }
+            });
+            if (!items.length) {
+                results.innerHTML = '<div class="search-empty">Ничего не найдено</div>';
+                return;
+            }
+            results.innerHTML = items.slice(0, 20).map(function(item) {
+                return '<div class="search-result-item">' +
+                    '<span class="search-result-type">' + esc(item.type) + '</span>' +
+                    '<div class="search-result-title">' + esc(item.title) + '</div>' +
+                    (item.desc ? '<div class="search-result-desc">' + esc(item.desc).slice(0, 120) + '</div>' : '') +
+                    '</div>';
+            }).join('');
+        });
     }
 
     function initScrollEffects() {
@@ -1662,6 +1742,18 @@
         window.dispatchEvent(new Event('scroll'));
     }
 
+    function openArticleModal(article) {
+        var modal = document.getElementById('article-modal');
+        var body = document.getElementById('modal-body');
+        if (!modal || !body) return;
+        body.innerHTML = '<h2 class="modal-article-title">' + esc(article.title) + '</h2>' +
+            (article.catLabel ? '<span class="modal-article-cat">' + esc(article.catLabel) + '</span>' : '') +
+            (article.readTime ? '<span class="modal-article-meta">📖 ' + esc(article.readTime) + '</span>' : '') +
+            '<div class="modal-article-body">' + (article.body || article.excerpt || esc(article.desc) || '') + '</div>';
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
     function initModal() {
         var modal = document.getElementById('article-modal');
         if (!modal) return;
@@ -1700,14 +1792,22 @@
     }
 
     function initCardGlow() {
+        var cards = document.querySelectorAll('.scenario-card, .article-card, .lifehack-card');
+        if (!cards.length) return;
+        var ticking = false;
         document.addEventListener('mousemove', function(e) {
-            var cards = document.querySelectorAll('.scenario-card, .article-card, .lifehack-card');
-            cards.forEach(function(card) {
-                var rect = card.getBoundingClientRect();
-                var x = ((e.clientX - rect.left) / rect.width) * 100;
-                var y = ((e.clientY - rect.top) / rect.height) * 100;
-                card.style.setProperty('--glow-x', x + '%');
-                card.style.setProperty('--glow-y', y + '%');
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(function() {
+                cards.forEach(function(card) {
+                    var rect = card.getBoundingClientRect();
+                    if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+                    var x = ((e.clientX - rect.left) / rect.width) * 100;
+                    var y = ((e.clientY - rect.top) / rect.height) * 100;
+                    card.style.setProperty('--glow-x', x + '%');
+                    card.style.setProperty('--glow-y', y + '%');
+                });
+                ticking = false;
             });
         });
     }
@@ -1860,8 +1960,10 @@
         renderShop();
         renderBooks();
         renderFacts();
+        setInterval(renderFacts, 15000);
         renderMonetization();
         initFilters();
+        initSearch();
         initScrollEffects();
         initModal();
         initCartUI();
@@ -1877,6 +1979,22 @@
         initParallaxBlobs();
         initAudio();
         initTheme();
+
+        var leadForm = document.getElementById('lead-magnet-form');
+        if (leadForm) {
+            leadForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var email = document.getElementById('lead-email');
+                var note = document.getElementById('lead-magnet-note');
+                if (email && email.value) {
+                    var emails = JSON.parse(localStorage.getItem('survive_emails') || '[]');
+                    emails.push({ email: email.value, date: new Date().toISOString() });
+                    localStorage.setItem('survive_emails', JSON.stringify(emails));
+                    if (note) note.textContent = '✓ Чеклист отправлен на ' + email.value;
+                    email.value = '';
+                }
+            });
+        }
     });
 
 })();
