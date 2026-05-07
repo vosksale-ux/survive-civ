@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru" data-page="tools">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инструменты выживальщика — SURVIVE.CIV</title>
+    <meta name="description" content="Чеклист выживания на 30+ дней, нормативы воды, калорийный минимум, критические температуры.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://survive-civ.github.io/tools.html">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dossier.css">
+    <link rel="stylesheet" href="css/page-common.css">
+</head>
+<body>
+    <div id="loading-screen">
+        <div class="loader-container">
+            <div class="loader-stamp">СЕКРЕТНО</div>
+            <div class="loader-ring"></div>
+            <div class="loader-text">ЗАГРУЗКА ИНСТРУМЕНТОВ...</div>
+            <div class="loader-progress"><span id="load-percent">0</span>%</div>
+        </div>
+    </div>
+    <canvas id="bg-canvas"></canvas>
+    <div class="atmosphere-blob atmosphere-blob-1"></div>
+    <div class="atmosphere-blob atmosphere-blob-2"></div>
+    <div id="cursor-glow"></div>
+    <div id="facts-ticker" class="facts-ticker"></div>
+    <nav id="main-nav">
+        <div class="nav-logo">
+            <span class="logo-stamp"></span>
+            <span class="logo-bracket">[</span><span class="logo-text">SURVIVE</span><span class="logo-dot">.</span><span class="logo-civ">CIV</span><span class="logo-bracket">]</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Главная</a>
+            <a href="scenarios.html" class="nav-link">Сценарии</a>
+            <a href="articles.html" class="nav-link">Статьи</a>
+            <a href="lifehacks.html" class="nav-link">Лайфхаки</a>
+            <a href="guides.html" class="nav-link">Гайды</a>
+            <a href="videos.html" class="nav-link">Видео</a>
+            <a href="tools.html" class="nav-link active">Инструменты</a>
+            <a href="books.html" class="nav-link">Медиатека</a>
+            <a href="shop.html" class="nav-link">Магазин</a>
+            <a href="maps.html" class="nav-link">Карты</a>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-icon" id="search-toggle" aria-label="Поиск">🔍</button>
+        </div>
+        <button class="nav-burger" id="nav-burger" aria-label="Меню">☰</button>
+    </nav>
+    <main id="main-content">
+        <div class="page-header">
+            <a href="index.html" class="back-link">← На главную</a>
+            <div class="section-stamp">НАБОР ВЫЖИВАЛЬЩИКА</div>
+            <h1 class="page-title">Чеклист и нормативы</h1>
+            <p class="page-desc">Минимальный набор для автономии на 30+ дней. Отмечайте собранное — прогресс сохраняется.</p>
+        </div>
+        <section class="section">
+            <div class="tools-grid">
+                <div class="tool-card" id="checklist-tool">
+                    <div class="tool-header">
+                        <span class="tool-icon">☑</span>
+                        <h3>Чеклист выживания</h3>
+                    </div>
+                    <div class="tool-body">
+                        <div id="survival-checklist"></div>
+                        <div class="checklist-progress">
+                            <div class="progress-bar"><div class="progress-fill" id="checklist-progress"></div></div>
+                            <span id="checklist-count">0/0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">💧</span>
+                        <h3>Нормативы воды</h3>
+                    </div>
+                    <div class="tool-body">
+                        <div class="info-table">
+                            <div class="info-row"><span>Питьё (минимум)</span><strong>2 л/чел/день</strong></div>
+                            <div class="info-row"><span>Питьё (норма)</span><strong>3-4 л/чел/день</strong></div>
+                            <div class="info-row"><span>Приготовление еды</span><strong>2 л/чел/день</strong></div>
+                            <div class="info-row"><span>Гигиена</span><strong>5-10 л/чел/день</strong></div>
+                            <div class="info-row"><span>Группа 4 чел / 30 дней</span><strong>~840 литров</strong></div>
+                            <div class="info-row"><span>Группа 4 чел / 90 дней</span><strong>~2 520 литров</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">🔥</span>
+                        <h3>Калорийный минимум</h3>
+                    </div>
+                    <div class="tool-body">
+                        <div class="info-table">
+                            <div class="info-row"><span>Выживание (минимум)</span><strong>1 200 ккал/чел/день</strong></div>
+                            <div class="info-row"><span>Малоподвижный режим</span><strong>1 800 ккал/чел/день</strong></div>
+                            <div class="info-row"><span>Физический труд</span><strong>2 500-3 000 ккал/чел/день</strong></div>
+                            <div class="info-row"><span>Группа 4 чел / 30 дней</span><strong>~300 000 ккал</strong></div>
+                            <div class="info-row"><span>Эквивалент в крупе</span><strong>~85 кг (3 500 ккал/кг)</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">🌡</span>
+                        <h3>Критические температуры</h3>
+                    </div>
+                    <div class="tool-body">
+                        <div class="info-table">
+                            <div class="info-row"><span>Гипотермия начинается</span><strong>ниже +35°C тела</strong></div>
+                            <div class="info-row"><span>Обморожение I ст.</span><strong>за 10 мин при −15°C</strong></div>
+                            <div class="info-row"><span>Обморожение II ст.</span><strong>за 5 мин при −25°C</strong></div>
+                            <div class="info-row"><span>Тепловой удар</span><strong>выше +40°C тела</strong></div>
+                            <div class="info-row"><span>Смерть без воды</span><strong>3-5 дней</strong></div>
+                            <div class="info-row"><span>Смерть без еды</span><strong>30-60 дней</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer id="footer">
+        <div class="footer-bottom">
+            <span>© 2026 SURVIVE.CIV — Все права потеряны после апокалипсиса</span>
+            <span class="footer-status">СТАТУС СИСТЕМЫ: <span class="status-online">ОНЛАЙН</span></span>
+        </div>
+    </footer>
+    <div id="search-overlay" class="search-overlay">
+        <div class="search-overlay-inner">
+            <button class="search-overlay-close" id="search-close">&times;</button>
+            <div class="search-input-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" placeholder="Поиск по статьям, гайдам, лайфхакам..." autocomplete="off">
+            </div>
+            <div id="search-results" class="search-results"></div>
+        </div>
+    </div>
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/app.js" defer></script>
+</body>
+</html>

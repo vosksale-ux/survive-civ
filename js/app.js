@@ -3,6 +3,10 @@
 
     function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+    var PAGE = (document.documentElement.getAttribute('data-page') || 'home');
+    var IS_HOME = (PAGE === 'home');
+    var TEASER_LIMIT = 4;
+
     const DATA = {
         scenarios: [
             {
@@ -890,8 +894,9 @@
         var grid = document.getElementById('scenarios-grid');
         if (!grid) return;
         var all = DATA.scenarios.concat(DATA.newScenarios);
+        var items = IS_HOME ? all.slice(0, TEASER_LIMIT) : all;
         var html = '';
-        all.forEach(function(s) {
+        items.forEach(function(s) {
             html += '<div class="scenario-card" data-severity="' + s.severity + '" data-id="' + esc(s.id) + '">' +
                 '<div class="scenario-icon">' + s.icon + '</div>' +
                 '<div class="scenario-title">' + esc(s.title) + '</div>' +
@@ -904,6 +909,9 @@
                 '<div class="severity-badge severity-' + s.severity + '">' + s.severity + '</div>' +
             '</div>';
         });
+        if (IS_HOME && all.length > TEASER_LIMIT) {
+            html += '<div style="text-align:center;grid-column:1/-1"><a href="scenarios.html" class="section-more">Все сценарии →</a></div>';
+        }
         grid.innerHTML = html;
 
         grid.addEventListener('click', function(e) {
@@ -959,7 +967,8 @@
         if (!grid) return;
         var html = '';
         var allArticles = DATA.articles.concat(DATA.newArticles);
-        allArticles.forEach(function(a) {
+        var items = IS_HOME ? allArticles.slice(0, TEASER_LIMIT) : allArticles;
+        items.forEach(function(a) {
             html += '<div class="article-card reveal" data-category="' + a.category + '" data-id="' + esc(a.id) + '">' +
                 '<div class="article-thumb" style="background:' + a.gradient + '">' +
                     '<div style="position:absolute;bottom:15px;left:20px;z-index:1"><span class="article-category">' + esc(a.catLabel) + '</span></div>' +
@@ -974,6 +983,9 @@
                 '</div>' +
             '</div>';
         });
+        if (IS_HOME && allArticles.length > TEASER_LIMIT) {
+            html += '<div style="text-align:center;grid-column:1/-1"><a href="articles.html" class="section-more">Все статьи →</a></div>';
+        }
         grid.innerHTML = html;
 
         grid.addEventListener('click', function(e) {
@@ -991,7 +1003,8 @@
         var grid = document.getElementById('lifehacks-grid');
         if (!grid) return;
         var html = '';
-        DATA.lifehacks.forEach(function(h, i) {
+        var items = IS_HOME ? DATA.lifehacks.slice(0, TEASER_LIMIT) : DATA.lifehacks;
+        items.forEach(function(h, i) {
             html += '<div class="lifehack-card reveal" style="animation-delay:' + (i * 0.05) + 's">' +
                 '<div class="lifehack-icon">' + h.icon + '</div>' +
                 '<span class="lifehack-tag">' + h.tag + '</span>' +
@@ -999,6 +1012,9 @@
                 '<p class="lifehack-desc">' + h.desc + '</p>' +
             '</div>';
         });
+        if (IS_HOME && DATA.lifehacks.length > TEASER_LIMIT) {
+            html += '<div style="text-align:center;grid-column:1/-1"><a href="lifehacks.html" class="section-more">Все лайфхаки →</a></div>';
+        }
         grid.innerHTML = html;
     }
 
@@ -1006,7 +1022,8 @@
         var grid = document.getElementById('autonomy-grid');
         if (!grid) return;
         var html = '';
-        DATA.autonomyArticles.forEach(function(a) {
+        var items = IS_HOME ? DATA.autonomyArticles.slice(0, TEASER_LIMIT) : DATA.autonomyArticles;
+        items.forEach(function(a) {
             html += '<div class="article-card reveal autonomy-article" data-category="' + a.category + '" data-id="' + a.id + '">' +
                 '<div class="article-thumb" style="background:' + a.gradient + '">' +
                     '<div style="position:absolute;bottom:15px;left:20px;z-index:1"><span class="article-category">' + a.catLabel + '</span></div>' +
@@ -1021,6 +1038,9 @@
                 '</div>' +
             '</div>';
         });
+        if (IS_HOME && DATA.autonomyArticles.length > TEASER_LIMIT) {
+            html += '<div style="text-align:center;grid-column:1/-1"><a href="articles.html#autonomy-anchor" class="section-more">Все гайды →</a></div>';
+        }
         grid.innerHTML = html;
 
         grid.addEventListener('click', function(e) {
@@ -1037,7 +1057,8 @@
         var container = document.getElementById('guides-container');
         if (!container) return;
         var html = '';
-        DATA.guides.forEach(function(g, gi) {
+        var items = IS_HOME ? DATA.guides.slice(0, 2) : DATA.guides;
+        items.forEach(function(g, gi) {
             html += '<div class="guide-card reveal">' +
                 '<div class="guide-header" data-guide="' + gi + '">' +
                     '<div class="guide-icon">' + g.icon + '</div>' +
@@ -1052,6 +1073,9 @@
             });
             html += '</div></div>';
         });
+        if (IS_HOME && DATA.guides.length > 2) {
+            html += '<div style="text-align:center"><a href="guides.html" class="section-more">Все гайды →</a></div>';
+        }
         container.innerHTML = html;
 
         container.addEventListener('click', function(e) {
@@ -1068,7 +1092,8 @@
         if (!grid) return;
         var html = '';
         var allVideos = DATA.videos.concat(DATA.newVideos || []);
-        allVideos.forEach(function(v) {
+        var items = IS_HOME ? allVideos.slice(0, TEASER_LIMIT) : allVideos;
+        items.forEach(function(v) {
             var tag = v.url ? 'a href="' + v.url + '" target="_blank" rel="noopener"' : 'div';
             var tagEnd = v.url ? '/a' : '/div';
             html += '<' + tag + ' class="video-card reveal">' +
@@ -1083,6 +1108,9 @@
                 '</div>' +
             '</' + tagEnd + '>';
         });
+        if (IS_HOME && allVideos.length > TEASER_LIMIT) {
+            html += '<div style="text-align:center;grid-column:1/-1"><a href="videos.html" class="section-more">Все видео →</a></div>';
+        }
         grid.innerHTML = html;
     }
 
@@ -1130,16 +1158,17 @@
         var grid = document.getElementById('shop-grid');
         if (!grid) return;
 
-        // Render filter buttons
-        var filterHtml = '';
-        Object.keys(SHOP_CATEGORIES).forEach(function(key) {
-            filterHtml += '<button class="filter-btn shop-filter-btn' + (key === 'all' ? ' active' : '') + '" data-filter="' + key + '">' + SHOP_CATEGORIES[key] + '</button>';
-        });
-        filterContainer.innerHTML = filterHtml;
+        if (filterContainer && !IS_HOME) {
+            var filterHtml = '';
+            Object.keys(SHOP_CATEGORIES).forEach(function(key) {
+                filterHtml += '<button class="filter-btn shop-filter-btn' + (key === 'all' ? ' active' : '') + '" data-filter="' + key + '">' + SHOP_CATEGORIES[key] + '</button>';
+            });
+            filterContainer.innerHTML = filterHtml;
+        }
 
-        // Render product cards
         var html = '';
-        DATA.shop.forEach(function(item) {
+        var items = IS_HOME ? DATA.shop.slice(0, TEASER_LIMIT) : DATA.shop;
+        items.forEach(function(item) {
             var badgeHtml = '';
             if (item.badge) {
                 badgeHtml = '<div class="shop-badge ' + item.badge + '">' + (item.badge === 'bestseller' ? 'ХИТ' : 'НОВИНКА') + '</div>';
@@ -1158,13 +1187,16 @@
                 '<div class="shop-card-stamp">КАТАЛОГ №' + (DATA.shop.indexOf(item) + 1).toString().padStart(3, '0') + '</div>' +
             '</div>';
         });
+        if (IS_HOME && DATA.shop.length > TEASER_LIMIT) {
+            html += '<div style="text-align:center;grid-column:1/-1"><a href="shop.html" class="section-more">Весь каталог →</a></div>';
+        }
         grid.innerHTML = html;
 
-        // Filter buttons logic
-        var shopBtns = filterContainer.querySelectorAll('.shop-filter-btn');
-        shopBtns.forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                shopBtns.forEach(function(b) { b.classList.remove('active'); });
+        if (filterContainer && !IS_HOME) {
+            var shopBtns = filterContainer.querySelectorAll('.shop-filter-btn');
+            shopBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    shopBtns.forEach(function(b) { b.classList.remove('active'); });
                 btn.classList.add('active');
                 var filter = btn.dataset.filter;
                 var cards = grid.querySelectorAll('.shop-product-card');
@@ -1183,8 +1215,8 @@
                 });
             });
         });
+        }
 
-        // Add to cart buttons
         grid.addEventListener('click', function(e) {
             var addBtn = e.target.closest('.shop-add-btn');
             if (addBtn) {
@@ -1477,10 +1509,10 @@
     function renderBooks() {
         var container = document.getElementById('books-grid');
         if (!container) return;
-        if (!container) return;
         var html = '';
         var typeLabels = { book: '📖 КНИГА', film: '🎬 ФИЛЬМ', game: '🎮 ИГРА' };
-        DATA.books.forEach(function(b) {
+        var items = IS_HOME ? DATA.books.slice(0, TEASER_LIMIT) : DATA.books;
+        items.forEach(function(b) {
             var starsHtml = '';
             for (var i = 0; i < 5; i++) {
                 starsHtml += i < b.stars ? '<span style="color:var(--accent)">&#9733;</span>' : '<span style="color:var(--border-color)">&#9733;</span>';
@@ -1493,6 +1525,9 @@
                 '<div class="book-stars">' + starsHtml + '</div>' +
             '</div>';
         });
+        if (IS_HOME && DATA.books.length > TEASER_LIMIT) {
+            html += '<div style="text-align:center;grid-column:1/-1"><a href="books.html" class="section-more">Всю медиатеку →</a></div>';
+        }
         container.innerHTML = html;
 
         var bookFilters = document.querySelectorAll('.book-filter');

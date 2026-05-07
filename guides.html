@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="ru" data-page="scenarios">
+<html lang="ru" data-page="guides">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сценарии конца света — SURVIVE.CIV</title>
-    <meta name="description" content="12 сценариев конца света: астероид, пандемия, ядерная война, ЭМИ, ИИ, климат, супервулкан и другие. Вероятности, стратегии выживания.">
+    <title>Пошаговые гайды — SURVIVE.CIV</title>
+    <meta name="description" content="Пошаговые инструкции по выживанию: разведение огня, строительство укрытия, поиск воды, первая помощь, навигация.">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://survive-civ.github.io/scenarios.html">
+    <link rel="canonical" href="https://survive-civ.github.io/guides.html">
     <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/dossier.css">
     <link rel="stylesheet" href="css/page-common.css">
@@ -16,17 +16,15 @@
         <div class="loader-container">
             <div class="loader-stamp">СЕКРЕТНО</div>
             <div class="loader-ring"></div>
-            <div class="loader-text">ДЕШИФРОВКА СЦЕНАРИЕВ...</div>
+            <div class="loader-text">ЗАГРУЗКА ГАЙДОВ...</div>
             <div class="loader-progress"><span id="load-percent">0</span>%</div>
         </div>
     </div>
-
     <canvas id="bg-canvas"></canvas>
     <div class="atmosphere-blob atmosphere-blob-1"></div>
     <div class="atmosphere-blob atmosphere-blob-2"></div>
     <div id="cursor-glow"></div>
     <div id="facts-ticker" class="facts-ticker"></div>
-
     <nav id="main-nav">
         <div class="nav-logo">
             <span class="logo-stamp"></span>
@@ -34,10 +32,10 @@
         </div>
         <div class="nav-links">
             <a href="index.html" class="nav-link">Главная</a>
-            <a href="scenarios.html" class="nav-link active">Сценарии</a>
+            <a href="scenarios.html" class="nav-link">Сценарии</a>
             <a href="articles.html" class="nav-link">Статьи</a>
             <a href="lifehacks.html" class="nav-link">Лайфхаки</a>
-            <a href="guides.html" class="nav-link">Гайды</a>
+            <a href="guides.html" class="nav-link active">Гайды</a>
             <a href="videos.html" class="nav-link">Видео</a>
             <a href="tools.html" class="nav-link">Инструменты</a>
             <a href="books.html" class="nav-link">Медиатека</a>
@@ -49,28 +47,23 @@
         </div>
         <button class="nav-burger" id="nav-burger" aria-label="Меню">☰</button>
     </nav>
-
     <main id="main-content">
         <div class="page-header">
             <a href="index.html" class="back-link">← На главную</a>
-            <div class="section-stamp">ПОЛНЫЙ КАТАЛОГ</div>
-            <h1 class="page-title">Сценарии конца света</h1>
-            <p class="page-desc">12 сценариев с анализом вероятности, уровня угрозы и стратегиями выживания. Нажмите на карточку для полного разбора.</p>
+            <div class="section-stamp">ИНСТРУКЦИИ</div>
+            <h1 class="page-title">Пошаговые гайды</h1>
+            <p class="page-desc">Пошаговые инструкции: огонь, вода, укрытие, навигация. Откройте гайд для подробностей.</p>
         </div>
-
-        <section id="scenarios" class="section">
-            <div class="scenarios-grid" id="scenarios-grid"></div>
-            <div class="scenario-detail" id="scenario-detail"></div>
+        <section class="section">
+            <div class="guides-container" id="guides-container"></div>
         </section>
     </main>
-
     <footer id="footer">
         <div class="footer-bottom">
             <span>© 2026 SURVIVE.CIV — Все права потеряны после апокалипсиса</span>
             <span class="footer-status">СТАТУС СИСТЕМЫ: <span class="status-online">ОНЛАЙН</span></span>
         </div>
     </footer>
-
     <div id="search-overlay" class="search-overlay">
         <div class="search-overlay-inner">
             <button class="search-overlay-close" id="search-close">&times;</button>
@@ -81,7 +74,6 @@
             <div id="search-results" class="search-results"></div>
         </div>
     </div>
-
     <script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="js/app.js" defer></script>
 </body>

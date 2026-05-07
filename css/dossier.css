@@ -1172,6 +1172,32 @@ input, select {
     line-height: 1.8;
 }
 
+.section-more {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--stamp-red);
+    text-decoration: none;
+    margin-top: 25px;
+    padding: 8px 20px;
+    border: 1px dashed var(--stamp-red);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all var(--transition-fast);
+}
+
+.section-more:hover {
+    background: var(--stamp-red-bg);
+    border-style: solid;
+}
+
+.section-teaser-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 10px;
+}
+
 /* ============================================================
    17. SCENARIO CARDS
    ============================================================ */
