@@ -1777,6 +1777,9 @@ input, select {
 }
 
 .video-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     overflow: hidden;
