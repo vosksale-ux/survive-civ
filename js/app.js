@@ -1521,11 +1521,11 @@
     function renderMonetization() {
         var block = document.getElementById('monetization-info');
         if (!block) return;
-        block.innerHTML = '<div class="monetization-inner">' +
-            '<div class="monetization-item"><span class="mi-icon">📦</span><div><strong>Бесплатная доставка</strong><span>По России от 5 000 ₽</span></div></div>' +
-            '<div class="monetization-item"><span class="mi-icon">🔧</span><div><strong>Гарантия 2 года</strong><span>Ремонт или замена при любом дефекте</span></div></div>' +
-            '<div class="monetization-item"><span class="mi-icon">🌿</span><div><strong>Натуральные материалы</strong><span>Хлопок, кожа, латунь — ничего синтетического</span></div></div>' +
-            '<div class="monetization-item"><span class="mi-icon">🤝</span><div><strong>Поддержка ремесла</strong><span>Каждое изделие шьётся вручную в мастерской</span></div></div>' +
+        block.innerHTML = '<div class="monetization-grid">' +
+            '<div class="monetization-item"><span class="mi-icon">📦</span><div><h4>Бесплатная доставка</h4><p>По России от 5 000 ₽</p></div></div>' +
+            '<div class="monetization-item"><span class="mi-icon">🔧</span><div><h4>Гарантия 2 года</h4><p>Ремонт или замена при любом дефекте</p></div></div>' +
+            '<div class="monetization-item"><span class="mi-icon">🌿</span><div><h4>Натуральные материалы</h4><p>Хлопок, кожа, латунь — ничего синтетического</p></div></div>' +
+            '<div class="monetization-item"><span class="mi-icon">🤝</span><div><h4>Поддержка ремесла</h4><p>Каждое изделие шьётся вручную в мастерской</p></div></div>' +
             '</div>';
     }
 
@@ -1702,8 +1702,7 @@
         var modal = document.getElementById('article-modal');
         if (!modal) return;
         var closeBtn = document.getElementById('modal-close');
-
-        closeBtn.addEventListener('click', function() {
+        if (closeBtn) closeBtn.addEventListener('click', function() {
             modal.classList.remove('active');
             document.body.style.overflow = '';
         });

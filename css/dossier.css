@@ -50,6 +50,7 @@
     --font-heading: 'Special Elite', 'Courier New', monospace;
     --font-body: 'Special Elite', 'Courier New', monospace;
     --font-long: 'Special Elite', 'Courier New', monospace;
+    --font-mono: 'Courier Prime', 'Courier New', monospace;
 
     /* Sizing */
     --nav-height: 60px;
@@ -2229,6 +2230,19 @@ input, select {
     padding: 16px;
     background: rgba(196, 163, 90, 0.1);
     border: 1px solid rgba(200, 184, 136, 0.5);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.mi-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.monetization-item > div {
+    flex: 1;
 }
 
 .monetization-item h4 {
